@@ -2,7 +2,7 @@ version: 0.0
 os: windows
 files:
   - source: \
-    destination: C:\Users\Administrator\Desktop\DeployTest
+    destination: c:\inetpub\wwwroot
 hooks:
   BeforeInstall:
     - location: \before-install.bat
