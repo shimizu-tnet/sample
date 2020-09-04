@@ -1,0 +1,47 @@
+﻿<script src="~/lib/trumbowyg/trumbowyg.min.js"></script>
+<script src="~/lib/trumbowyg/langs/ja.min.js"></script>
+<script src="~/lib/trumbowyg/plugins/colors/trumbowyg.colors.min.js"></script>
+<script src="~/lib/trumbowyg/plugins/cleanpaste/trumbowyg.cleanpaste.min.js"></script>
+<script>
+    $(".wysiwyg-editor").trumbowyg({
+        btns: [
+            ["heading", "p"],
+            ["strong"],
+            ["foreColor"],
+            ["link"],
+            ["align"],
+            ["unorderedList", "orderedList"],
+            ["removeformat"],
+            ["undo", "redo"],
+            ["viewHTML"],
+        ],
+        btnsDef: {
+            heading: {
+                fn: "formatBlock",
+                tag: "h3",
+                title: "見出し",
+                text: "H",
+                param: "h3",
+                ico: "header"
+            },
+            p: {
+                title: "文章",
+                text: "P",
+                ico: "paragraph"
+            },
+            align: {
+                dropdown: ["justifyLeft", "justifyCenter", "justifyRight", "justifyFull"],
+                title: '文字寄せ',
+                ico: 'justify-left',
+                hasIcon: true
+            }
+        },
+        removeformatPasted: true,
+        lang: "ja",
+        plugins: {
+            colors: {
+                colorList: ['000000', 'ff0000']
+            },
+        },
+    });
+</script>

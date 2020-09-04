@@ -1,0 +1,225 @@
+﻿@model JuniorTennis.Mvc.Features.DrawTables.IndexViewModel
+
+@{
+    ViewData["Title"] = "ドロー表管理 - 大会・種目選択";
+}
+
+<h2>@ViewData["Title"]</h2>
+<div class="single-column-form">
+    <form asp-action="Index">
+        <div class="form-item">
+            <label asp-for="SelectedTournametId"></label>
+            <select asp-for="SelectedTournametId">
+                <option value="0">------大会を選択してください。------</option>
+            </select>
+        </div>
+        <div class="form-item">
+            <label asp-for="SelectedTennisEventId"></label>
+            <select asp-for="SelectedTennisEventId">
+                <option value="0">------大会を選択してください。------</option>
+            </select>
+        </div>
+        <div class="form-item">
+            <label>開催期間</label>
+            <span id="HoldingPeriod">------大会を選択してください。------</span>
+        </div>
+        <div class="form-item">
+            <label>場所</label>
+            <span id="Venue">------大会を選択してください。------</span>
+        </div>
+        <div class="form-item">
+            <label>申込者数</label>
+            <span id="NumberOfEntries"></span>
+        </div>
+        <fieldset class="form-item">
+            <legend>大会形式</legend>
+            <div class="horizontal-items">
+                <label>
+                    <input id="OnlyMain" type="radio" asp-for="SelectedTournamentFormatId" value="@Model.OnlyMain.Id" checked />
+                    <span>@Model.OnlyMain.Name</span>
+                </label>
+                <label>
+                    <input id="WithQualifying" type="radio" asp-for="SelectedTournamentFormatId" value="@Model.WithQualifying.Id" />
+                    <span>@Model.WithQualifying.Name</span>
+                </label>
+            </div>
+        </fieldset>
+        <div class="form-item">
+            <div class="horizontal-items">
+                <button type="submit" class="button-primary" id="CreateDraw">作成</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div id="LoadingDialog" class="dialog">
+    <p>読込中です</p>
+</div>
+
+@section Scripts {
+    <script src="~/js/dialog.js"></script>
+    <script>
+        /*** VALUES ***/
+        let existsDrawTable = false;
+        let selectedTournamentFormatId = "@Model.OnlyMain.Id";
+
+        /*** API ***/
+        const fetchTournamentsAsync = async () => {
+            const res = await fetch("/DrawTables/tournaments");
+            const json = await res.json();
+
+            const tournaments = document.getElementById("SelectedTournametId");
+            removeOptionAll(tournaments);
+
+            const option = document.createElement("option");
+            option.value = "0";
+            option.textContent = "------大会を選択してください。------";
+            option.dataset["HoldingPeriod"] = "------大会を選択してください。------";
+            option.dataset["Venue"] = "------大会を選択してください。------";
+            tournaments.appendChild(option);
+
+            [...json].forEach(o => {
+                const option = document.createElement("option");
+                option.value = o.id;
+                option.textContent = o.name;
+                option.dataset["HoldingPeriod"] = o.holdingPeriod;
+                option.dataset["Venue"] = o.venue;
+                tournaments.appendChild(option);
+            });
+        }
+        const fetchTennisEventsAsync = async tournamentId => {
+            const res = await fetch(`DrawTables/${tournamentId}/tennis_events`);
+            const json = await res.json();
+
+            const tennisEvents = document.getElementById("SelectedTennisEventId");
+            removeOptionAll(tennisEvents);
+
+            const option = document.createElement("option");
+            option.value = "0";
+            option.textContent =
+                isOptionSelected(document.getElementById("SelectedTournametId").value)
+                    ? "------種目を選択してください。------"
+                    : "------大会を選択してください。------";
+            tennisEvents.appendChild(option);
+
+            [...json].forEach(o => {
+                const option = document.createElement("option");
+                option.value = o.id;
+                option.textContent = o.name;
+                tennisEvents.appendChild(option);
+            });
+        }
+        const fetchNumberOfEntries = async (tournamentId, tennisEventId) => {
+            const res = await fetch(`/DrawTables/${tournamentId}/${tennisEventId}/number_of_entries`);
+            const { count } = await res.json();
+            document.getElementById("NumberOfEntries").innerText = count === 0 ? "" : `${count} 名`;
+        }
+        const fetchTournamentFormatAsync = async (tournamentId, tennisEventId) => {
+            const res = await fetch(`DrawTables/${tournamentId}/${tennisEventId}/tournament_format`);
+            const json = await res.json();
+            existsDrawTable = json.existsDrawTable;
+            selectedTournamentFormatId = json.tournamentFormatId;
+
+            const tournamentFormats = [...document.getElementsByName("SelectedTournamentFormatId")];
+            tournamentFormats.forEach(o => {
+                document.getElementById(o.id).checked = o.value === `${selectedTournamentFormatId}`;
+            });
+        }
+
+        /*** FUNCTIONS ***/
+        const removeOptionAll = element => {
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+        }
+        const isOptionSelected = value => `${value}` !== "0";
+        const getSelectedTournamentFormatId = () => document.querySelector("input[name=SelectedTournamentFormatId]:checked").value;
+        const isChanged = () => selectedTournamentFormatId !== getSelectedTournamentFormatId();
+        const setTournamentFormat = value => document.querySelector(`input[name="SelectedTournamentFormatId"][value="${value}"]`).checked = true;
+        const showLaodingDialog = () => showDialog("LoadingDialog");
+        const closeLaodingDialog = () => closeDialog("LoadingDialog");
+
+        /*** EVENTS HANDLER ***/
+        const handleTournamentChanged = async e => {
+            showLaodingDialog();
+
+            await fetchTennisEventsAsync(e.target.value);
+
+            document.getElementById("HoldingPeriod").innerText
+                = isOptionSelected(e.target.value)
+                    ? e.target.selectedOptions[0].dataset["HoldingPeriod"]
+                    : "------大会を選択してください。------";
+
+            document.getElementById("Venue").innerText
+                = isOptionSelected(e.target.value)
+                    ? e.target.selectedOptions[0].dataset["Venue"]
+                    : "------大会を選択してください。------";
+
+            document.getElementById("OnlyMain").checked = true;
+            existsDrawTable = false;
+
+            closeLaodingDialog();
+        };
+        const handleTennisEventChanged = async e => {
+            showLaodingDialog();
+
+            const tournamentId = document.getElementById("SelectedTournametId").value;
+            await Promise.all([
+                fetchNumberOfEntries(tournamentId, e.target.value),
+                fetchTournamentFormatAsync(tournamentId, e.target.value),
+            ]);
+
+            closeLaodingDialog();
+        };
+        const handleCreateDrawClicked = e => {
+            const tournaments = document.getElementById("SelectedTournametId");
+            if (!isOptionSelected(tournaments.value)) {
+                alert("大会を選択してください。");
+                tournaments.focus();
+                e.preventDefault();
+                return false;
+            }
+
+            const tennisEvents = document.getElementById("SelectedTennisEventId");
+            if (!isOptionSelected(tennisEvents.value)) {
+                alert("種目を選択してください。");
+                tennisEvents.focus();
+                e.preventDefault();
+                return false;
+            }
+        }
+
+        /*** EVENTS LISTENER ***/
+        document.getElementById("SelectedTournametId").addEventListener("change", handleTournamentChanged, false);
+        document.getElementById("SelectedTennisEventId").addEventListener("change", handleTennisEventChanged, false);
+        [...document.querySelectorAll("input[name=SelectedTournamentFormatId]")].forEach(o => {
+            o.addEventListener("click", ev => {
+                if (!isChanged()) {
+                    // ラジオボタン変更なし
+                    return true;
+                }
+
+                if (!existsDrawTable) {
+                    // ドロー表が未作成
+                    return true;
+                }
+
+                if (confirm("ドロー表が作成済みです。\n大会形式を変更すると作成済みのドロー表がリセットされます。\nよろしいですか。")) {
+                    existsDrawTable = false;
+                    selectedTournamentFormatId = getSelectedTournamentFormatId();
+                    return true;
+                }
+
+                setTournamentFormat(selectedTournamentFormatId);
+            }, false);
+        });
+        document.getElementById("CreateDraw").addEventListener("click", handleCreateDrawClicked, false);
+
+        (async () => {
+            showLaodingDialog();
+
+            await fetchTournamentsAsync();
+
+            closeLaodingDialog();
+        })();
+    </script>
+}

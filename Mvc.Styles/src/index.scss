@@ -1,0 +1,14 @@
+﻿@tailwind base;
+@import "components/base";
+
+@tailwind components;
+@import "components/layout";
+@import "components/button";
+@import "components/table";
+@import "components/form";
+@import "components/trumbowyg";
+@import "components/pagination";
+@import "components/search";
+@import "components/dialog";
+
+@tailwind utilities;

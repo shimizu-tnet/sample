@@ -1,0 +1,59 @@
+﻿@model JuniorTennis.Mvc.Features.Seasons.RegisterViewModel
+
+@{
+    ViewData["Title"] = "年度 - 年度登録";
+}
+
+<h2>年度登録</h2>
+<div class="single-column-form">
+    <div class="horizontal-items right">
+        <a class="button-link" asp-action="Index">戻る</a>
+    </div>
+    <form asp-action="Register">
+        <div class="form-item">
+            <label asp-for="SeasonName"></label>
+            <input asp-for="SeasonName" />
+            <span asp-validation-for="SeasonName"></span>
+        </div>
+        <fieldset class="form-item">
+            <legend>期間</legend>
+            <div class="horizontal-items">
+                <input asp-for="FromDate" value="" />
+                <span>～</span>
+                <input asp-for="ToDate" value="" />
+            </div>
+            <span asp-validation-for="FromDate"></span>
+            <span asp-validation-for="ToDate"></span>
+        </fieldset>
+        <div class="form-item">
+            <label asp-for="RegistrationFromDate"></label>
+            <input asp-for="RegistrationFromDate" value="" />
+            <span asp-validation-for="RegistrationFromDate"></span>
+        </div>
+        <div class="form-item">
+            <label asp-for="TeamRegistrationFee"></label>
+            <input asp-for="TeamRegistrationFee" />
+            <span asp-validation-for="TeamRegistrationFee"></span>
+        </div>
+        <div class="form-item">
+            <label asp-for="PlayerRegistrationFee"></label>
+            <input asp-for="PlayerRegistrationFee" />
+            <span asp-validation-for="PlayerRegistrationFee"></span>
+        </div>
+        <div class="form-item">
+            <label asp-for="PlayerTradeFee"></label>
+            <input asp-for="PlayerTradeFee" />
+            <span asp-validation-for="PlayerTradeFee"></span>
+        </div>
+
+        <div class="form-item">
+            <div class="horizontal-items">
+                <button class="button-primary" type="submit">登録</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts{
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

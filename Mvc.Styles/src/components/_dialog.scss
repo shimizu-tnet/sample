@@ -1,0 +1,32 @@
+.dialog {
+  display: none;
+  box-sizing: border-box;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 300px;
+  min-height: 200px;
+  background-color: white;
+  z-index: 99999;
+  padding: 20px;
+
+  &.open {
+    display: block;
+  }
+}
+
+.dialog-background {
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(128, 128, 128, 0.3);
+  z-index: 99998;
+
+  &.closed {
+    display: none;
+  }
+}

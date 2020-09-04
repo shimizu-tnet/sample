@@ -1,0 +1,69 @@
+﻿@model JuniorTennis.Mvc.Features.Association.Teams.EditViewModel
+
+@{
+    ViewData["Title"] = "団体管理 - 編集";
+}
+
+<h2>編集</h2>
+<div class="single-column-form">
+    <div class="horizontal-items right">
+        <a class="button-link" asp-controller="Teams" asp-action="Index">戻る</a>
+    </div>
+
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="TeamCode" />
+        <div class="form-item">
+            <label asp-for="TeamCode"></label>
+            <span>@Model.TeamCode</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="TeamType"></label>
+            <span>@Model.TeamType</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="TeamName"></label>
+            <span>@Model.TeamName</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="TeamAbbreviatedName"></label>
+            <span>@Model.TeamAbbreviatedName</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="RepresentativeName"></label>
+            <span>@Model.RepresentativeName</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="RepresentativeEmailAddress"></label>
+            <span>@Model.RepresentativeEmailAddress</span>
+            <a class="button-link"
+               asp-action="RequestChangeMailAddress"
+               asp-route-teamCode="@Model.TeamCode">メールアドレス再設定</a>
+        </div>
+        <div class="form-item">
+            <label asp-for="TelephoneNumber"></label>
+            <span>@Model.TelephoneNumber</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="Address"></label>
+            <span>@Model.Address</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="CoachName"></label>
+            <span>@Model.CoachName</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="CoachEmailAddress"></label>
+            <span>@Model.CoachEmailAddress</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="TeamJpin"></label>
+            <input asp-for="TeamJpin" />
+            <span asp-validation-for="TeamJpin"></span>
+        </div>
+        <div class="form-item">
+            <div class="horizontal-items">
+                <button class="button-primary" type="submit">登録</button>
+            </div>
+        </div>
+    </form>
+</div>

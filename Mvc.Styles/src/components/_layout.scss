@@ -1,0 +1,85 @@
+#root {
+  @apply min-h-screen;
+  @apply grid;
+  grid-template-rows: 50px 1fr 30px;
+}
+
+#app-header {
+  @apply bg-main-dark text-white;
+  @apply w-full;
+  @apply font-bold;
+  padding: 10px 20px 5px 20px;
+  font-size: 24px;
+}
+
+#app-container {
+  @apply grid;
+  grid-template-columns: 180px 1fr;
+
+  nav {
+    @apply bg-main text-white;
+    padding-top: 4px;
+    padding-left: 20px;
+
+    header {
+      @apply font-bold;
+    }
+
+    > ul > li {
+      padding: 5px 0;
+    }
+
+    > ul > li > ul {
+      padding-left: 10px;
+    }
+  }
+
+  main {
+    @apply py-6 px-12;
+  }
+}
+
+#app-footer {
+  @apply bg-main-dark text-white;
+  @apply flex items-center;
+  @apply pl-4;
+}
+
+.single-column-form {
+  @apply flex flex-col;
+  max-width: 600px;
+}
+
+.horizontal-container {
+  @apply py-4;
+}
+
+.horizontal-items {
+  @apply flex;
+
+  > :not(:first-child) {
+    margin-left: 15px;
+  }
+
+  &.right {
+    @apply justify-end;
+  }
+}
+
+hr.border {
+  @apply border-0 border-t text-gray-dark;
+}
+
+.fullwidth {
+  @apply w-full;
+}
+
+.overlay {
+  @apply relative;
+
+  &::after {
+    @apply block absolute top-0 left-0;
+    @apply w-full h-full;
+    content: "";
+  }
+}

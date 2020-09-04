@@ -1,0 +1,43 @@
+﻿@model JuniorTennis.Mvc.Features.Operators.EditViewModel
+
+@{
+    ViewData["Title"] = "管理ユーザー - 管理ユーザー編集";
+}
+
+<h2>管理ユーザー編集</h2>
+<div class="single-column-form">
+    <div class="horizontal-items right">
+        <a class="button-link" asp-action="Index">戻る</a>
+    </div>
+    <form asp-action="Edit">
+        <div class="form-item">
+            <label asp-for="SelectedRoleName"></label>
+            <select asp-for="SelectedRoleName" asp-items="Model.RoleNames"></select>
+        </div>
+        <div class="form-item">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" />
+            <span asp-validation-for="Name"></span>
+        </div>
+        <div class="form-item">
+            <label asp-for="EmailAddress"></label>
+            <input asp-for="EmailAddress" />
+            <span asp-validation-for="EmailAddress"></span>
+        </div>
+        <div class="form-item">
+            <label asp-for="LoginId"></label>
+            <span>@Model.LoginId</span>
+        </div>
+        <div class="form-item">
+            <div class="horizontal-items">
+                <button class="button-primary" type="submit">登録</button>
+            </div>
+        </div>
+        <input type="hidden" asp-for="OperatorId" />
+    </form>
+</div>
+
+@section Scripts
+{
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

@@ -1,0 +1,28 @@
+.wysiwyg-styles {
+  @apply text-left;
+
+  .trumbowyg-box {
+    @apply my-0;
+  }
+
+  h3 {
+    @apply text-3xl;
+  }
+
+  strong {
+    @apply font-bold;
+  }
+
+  a {
+    @apply underline;
+    color: #0000ee;
+  }
+
+  ul {
+    @apply list-disc pl-12;
+  }
+
+  ol {
+    @apply list-decimal pl-12;
+  }
+}

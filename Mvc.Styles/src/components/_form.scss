@@ -1,0 +1,142 @@
+.form-item {
+  @apply flex flex-col;
+  padding: 2px 15px 10px 0;
+
+  // h3と同じ
+  > label,
+  > legend {
+    @apply font-bold pb-1;
+
+    + * {
+      min-height: 30px;
+    }
+  }
+}
+
+.field-validation-error {
+  @apply text-attention;
+}
+
+input,
+textarea,
+select {
+  @apply border border-gray-dark rounded-sm;
+
+  &:disabled {
+    @apply bg-white text-gray-light border-gray-light;
+  }
+}
+
+input,
+select {
+  @apply h-12;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="email"],
+input[type="date"],
+input[type="time"],
+input[type="number"],
+input[type="range"],
+input[type="color"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="week"],
+textarea,
+select {
+  @apply w-full;
+  padding: 3px 10px;
+}
+
+input[type="number"] {
+  padding: 3px;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  @apply relative;
+  @apply outline-none cursor-pointer;
+  top: 4px;
+  height: 20px;
+  width: 20px;
+  ~ span {
+    @apply cursor-pointer;
+    @apply ml-2;
+  }
+
+  &:before {
+    @apply block absolute pointer-events-none;
+    @apply border-solid border-2 border-main;
+    content: "";
+    height: 20px;
+    width: 20px;
+  }
+
+  &:after {
+    @apply block absolute pointer-events-none;
+    content: "";
+  }
+
+  &:checked:after {
+    @apply bg-main;
+  }
+
+  &:disabled {
+    @apply cursor-auto;
+    ~ span {
+      @apply cursor-auto;
+      @apply text-gray-light;
+    }
+
+    &:checked:after {
+      @apply bg-gray-light;
+    }
+
+    &:before {
+      @apply border-gray-light;
+    }
+  }
+}
+
+input[type="checkbox"] {
+  &:after {
+    height: 20px;
+    width: 20px;
+  }
+
+  &:checked:after {
+    background-image: url(/image/check.png);
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+}
+
+input[type="radio"] {
+  &:before,
+  &:after {
+    @apply rounded-full;
+  }
+
+  &:after {
+    top: 4px;
+    left: 4px;
+    height: 10px;
+    width: 10px;
+  }
+}
+
+input[type="hidden"],
+input[type="file"] {
+}
+
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+input[type="image"],
+button {
+}

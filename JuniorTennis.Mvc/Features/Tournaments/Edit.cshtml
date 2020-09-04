@@ -1,0 +1,236 @@
+﻿@model JuniorTennis.Mvc.Features.Tournaments.EditViewModel
+
+@{
+    ViewData["Title"] = "大会管理 - 編集";
+}
+
+<h2>編集</h2>
+<div class="single-column-form">
+    <div class="horizontal-items right">
+        <a class="button-link" asp-controller="Tournaments" asp-action="Details" asp-route-id="@Model.TournamentId">戻る</a>
+    </div>
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="TournamentId" />
+        <div class="form-item">
+            <label asp-for="TournamentName"></label>
+            <input asp-for="TournamentName" />
+            <span asp-validation-for="TournamentName"></span>
+        </div>
+        <fieldset class="form-item">
+            <div class="horizontal-items">
+                <label>
+                    <input id="tournament-type1" type="radio" asp-for="SelectedTournamentType" value="@Model.TournamentTypes[0].Value" checked="@Model.TournamentTypes[0].Selected" />
+                    <span>@Model.TournamentTypes[0].Text</span>
+                </label>
+                <label>
+                    <input id="tournament-type2" type="radio" asp-for="SelectedTournamentType" value="@Model.TournamentTypes[1].Value" checked="@Model.TournamentTypes[1].Selected" />
+                    <span>@Model.TournamentTypes[1].Text</span>
+                </label>
+            </div>
+        </fieldset>
+        <div class="form-item">
+            <label asp-for="SelectedRegistrationYear"></label>
+            <select asp-for="SelectedRegistrationYear" asp-items="Model.RegistrationYears"></select>
+        </div>
+        <fieldset class="form-item">
+            <div class="horizontal-items">
+                <label>
+                    <input type="radio" asp-for="SelectedTypeOfYear" value="@Model.TypeOfYears[0].Value" checked="@Model.TypeOfYears[0].Selected">
+                    <span>@Model.TypeOfYears[0].Text</span>
+                </label>
+                <label>
+                    <input type="radio" asp-for="SelectedTypeOfYear" value="@Model.TypeOfYears[1].Value" checked="@Model.TypeOfYears[1].Selected">
+                    <span>@Model.TypeOfYears[1].Text</span>
+                </label>
+            </div>
+        </fieldset>
+        <div class="form-item">
+            <label for="aggregation-months" asp-for="SelectedAggregationMonth"></label>
+            <select id="aggregation-months" asp-for="SelectedAggregationMonth" asp-items="Model.AggregationMonths"></select>
+        </div>
+        <fieldset class="form-item">
+            <legend>大会種目</legend>
+            <table class="table text-center fullwidth">
+                <thead>
+                    <tr>
+                        <th rowspan="2">年齢</th>
+                        <th colspan="2">男子</th>
+                        <th colspan="2">女子</th>
+                    </tr>
+                    <tr>
+                        <th>シングルス</th>
+                        <th>ダブルス</th>
+                        <th>シングルス</th>
+                        <th>ダブルス</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <th>17/18歳以下</th>
+                    <td><input name="SelectedTennisEvents" asp-for="@Model.TennisEvents[0].Selected" value="@Model.TennisEvents[0].Value" /></td>
+                    <td><input name="SelectedTennisEvents" asp-for="@Model.TennisEvents[1].Selected" value="@Model.TennisEvents[1].Value" /></td>
+                    <td><input name="SelectedTennisEvents" asp-for="@Model.TennisEvents[2].Selected" value="@Model.TennisEvents[2].Value" /></td>
+                    <td><input name="SelectedTennisEvents" asp-for="@Model.TennisEvents[3].Selected" value="@Model.TennisEvents[3].Value" /></td>
+                </tr>
+                <tr>
+                    <th>15/16歳以下</th>
+                    <td><input name="SelectedTennisEvents" asp-for="@Model.TennisEvents[4].Selected" value="@Model.TennisEvents[4].Value" /></td>
+                    <td><input name="SelectedTennisEvents" asp-for="@Model.TennisEvents[5].Selected" value="@Model.TennisEvents[5].Value" /></td>
+                    <td><input name="SelectedTennisEvents" asp-for="@Model.TennisEvents[6].Selected" value="@Model.TennisEvents[6].Value" /></td>
+                    <td><input name="SelectedTennisEvents" asp-for="@Model.TennisEvents[7].Selected" value="@Model.TennisEvents[7].Value" /></td>
+                </tr>
+                <tr>
+                    <th>13/14歳以下</th>
+                    <td><input name="SelectedTennisEvents" asp-for="@Model.TennisEvents[8].Selected" value="@Model.TennisEvents[8].Value" /></td>
+                    <td><input name="SelectedTennisEvents" asp-for="@Model.TennisEvents[9].Selected" value="@Model.TennisEvents[9].Value" /></td>
+                    <td><input name="SelectedTennisEvents" asp-for="@Model.TennisEvents[10].Selected" value="@Model.TennisEvents[10].Value" /></td>
+                    <td><input name="SelectedTennisEvents" asp-for="@Model.TennisEvents[11].Selected" value="@Model.TennisEvents[11].Value" /></td>
+                </tr>
+                <tr>
+                    <th>11/12歳以下</th>
+                    <td><input name="SelectedTennisEvents" asp-for="@Model.TennisEvents[12].Selected" value="@Model.TennisEvents[12].Value" /></td>
+                    <td><input name="SelectedTennisEvents" asp-for="@Model.TennisEvents[13].Selected" value="@Model.TennisEvents[13].Value" /></td>
+                    <td><input name="SelectedTennisEvents" asp-for="@Model.TennisEvents[14].Selected" value="@Model.TennisEvents[14].Value" /></td>
+                    <td><input name="SelectedTennisEvents" asp-for="@Model.TennisEvents[15].Selected" value="@Model.TennisEvents[15].Value" /></td>
+                </tr>
+            </table>
+        </fieldset>
+        <fieldset class="form-item with-draw-menu">
+            <legend>開催期間</legend>
+            <div class="horizontal-items">
+                <input asp-for="HoldingStartDate" />
+                <span> ～ </span>
+                <input asp-for="HoldingEndDate" />
+            </div>
+            <span asp-validation-for="HoldingStartDate"></span>
+            <span asp-validation-for="HoldingEndDate"></span>
+        </fieldset>
+        <fieldset class="form-item with-draw-menu">
+            <legend>開催日</legend>
+            <table id="holding-dates-table" class="table fullwidth">
+                <thead>
+                    <tr>
+                        <th>月</th>
+                        <th>火</th>
+                        <th>水</th>
+                        <th>木</th>
+                        <th>金</th>
+                        <th>土</th>
+                        <th>日</th>
+                    </tr>
+                </thead>
+                @foreach (var holdingDates in Model.HoldingDates)
+                {
+                    <tr>
+                        @foreach (var holdingDate in holdingDates)
+                        {
+                            <td>
+                                <label>
+                                    <input type="checkbox" name="SelectedHoldingDates" value="@holdingDate.Value" checked="@holdingDate.Selected" disabled="@holdingDate.Disabled">
+                                    <span>@holdingDate.Text</span>
+                                </label>
+                                <input type="hidden" name="AllHoldingDates" value="@holdingDate.Value" />
+                            </td>
+                        }
+                    </tr>
+                }
+            </table>
+        </fieldset>
+        <div class="form-item with-draw-menu">
+            <label asp-for="Venue"></label>
+            <input asp-for="Venue" />
+        </div>
+        <fieldset class="form-item with-draw-menu">
+            <legend>支払方法</legend>
+            <div class="horizontal-items">
+                <label>
+                    <input id="method-of-payment1" type="radio" asp-for="SelectedMethodOfPayments" value="@Model.MethodOfPayments[0].Value" checked="@Model.MethodOfPayments[0].Selected" onchange="changeMailBody('PrePayment')">
+                    <span>@Model.MethodOfPayments[0].Text</span>
+                </label>
+                <label>
+                    <input id="method-of-payment2" type="radio" asp-for="SelectedMethodOfPayments" value="@Model.MethodOfPayments[1].Value" checked="@Model.MethodOfPayments[1].Selected" onchange="changeMailBody('PostPayment')">
+                    <span>@Model.MethodOfPayments[1].Text</span>
+                </label>
+                <label>
+                    <input id="method-of-payment3" type="radio" asp-for="SelectedMethodOfPayments" value="@Model.MethodOfPayments[2].Value" checked="@Model.MethodOfPayments[2].Selected" onchange="changeMailBody('NotRecieve')">
+                    <span>@Model.MethodOfPayments[2].Text</span>
+                </label>
+                <label>
+                    <input id="method-of-payment4" type="radio" asp-for="SelectedMethodOfPayments" value="@Model.MethodOfPayments[3].Value" checked="@Model.MethodOfPayments[3].Selected" onchange="changeMailBody('Other')">
+                    <span>@Model.MethodOfPayments[3].Text</span>
+                </label>
+            </div>
+            <span class="payment-method-other">※入金方法は大会要領に記載。</span>
+        </fieldset>
+        <div class="form-item with-draw-menu entry-fee">
+            <label asp-for="EntryFee"></label>
+            <input asp-for="EntryFee" />
+        </div>
+        <div class="with-draw-menu">
+            <div class="form-item">
+                <label asp-for="TournamentEntryReceptionMailSubject"></label>
+                <input asp-for="TournamentEntryReceptionMailSubject" />
+                <span asp-validation-for="TournamentEntryReceptionMailSubject"></span>
+            </div>
+            <div class="form-item">
+                <label asp-for="TournamentEntryReceptionMailBody"></label>
+                <textarea asp-for="TournamentEntryReceptionMailBody" style="height: 350px;"></textarea>
+                <span asp-validation-for="TournamentEntryReceptionMailBody"></span>
+            </div>
+        </div>
+        <fieldset class="form-item with-draw-menu">
+            <legend>申込期間</legend>
+            <div class="horizontal-items">
+                <input asp-for="ApplicationStartDate" />
+                <span> ～ </span>
+                <input asp-for="ApplicationEndDate" />
+            </div>
+            <span asp-validation-for="ApplicationStartDate"></span>
+            <span asp-validation-for="ApplicationEndDate"></span>
+        </fieldset>
+        <div class="form-item with-draw-menu">
+            <label asp-for="Outline"></label>
+            <div class="wysiwyg-styles" style="height: 540px;">
+                <textarea class="wysiwyg-editor" asp-for="Outline"></textarea>
+            </div>
+        </div>
+        <div class="form-item">
+            <div class="horizontal-items">
+                <button type="submit" class="button-primary">更新</button>
+            </div>
+        </div>
+    </form>
+</div>
+<style>
+    .with-draw, .pay {
+        visibility: visible;
+        height: auto;
+    }
+
+    .only-point, .no-pay {
+        visibility: hidden;
+        height: 0;
+    }
+</style>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/tournament.js"></script>
+@section CSS{
+    @await Html.PartialAsync("/Features/Shared/Wysiwyg/_WysiwygCss.cshtml")
+}
+
+@section Scripts{
+    @await Html.PartialAsync("/Features/Shared/Wysiwyg/_WysiwygJavascripts.cshtml")
+<script>
+        const mailBodies = {
+            "PrePayment": `@Html.Raw(Model.TournamentEntryReceptionMailBodies["PrePayment"])`,
+            "PostPayment": `@Html.Raw(Model.TournamentEntryReceptionMailBodies["PostPayment"])`,
+            "NotRecieve": `@Html.Raw(Model.TournamentEntryReceptionMailBodies["NotRecieve"])`,
+            "Other": `@Html.Raw(Model.TournamentEntryReceptionMailBodies["Other"])`,
+        };
+
+        const changeMailBody = key => {
+            const body = mailBodies[key];
+            const tournamentEntryReceptionMailBody = document.getElementById("TournamentEntryReceptionMailBody")
+            tournamentEntryReceptionMailBody.value = body;
+        }
+</script>
+}

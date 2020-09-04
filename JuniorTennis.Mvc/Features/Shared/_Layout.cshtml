@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+        @ViewData["Title"] - OTA ジュニアシステム
+    </title>
+    <link rel="stylesheet" href="~/css/style.css" />
+    @RenderSection("CSS", required: false)
+</head>
+<body>
+    <div id="root">
+        <header id="app-header">
+            <a asp-controller="Home" asp-action="Index">
+                OTA ジュニアシステム
+            </a>
+        </header>
+        <div id="app-container">
+            <nav>
+                <ul>
+                    <li>
+                        <header>団体管理</header>
+                        <ul>
+                            <li>
+                                <a asp-area="Association" asp-controller="Teams" asp-action="Receipt">受領一覧</a>
+                            </li>
+                            <li>
+                                <a asp-area="Association" asp-controller="Teams" asp-action="Index">団体一覧</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <header>大会管理</header>
+                        <ul>
+                            <li>
+                                <a asp-controller="Tournaments" asp-action="Index">大会一覧</a>
+                            </li>
+                            <li>
+                                <a asp-controller="DrawTables" asp-action="Index">ドロー表一覧</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <header>お知らせ</header>
+                        <ul>
+                            <li>
+                                <a asp-controller="Announcements" asp-action="Index">お知らせ一覧</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <header>全般</header>
+                        <ul>
+                            <li>
+                                <a asp-controller="Seasons" asp-action="Index">年度</a>
+                            </li>                            
+                            <li>
+                                <a asp-controller="Operators" asp-action="Index">管理ユーザー</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <header>開発用</header>
+                        <ul>
+                            <li>
+                                <a asp-area="Identity" asp-controller="Accounts" asp-action="Login">ログイン</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+        <footer id="app-footer">
+            <span><a asp-area="" asp-controller="Home" asp-action="Index">&copy; 2020 - OTAジュニアシステム</a></span>
+        </footer>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

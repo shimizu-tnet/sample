@@ -1,0 +1,44 @@
+﻿@model List<JuniorTennis.Domain.Players.Player>
+@{
+    Layout = "";
+}
+
+@if (Model.Any())
+{
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>登録番号</th>
+                    <th>氏名</th>
+                    <th>フリガナ</th>
+                    <th>JPIN</th>
+                    <th>カテゴリー</th>
+                    <th>性別</th>
+                    <th>生年月日</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var player in Model)
+                {
+                    <tr>
+                        <td>
+                            <a class="button-link"
+                               asp-action="Edit"
+                               asp-route-playerCode="@player.PlayerCode?.Value">@player.PlayerCode?.Value</a>
+                        </td>
+
+                        <td>@player.PlayerFamilyName.Value @player.PlayerFirstName.Value</td>
+
+                        <td>@player.PlayerFamilyNameKana.Value @player.PlayerFirstNameKana.Value</td>
+                        <td>@player.PlayerJpin</td>
+
+                        <td>@player.Category.Name</td>
+                        <td>@player.Gender.Name</td>
+                        <td>@player.BirthDate.DisplayValue</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,67 @@
+.draw-table-area {
+    margin-top: 20px;
+}
+
+    .draw-table-area * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+.draw-table {
+    border-collapse: collapse;
+}
+
+td.player-box {
+    width: 150px;
+    height: 50px;
+}
+
+    td.player-box.singles {
+        height: 30px;
+    }
+
+div.player-box {
+    position: absolute;
+    display: inline-block;
+    border: 1px solid black;
+    width: 150px;
+    transform: translate(-50%, -50%);
+    height: 70px;
+    padding-top: 10px;
+}
+
+    div.player-box.singles {
+        height: 42px;
+        padding-top: 8px;
+    }
+
+.underline-short {
+    border-bottom: 1px solid black;
+    width: 30px;
+}
+
+.underline {
+    border-bottom: 1px solid black;
+    width: 120px;
+}
+
+.sideline {
+    border-left: 1px solid black;
+}
+
+.sideline-result {
+    border-left: 1px solid black;
+}
+
+.base-height {
+    height: 50px;
+}
+
+    .base-height.singles {
+        height: 30px;
+    }
+
+.result-input {
+    cursor: pointer;
+}

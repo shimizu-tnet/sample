@@ -1,0 +1,9 @@
+{
+  "tailwindCSS.emmetCompletions": true,
+  "emmet.includeLanguages": {
+    "postcss": "scss"
+  },
+  "files.associations": {
+    "*.scss": "postcss"
+  }
+}

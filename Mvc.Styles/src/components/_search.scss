@@ -1,0 +1,21 @@
+.search-form {
+  @apply border-t border-b border-gray;
+  @apply py-3;
+
+  .search-item {
+    @apply flex items-center;
+
+    &:not(:first-child) {
+      @apply ml-8;
+    }
+
+    label,
+    span {
+      @apply whitespace-no-wrap;
+    }
+
+    > :not(:first-child) {
+      margin-left: 10px;
+    }
+  }
+}

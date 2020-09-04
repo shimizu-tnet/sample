@@ -1,0 +1,26 @@
+.pagination {
+  @apply flex flex-row;
+
+  span {
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+
+    &:not(:first-child) {
+      @apply ml-2;
+    }
+
+    * {
+      @apply w-full h-full;
+    }
+  }
+
+  span.page {
+    @apply border border-main rounded-sm;
+    @apply text-main text-center align-baseline;
+
+    &.selected {
+      @apply bg-main text-white;
+    }
+  }
+}

@@ -1,0 +1,71 @@
+﻿@model JuniorTennis.Mvc.Features.Announcements.IndexViewModel
+
+@{
+    ViewData["Title"] = "お知らせ - お知らせ一覧";
+}
+
+<h2>お知らせ一覧</h2>
+
+<div class="horizontal-items right">
+    <a class="button-link" asp-action="Register">新規登録</a>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>タイトル</th>
+            <th>種類</th>
+            <th>登録日</th>
+            <th>終了日</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var annoucements in Model.Annoucements)
+        {
+            <tr>
+                <td>
+                    <a class="button-link" asp-action="Edit" asp-route-id="@annoucements.Id">@annoucements.AnnounceTitle.Value</a>
+                </td>
+                <td>@annoucements.AnnouncementGenre.Name</td>
+                <td>@annoucements.RegisteredDate.DisplayValue</td>
+                <td>@(annoucements.EndDate?.DisplayValue ?? "-")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+    <ul class="pagination">
+        @if (Model.Annoucements.HasPreviousPage)
+        {
+            <li>
+                <a asp-action="Index" asp-route-page="@(Model.Annoucements.PageIndex - 1)">←</a>
+            </li>
+        }
+        @foreach (var page in @Model.Annoucements.PageNumbers)
+        {
+            <li class="@(Model.Annoucements.SelectedPageNumber == page ? "selected" : "")">
+                <a asp-action="Index" asp-route-page="@( page - 1)">@(page)</a>
+            </li>
+        }
+        @if (Model.Annoucements.HasNextPage)
+        {
+            <li>
+                <a asp-action="Index" asp-route-page="@(Model.Annoucements.PageIndex + 1)">→</a>
+            </li>
+        }
+    </ul>
+</div>
+
+@section CSS{
+    <style>
+        .pagination {
+            display: flex;
+        }
+
+            .pagination .selected {
+                pointer-events: none;
+                cursor: default;
+                text-decoration: none;
+                border-bottom: solid 1px black;
+            }
+    </style>
+}

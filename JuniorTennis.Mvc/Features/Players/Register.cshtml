@@ -1,0 +1,136 @@
+﻿@model JuniorTennis.Mvc.Features.Players.RegisterViewModel
+
+@{
+    ViewData["Title"] = "選手登録";
+}
+
+<h2>選手登録</h2>
+<div class="single-column-form">
+
+    <form asp-action="Register">
+        <div class="horizontal-items right">
+            <a class="button-link" asp-controller="Players" asp-action="RequestPlayers">戻る</a>
+        </div>
+        <div class="horizontal-items">
+            <button class="button-primary" type="submit">登録</button>
+        </div>
+        @if (Model.IsDuplicated)
+        {
+            <span>既に氏名、生年月日が同じ選手が登録されています。協会までお問い合わせください。</span>
+        }
+        <fieldset class="form-item">
+            <legend>氏名</legend>
+            <div class="horizontal-items">
+                <input asp-for="PlayerFamilyName" />
+                <input asp-for="PlayerFirstName" />
+            </div>
+            <span asp-validation-for="PlayerFamilyName"></span>
+            <span asp-validation-for="PlayerFirstName"></span>
+        </fieldset>
+        <fieldset class="form-item">
+            <legend>フリガナ</legend>
+            <div class="horizontal-items">
+                <input asp-for="PlayerFamilyNameKana" />
+                <input asp-for="PlayerFirstNameKana" />
+            </div>
+            <span asp-validation-for="PlayerFamilyNameKana"></span>
+            <span asp-validation-for="PlayerFirstNameKana"></span>
+        </fieldset>
+        <div class="form-item">
+            <label asp-for="SelectedGender"></label>
+            <div class="horizontal-items">
+                @foreach (var button in Model.GenderButton)
+                {
+                    <label>
+                        <input type="radio" asp-for="SelectedGender" value="@button.Value" checked="@button.Selected">
+                        <span>@button.Text</span>
+                    </label>
+                }
+            </div>
+        </div>
+        <div class="form-item">
+            <label asp-for="SelectedCategory"></label>
+            <div class="horizontal-items">
+                @foreach (var button in Model.CategoryButton)
+                {
+                    <label>
+                        <input type="radio" asp-for="SelectedCategory" value="@button.Value" checked="@button.Selected">
+                        <span>@button.Text</span>
+                    </label>
+                }
+            </div>
+        </div>
+        <fieldset class="form-item">
+            <legend>誕生日</legend>
+            <div class="horizontal-items">
+                <select asp-for="BirthYear" onchange="disableIllegalCategory();">
+                    @for (var i = 0; i < 18; i++)
+                    {
+                        var year = Model.CurrentYear - i;
+                        <option value=@year>@year</option>
+
+                    }
+                </select>
+                <span>年</span>
+                <select asp-for="BirthMonth" onchange="disableIllegalCategory();">
+                    @for (var month = 1; month <= 12; month++)
+                    {
+                        <option value=@month>@month</option>
+                    }
+                </select>
+                <span>月</span>
+                <select asp-for="BirthDate" onchange="disableIllegalCategory();">
+                    @for (var date = 1; date <= 31; date++)
+                    {
+                        <option value=@date>@date</option>
+
+                    }
+                </select>
+                <span>日</span>
+            </div>
+            @if (Model.IsIllegalBirthDate)
+            {
+                <span>誕生日が不正です。</span>
+            }
+        </fieldset>
+        <div class="form-item">
+            <label asp-for="TelephoneNumber"></label>
+            <input asp-for="TelephoneNumber" />
+            <span asp-validation-for="TelephoneNumber"></span>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const disableIllegalCategory = () => {
+            const selectedMonth = document.getElementById("BirthMonth").value;
+            const selectedYear = selectedMonth < 4 ? document.getElementById("BirthYear").value - 1 : document.getElementById("BirthYear").value;
+            const schoolYear = @Model.CurrentYear - selectedYear;
+            if (schoolYear > 16) {
+                document.getElementsByName("SelectedCategory")[1].disabled = true;
+                document.getElementsByName("SelectedCategory")[2].disabled = true;
+                document.getElementsByName("SelectedCategory")[3].disabled = true;
+            }
+            else if (schoolYear > 14) {
+                document.getElementsByName("SelectedCategory")[1].disabled = false;
+                document.getElementsByName("SelectedCategory")[2].disabled = true;
+                document.getElementsByName("SelectedCategory")[3].disabled = true;
+            }
+            else if (schoolYear > 12) {
+                document.getElementsByName("SelectedCategory")[1].disabled = false;
+                document.getElementsByName("SelectedCategory")[2].disabled = false;
+                document.getElementsByName("SelectedCategory")[3].disabled = true;
+            }
+            else {
+                document.getElementsByName("SelectedCategory")[1].disabled = false;
+                document.getElementsByName("SelectedCategory")[2].disabled = false;
+                document.getElementsByName("SelectedCategory")[3].disabled = false;
+            }
+        }
+
+        window.onload = function () {
+            disableIllegalCategory();
+        };
+    </script>
+}

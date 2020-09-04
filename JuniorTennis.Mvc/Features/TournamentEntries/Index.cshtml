@@ -1,0 +1,36 @@
+﻿@model JuniorTennis.Mvc.Features.TournamentEntries.IndexViewModel
+
+@{
+    ViewData["Title"] = "大会申込 - 大会選択";
+}
+
+<h2>大会選択</h2>
+<div class="single-column-form">
+    <form asp-action="SelectPlayer">
+        <div class="form-item">
+            <label asp-for="SelectedTournamentId"></label>
+            <select asp-for="SelectedTournamentId">
+                <option value="0">------大会を選択してください。------</option>
+            </select>
+        </div>
+        <div class="form-item">
+            <label asp-for="SelectedTennisEventId"></label>
+            <select asp-for="SelectedTennisEventId">
+                <option value="0">------大会を選択してください。------</option>
+            </select>
+        </div>
+        <div class="form-item">
+            <label>開催期間</label>
+            <span id="HoldingPeriod">------大会を選択してください。------</span>
+        </div>
+        <div class="form-item">
+            <label>申込期間</label>
+            <span id="ApplicationPeriod">------大会を選択してください。------</span>
+        </div>
+        <div class="form-item">
+            <div class="horizontal-items">
+                <button type="submit" class="button-primary">次へ</button>
+            </div>
+        </div>
+    </form>
+</div>

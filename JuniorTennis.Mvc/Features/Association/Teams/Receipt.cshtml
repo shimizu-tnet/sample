@@ -1,0 +1,129 @@
+﻿@model JuniorTennis.Mvc.Features.Association.Teams.ReceiptViewModel
+
+@{
+    ViewData["Title"] = "団体管理 - 受領一覧";
+}
+
+<h2>受領一覧</h2>
+<form  id="search" asp-action="Receipt">
+    <div class="search-form">
+        <div class="horizontal-items">
+            <div class="search-item">
+                <span>登録年度：</span>
+                <select asp-for="SelectedSeasonId">
+                    @foreach (var season in Model.Seasons)
+                    {
+                        <option value="@season.Id">@season.Name</option>
+                    }
+
+                </select>
+            </div>
+            <div class="search-item">
+                <label>団体番号：</label>
+                <input asp-for="TeamCodeForSearch" />
+            </div>
+            <div class="search-item">
+                <label>予約番号：</label>
+                <input asp-for="ReservationNumberForSearch" />
+            </div>
+            <button type="button" class="button" id="search-button">検索</button>
+        </div>
+    </div>
+
+    <fieldset class="form-item">
+        <div class="horizontal-items">
+            @for (var i = 0; i < Model.ApproveStateButtons.Count; i++)
+            {
+                <label>
+                    <input type="radio" asp-for="SelectedApproveState" value="@Model.ApproveStateButtons[i].Value" checked="@Model.ApproveStateButtons[i].Selected">
+                    <span>@Model.ApproveStateButtons[i].Text</span>
+                </label>
+            }
+            <button class="button" type="button" onclick="downloadClicked()">ダウンロード</button>
+            <button class="button-primary" type="submit" id="ReceiptSubmitButton">登録</button>
+        </div>
+    </fieldset>
+    <div id="search-result">
+        @await Html.PartialAsync("_RequestTeamsTable", Model.RequestTeams)
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        /*** API ***/
+        const fetchTeamsAsync = async () => {
+            const queryString = createQueryString(document.forms.search);
+            const res = await fetch(`@Url.Action("ReceiptList")?${queryString}`);
+            const htmlText = await res.text();
+            return htmlText;
+        }
+
+        /*** FUNCTIONS ***/
+        const renderTeamsAsync = async () => {
+            const html = await fetchTeamsAsync();
+            const dom = convertToDom(html);
+            const searchResult = document.getElementById("search-result");
+            // awaitで待機すると一瞬ちらつくので変換後に実行
+            removeChildren(searchResult);
+            if (dom === "") {
+                return;
+            }
+
+            Array.from(dom.children).forEach(element => searchResult.append(element));
+        }
+
+        const changePage = async pageNumber => {
+            const pageInput = document.getElementById("page");
+            pageInput.value = pageNumber;
+            await renderTeamsAsync();
+        }
+
+        /*** EVENTS HANDLER ***/
+        const handleSearchAsync = async (ev) => {
+            await renderTeamsAsync();
+        }
+
+        const displaySubmitButton = async (ev) => {
+            let approveState;
+            const approveStateButton = document.getElementsByName("SelectedApproveState");
+            for (let i = 0; i < approveStateButton.length; i++) {
+                if (approveStateButton[i].checked) {
+                    approveState = approveStateButton[i].value;
+                    break;
+                }
+            }
+            if (approveState == 0) {
+                document.getElementById("ReceiptSubmitButton").style.display = "none";
+            }
+            else if (approveState == 1) {
+                document.getElementById("ReceiptSubmitButton").style.display = "inline";
+                document.getElementById("ReceiptSubmitButton").innerHTML = "取消登録"
+            }
+            else {
+                document.getElementById("ReceiptSubmitButton").style.display = "inline";
+                document.getElementById("ReceiptSubmitButton").innerHTML = "受領登録"
+            }
+        }
+
+        /*** EVENTS LISTENER ***/
+        /*** 検索 ***/
+        document.getElementById("search-button").addEventListener("click", handleSearchAsync, false);
+        document.getElementsByName("SelectedApproveState")[0].addEventListener("click", handleSearchAsync, false);
+        document.getElementsByName("SelectedApproveState")[1].addEventListener("click", handleSearchAsync, false);
+        document.getElementsByName("SelectedApproveState")[2].addEventListener("click", handleSearchAsync, false);
+        /*** 登録ボタンの制御用 ***/
+        document.getElementsByName("SelectedApproveState")[0].addEventListener("click", displaySubmitButton, false);
+        document.getElementsByName("SelectedApproveState")[1].addEventListener("click", displaySubmitButton, false);
+        document.getElementsByName("SelectedApproveState")[2].addEventListener("click", displaySubmitButton, false);
+
+        window.onload = function () {
+            displaySubmitButton();
+        };
+
+        const downloadClicked = async () => {
+            const res = await fetch(`/Association/Teams/download`);
+            const csv = await res.text();
+            handleExport(csv, '受領一覧.csv');
+        }
+    </script>
+}

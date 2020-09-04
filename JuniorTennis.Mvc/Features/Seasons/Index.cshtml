@@ -1,0 +1,34 @@
+﻿@model JuniorTennis.Mvc.Features.Seasons.IndexViewModel
+
+@{
+    ViewData["Title"] = "年度 - 年度一覧";
+}
+
+<h2>年度</h2>
+
+<div class="horizontal-items right">
+    <a class="button-link" asp-action="Register">新規登録</a>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>年度</th>
+            <th>期間</th>
+            <th>団体登録料</th>
+            <th>選手登録料(1人)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var seasons in Model.Seasons)
+        {
+            <tr>
+                <td>
+                    <a class="button-link" asp-action="Edit" asp-route-id="@seasons.SeasonId">@seasons.SeasonName</a>
+                </td>
+                <td>@seasons.SeasonPeriod</td>
+                <td>@seasons.TeamRegistrationFee</td>
+                <td>@seasons.PlayerRegistrationFee</td>
+            </tr>
+        }
+    </tbody>
+</table>
