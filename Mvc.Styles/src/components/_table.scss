@@ -1,0 +1,31 @@
+.table {
+  th {
+    padding: 8px 18px;
+  }
+
+  thead {
+    th {
+      @apply bg-main-dark text-white;
+      @apply border-b border-white;
+    }
+
+    th:not(:first-child) {
+      @apply border-l border-white;
+    }
+  }
+
+  tbody {
+    th {
+      @apply bg-main-light text-main-dark;
+      @apply border-r border-main-dark;
+    }
+  }
+
+  td {
+    padding: 6px 10px;
+  }
+
+  tr {
+    @apply border border-main-dark;
+  }
+}

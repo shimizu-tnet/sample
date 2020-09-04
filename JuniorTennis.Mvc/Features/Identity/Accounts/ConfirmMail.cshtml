@@ -1,0 +1,14 @@
+﻿@model JuniorTennis.Mvc.Features.Identity.Accounts.ConfirmMailViewModel
+
+<div>入力したメールアドレスに確認メールを送信します
+    <form method="post" asp-action="ConfirmMail">
+        <input asp-for="MailAddress" />
+        <span asp-validation-for="MailAddress"></span>
+        @if (Model.IsDuplicated)
+        {
+        <span>既に使用されているメールアドレスです</span>
+        }
+        <input type="submit" value="送信">
+    </form>
+</div>
+

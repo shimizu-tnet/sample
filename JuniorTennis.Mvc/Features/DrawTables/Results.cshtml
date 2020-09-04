@@ -1,0 +1,369 @@
+﻿@model JuniorTennis.Mvc.Features.DrawTables.ResultsViewModel
+
+@{
+    ViewData["Title"] = "ドロー表管理 - 試合結果入力";
+}
+
+<h2>@ViewData["Title"]</h2>
+<div>
+    <form method="post">
+        <input type="hidden" asp-for="TournamentId" />
+        <input type="hidden" asp-for="TournamentName" />
+        <input type="hidden" asp-for="TennisEventId" />
+        <input type="hidden" asp-for="TennisEventName" />
+        <div style="padding-bottom: 20px;">
+            <table>
+                <tr>
+                    <td>
+                        <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Index" value="大会・種目選択" />
+                    </td>
+                    <td>
+                        <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Players" value="選手情報設定" />
+                    </td>
+                    <td>
+                        <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Settings" value="ドロー設定" />
+                    </td>
+                    <td>
+                        <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Create" value="ドロー作成" />
+                    </td>
+                    <td>
+                        <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Results" value="試合結果入力" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <h3>
+            <label asp-for="TournamentName"></label>
+        </h3>
+        <div>
+            @Model.TournamentName
+        </div>
+        <h3>
+            <label asp-for="TennisEventName"></label>
+        </h3>
+        <div>
+            @Model.TennisEventName
+        </div>
+    </form>
+    <div>
+        <select id="BlockNames"></select>
+    </div>
+    <div class="text-center">
+        <div id="DrawTable" class="draw-table-area">
+        </div>
+    </div>
+</div>
+<div id="InputResultDialog" class="dialog single-column-form">
+    <h2>試合結果入力</h2>
+
+    <fieldset class="form-item">
+        <legend>■勝者を選択し、スコアを入力して下さい。</legend>
+        <div>
+            <label>
+                <input type="radio" name="gameStatus" id="StatusNone" value="1" />
+                <span>未 ※試合が終了していない場合</span>
+            </label>
+        </div>
+        <div>
+            <label>
+                <input type="radio" name="gameStatus" id="StatusPlayer1" value="" />
+                <span>１．<span id="StatusPlayer1Name"></span></span>
+            </label>
+        </div>
+        <div>
+            <label>
+                <input type="radio" name="gameStatus" id="StatusPlayer2" value="" />
+                <span>２．<span id="StatusPlayer2Name"></span></span>
+            </label>
+        </div>
+        <div>
+            <label>
+                <input type="radio" name="gameStatus" id="StatusNotplayed" value="3" />
+                <span>Not Played（両者不参加）</span>
+            </label>
+        </div>
+    </fieldset>
+    <div class="form-item">
+        <label for="GameScore">■スコア</label>
+        <input type="text" id="GameScore" />
+    </div>
+    <div class="form-item">
+        <label>■敗者が不出場だった場合は、以下をチェックしてください。</label>
+        <div>
+            <label>
+                <input type="checkbox" id="StatusWalkover" />
+                <span>WO</span>
+            </label>
+        </div>
+    </div>
+    <div>
+        <button id="RegisterGameResult" class="button-primary">登録</button>
+        <button id="ClearGameResult" class="button">クリア</button>
+        <button onclick="closeInputResultDialog()" class="button">キャンセル</button>
+    </div>
+    <input type="hidden" id="GameNumber" value="" />
+</div>
+<div id="LoadingDialog" class="dialog">
+    <p>読込中です</p>
+</div>
+
+@section CSS{
+    <link rel="stylesheet" type="text/css" href="~/css/drawTable.css">
+}
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/dialog.js"></script>
+    <script src="~/js/drawTable.js"></script>
+    <script>
+        /*** VALUES ***/
+        let assignedPlayers = [];
+        const tournamentId = "@Model.TournamentId";
+        const tennisEventId = "@Model.TennisEventId";
+        const isSingles = ("@Model.IsSingles" === "True");
+        const getParticipationClassificationId = () => {
+            const index = document.getElementById("BlockNames").selectedIndex;
+            const block = document.getElementById("BlockNames")[index];
+            const participationClassificationId = block.dataset.pid;
+
+            return participationClassificationId;
+        }
+        const getBlockNumber = () => Number(document.getElementById("BlockNames").value);
+
+        /*** API ***/
+        const baseUrl = `/DrawTables/${tournamentId}/${tennisEventId}`;
+        const fetchBlockNamesAsync = async () => {
+            const res = await fetch(`${baseUrl}/block_names`);
+            const json = await res.json();
+            return json;
+        }
+        const fetchAssignedPlayersAsync = async () => {
+            const res = await fetch(`${baseUrl}/assigned_players?participationClassificationId=${getParticipationClassificationId()}&blockNumber=${getBlockNumber()}`);
+            const json = await res.json();
+            return json;
+        }
+        const fetchDrawSettingsAsync = async () => {
+            const res = await fetch(`${baseUrl}/draw_settings?participationClassification=${getParticipationClassificationId()}`);
+            const json = await res.json();
+            return json;
+        }
+        const fetchGameResults = async () => {
+            const res = await fetch(`${baseUrl}/game_results?participationClassificationId=${getParticipationClassificationId()}&blockNumber=${getBlockNumber()}`);
+            const json = await res.json();
+            return json;
+        }
+
+        /*** FUNCTIONS ***/
+        const updateBlockNamesAsync = async () => {
+            const blockNames = await fetchBlockNamesAsync();
+
+            $("#BlockNames").empty();
+            $("#BlockNames").append(blockNames.map(o => {
+                return $(`<option value="${o.blockNumber}" data-pid="${o.participationClassificationId}">${o.name}</ option>`);
+            }));
+        }
+        const updateAssignedPlayersAsync = async () => {
+            assignedPlayers = await fetchAssignedPlayersAsync();
+
+            const gameResults = await fetchGameResults();
+            const { numberOfDraws }  = await fetchDrawSettingsAsync();
+            const table = createTournament(numberOfDraws, assignedPlayers, isSingles);
+            updateResult(table, numberOfDraws, assignedPlayers, gameResults);
+
+            while (document.getElementById("DrawTable").firstChild)
+                document.getElementById("DrawTable").removeChild(document.getElementById("DrawTable").firstChild);
+            document.getElementById("DrawTable").appendChild(table);
+        }
+        const updateGameResult = async data => {
+            const url = `${baseUrl}/game_results`;
+            const option = {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify(data)
+            };
+
+            await fetch(url, option);
+        }
+        const getGameStatus = () => {
+            if (document.getElementById("StatusNone").checked) {
+                return gameStatus.none.id;
+            }
+
+            if (document.getElementById("StatusNotplayed").checked) {
+                return gameStatus.notPlayed.id;
+            }
+
+            if (document.getElementById("StatusWalkover").checked) {
+                return gameStatus.walkover.id;
+            }
+
+            return gameStatus.done.id;
+        }
+        const getPlayerClassification = () => {
+            if (document.getElementById("StatusPlayer1").checked) {
+                return Number(document.getElementById("StatusPlayer1").dataset["playerClassification"]);
+            }
+
+            if (document.getElementById("StatusPlayer2").checked) {
+                return Number(document.getElementById("StatusPlayer2").dataset["playerClassification"]);
+            }
+
+            return null;
+        }
+        const getEntryNumber = () => {
+            if (document.getElementById("StatusPlayer1").checked) {
+                return Number(document.getElementById("StatusPlayer1").dataset["entryNumber"]);
+            }
+
+            if (document.getElementById("StatusPlayer2").checked) {
+                return Number(document.getElementById("StatusPlayer2").dataset["entryNumber"]);
+            }
+
+            return null;
+        }
+        const setStatusNone = () => {
+            document.getElementById("StatusWalkover").disabled = true;
+            document.getElementById("StatusWalkover").checked = false;
+        }
+        const setStatusDone = () => {
+            document.getElementById("StatusWalkover").disabled = false;
+        }
+        const setStatusNotplayed = () => {
+            document.getElementById("StatusWalkover").disabled = true;
+            document.getElementById("StatusWalkover").checked = false;
+        }
+        const setStatusWalkover = () => {
+            document.getElementById("StatusWalkover").disabled = false;
+        }
+        const showInputResultDialog = gameResult => {
+            const isWinner = entryNumber => gameResult.entryNumberOfWinner === entryNumber;
+            const isBye = playerClassificationId => playerClassificationId === playerClassification.bye.id;
+            const targetPlayers = assignedPlayers
+                .filter(o => o.gameNumber === gameResult.gameNumber)
+                .sort((a, b) => a.drawNumber - b.drawNumber);
+            const player1 = targetPlayers[0];
+            const player2 = targetPlayers[1];
+            const player1name = (player1 => {
+                if (typeof player1 === "undefined") {
+                    return "";
+                }
+
+                if (isBye(player1.playerClassification)) {
+                    return "";
+                }
+
+                return player1.playerNames ? player1.playerNames.join("／") : ""
+            })(player1);
+            const player2playerClassification = player2 ? player2.playerClassification : playerClassification.bye.id;
+            const player2name = (player2 => {
+                if (typeof player2 === "undefined") {
+                    return "";
+                }
+
+                if (isBye(player2playerClassification)) {
+                    return "";
+                }
+
+                return player2.playerNames ? player2.playerNames.join("／") : "";
+            })(player2);
+            const player2entryNumber = player2 ? player2.entryNumber : 0;
+
+            document.getElementById("GameNumber").value = gameResult.gameNumber;
+            document.getElementById("StatusPlayer1").dataset["playerClassification"] = player1.playerClassification;
+            document.getElementById("StatusPlayer1").dataset["entryNumber"] = player1.entryNumber;
+            document.getElementById("StatusPlayer1").disabled = isBye(player1.playerClassification);
+            document.getElementById("StatusPlayer1Name").innerText = player1name;
+            document.getElementById("StatusPlayer2").dataset["playerClassification"] = player2playerClassification;
+            document.getElementById("StatusPlayer2").dataset["entryNumber"] = player2entryNumber;
+            document.getElementById("StatusPlayer2").disabled = isBye(player2playerClassification);
+            document.getElementById("StatusPlayer2Name").innerText = player2name;
+            document.getElementById("GameScore").value = gameResult.gameScore;
+
+            if (gameResult.isDoneNextGame) {
+                document.getElementById("StatusNone").disabled = true;
+                document.getElementById("StatusPlayer1").disabled = true;
+                document.getElementById("StatusPlayer2").disabled = true;
+                document.getElementById("StatusNotplayed").disabled = true;
+            }
+
+            switch (gameResult.gameStatus) {
+                case gameStatus.none.id:
+                    document.getElementById("StatusNone").checked = true;
+                    setStatusNone();
+                    break;
+                case gameStatus.done.id:
+                    document.getElementById("StatusPlayer1").checked = isWinner(player1.entryNumber);
+                    document.getElementById("StatusPlayer2").checked = isWinner(player2entryNumber);
+                    setStatusDone();
+                    break;
+                case gameStatus.notPlayed.id:
+                    document.getElementById("StatusNotplayed").checked = true;
+                    setStatusNotplayed();
+                    break;
+                case gameStatus.walkover.id:
+                    document.getElementById("StatusPlayer1").checked = isWinner(player1.entryNumber);
+                    document.getElementById("StatusPlayer2").checked = isWinner(player2entryNumber);
+                    document.getElementById("StatusWalkover").checked = true;
+                    setStatusWalkover();
+                    break;
+            }
+
+            showDialog("InputResultDialog");
+        }
+        const closeInputResultDialog = () => closeDialog("InputResultDialog");
+        const showLaodingDialog = () => showDialog("LoadingDialog");
+        const closeLaodingDialog = () => closeDialog("LoadingDialog");
+
+        /*** EVENTS HANDLER ***/
+        const handleBlockNamesChangedAsync = async (ev) => {
+            showLaodingDialog();
+
+            await updateAssignedPlayersAsync();
+
+            closeLaodingDialog();
+        }
+        const handleRegisterGameResultClickedAsync = async () => {
+            const data = {
+                blockNumber: getBlockNumber(),
+                gameNumber: Number(document.getElementById("GameNumber").value),
+                gameStatus: getGameStatus(),
+                playerClassification: getPlayerClassification(),
+                entryNumber: getEntryNumber(),
+                gameScore: document.getElementById("GameScore").value,
+            }
+
+            await updateGameResult(data);
+            await updateAssignedPlayersAsync();
+            closeInputResultDialog();
+        }
+
+        /*** EVENTS LISTENER ***/
+        document.getElementById("BlockNames").addEventListener("change", handleBlockNamesChangedAsync, false);
+        document.getElementById("StatusNone").addEventListener("click", setStatusNone, false);
+        document.getElementById("StatusPlayer1").addEventListener("click", setStatusDone, false);
+        document.getElementById("StatusPlayer2").addEventListener("click", setStatusDone, false);
+        document.getElementById("StatusNotplayed").addEventListener("click", setStatusNotplayed, false);
+        document.getElementById("RegisterGameResult").addEventListener("click", handleRegisterGameResultClickedAsync, false);
+
+        [...document.querySelectorAll(".submit-button")].forEach(el => {
+            el.addEventListener("click", async (ev) => {
+
+                document.forms[0].action = ev.target.attributes.formaction.value;
+                document.forms[0].submit();
+
+            }, false);
+        });
+
+        (async () => {
+            showLaodingDialog();
+
+            await updateBlockNamesAsync();
+            await updateAssignedPlayersAsync();
+
+            closeLaodingDialog();
+        })();
+    </script>
+}

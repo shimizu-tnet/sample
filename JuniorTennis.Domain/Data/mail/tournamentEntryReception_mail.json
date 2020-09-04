@@ -1,0 +1,14 @@
+﻿{
+  "PrePayment": {
+    "body": "大会出場申込を受け付けました。<br>エントリー料は要項記載の通りご入金ください。<br>郵便振替の場合払込取扱票の通信欄に<br>【大会名、所属団体名、予約番号、エントリー件数】<br>を必ずご記入ください。<br><br>●   大会名 ： {tournament_name}<br>●     期間 ： {tournament_from} ? {tournament_to}<br>● 大会会場 ： {place}<br>●   参加料 ： {requested_fee}<br>●   受付日 ： {requested_time}<br>● 予約番号 ： {check_no}<br>"
+  },
+  "PostPayment": {
+    "body": "大会出場申込を受け付けました。<br>エントリー料は大会出場が決まり次第、要項記載の通りご入金ください。<br>郵便振替の払込取扱票の通信欄に<br>【大会名、所属団体名、出場者氏名、出場種目（例：１２歳男子シングルス）】<br>を必ずご記入ください。<br>※下記の参加料のうち大会出場が決定した選手分のみをご入金ください。<br><br>●   大会名 ： {tournament_name}<br>●     期間 ： {tournament_from} ? {tournament_to}<br>● 大会会場 ： {place}<br>●   参加料 ： {requested_fee}<br>●   受付日 ： {requested_time}<br>● 予約番号 ： {check_no}<br>"
+  },
+  "NotRecieve": {
+    "body": ""
+  },
+  "Other": {
+    "body": "大会出場申込を受け付けました。<br>エントリー料は要項記載の通りご入金ください。<br><br>●   大会名 ： {tournament_name}<br>●     期間 ： {tournament_from} ? {tournament_to}<br>● 大会会場 ： {place}<br>●   参加料 ： {requested_fee}<br>●   受付日 ： {requested_time}<br>● 予約番号 ： {check_no}<br>"
+  }
+}

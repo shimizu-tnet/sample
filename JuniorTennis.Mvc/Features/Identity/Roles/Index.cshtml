@@ -1,0 +1,73 @@
+﻿@model JuniorTennis.Mvc.Features.Identity.Roles.IndexViewModel
+
+<h2>Role管理</h2>
+
+@if (Model.HasUnregistered)
+{
+    <button onclick="showDialog('RegisterationDialog')" class="button-link">未登録のRoleが存在します。</button>
+
+    <div id="RegisterationDialog" class="dialog">
+        <span>未登録Roleを登録します。</span>
+        <div class="flex">
+            <form asp-action="CreateRoles">
+                @foreach (var item in Model.AddRoleNames)
+                {
+                    <input type="hidden" asp-for="AddRoleNames" value="@item">
+                }
+                <input type="submit" value="はい">
+            </form>
+            <button onclick="closeDialog('RegisterationDialog')">キャンセル</button>
+        </div>
+    </div>
+}
+
+@if (Model.HasUndeleted)
+{
+
+    <button onclick="showDialog('DeletionDialog')" class="button-link">未削除のRoleが存在します。</button>
+
+    <div id="DeletionDialog" class="dialog">
+        <span>未削除Roleを削除します。</span>
+        @foreach (var item in Model.DeleteRoles)
+        {
+            <span>RoleName : @item.RoleName 紐付け : @item.MemberCount </span>
+        }
+        <div class="flex">
+            <form asp-action="DeleteRoles">
+                @foreach (var item in Model.DeleteRoles)
+                {
+                    <input type="hidden" asp-for="DeleteRoleNames" value="@item.RoleName">
+                }
+                <input type="submit" value="はい">
+            </form>
+            <button onclick="closeDialog('DeletionDialog')">キャンセル</button>
+        </div>
+    </div>
+}
+
+<table>
+    <thead>
+        <tr>
+            <th>RoleName</th>
+            <th>Claim一覧</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.RoleNames)
+        {
+            <tr>
+                <td>
+                    @item
+                </td>
+                <td>
+                    <a asp-action="ShowRoleClaims" asp-route-roleName="@item" class="button">Claim一覧</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script type="text/javascript" src="~/js/dialog.js"></script>
+}

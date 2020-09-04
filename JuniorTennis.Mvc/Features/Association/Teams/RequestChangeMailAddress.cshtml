@@ -1,0 +1,16 @@
+﻿@model JuniorTennis.Mvc.Features.Association.Teams.RequestChangeMailAddressViewModel
+
+@{
+    ViewData["Title"] = "メールアドレス再設定";
+}
+
+<div>
+    認証メールの送信先メールアドレスメールアドレスを入力してください
+    <form method="post" asp-action="RequestChangeMailAddress">
+        <input type="hidden" asp-for="TeamCode" />
+        <input asp-for="MailAddress" />
+        <span asp-validation-for="MailAddress"></span>
+        <input type="submit" value="送信">
+    </form>
+</div>
+

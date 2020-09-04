@@ -1,0 +1,70 @@
+﻿@model JuniorTennis.Mvc.Features.Association.Teams.IndexViewModel
+
+@{
+    ViewData["Title"] = "団体管理 - 団体一覧";
+}
+
+<h2>団体一覧</h2>
+<form id="search" class="search-form">
+    <input id="page" type="hidden" name="page" />
+    <div class="horizontal-items">
+        <div class="search-item">
+            <span>団体種別：</span>
+            <label>
+                <input type="checkbox" name="teamTypes" value="1" />
+                <span>学校</span>
+            </label>
+            <label>
+                <input type="checkbox" name="teamTypes" value="2" />
+                <span>民間クラブ</span>
+            </label>
+        </div>
+        <div class="search-item">
+            <label>団体名：</label>
+            <input type="text" name="teamName" />
+        </div>
+        <button id="search-button" type="button" class="button">検索</button>
+    </div>
+</form>
+<div id="search-result">
+    @await Html.PartialAsync("_TeamsTable", Model.Teams)
+</div>
+@section Scripts {
+    <script>
+        /*** API ***/
+        const fetchTeamsAsync = async () => {
+            const queryString = createQueryString(document.forms.search);
+            const res = await fetch(`@Url.Action("list")?${queryString}`);
+            const htmlText = await res.text();
+            return htmlText;
+        }
+
+        /*** FUNCTIONS ***/
+        const renderTeamsAsync = async () => {
+            const html = await fetchTeamsAsync();
+            const dom = convertToDom(html);
+            const searchResult = document.getElementById("search-result");
+            // awaitで待機すると一瞬ちらつくので変換後に実行
+            removeChildren(searchResult);
+            if (dom === "") {
+                return;
+            }
+
+            Array.from(dom.children).forEach(element => searchResult.append(element));
+        }
+
+        const changePage = async pageNumber => {
+            const pageInput = document.getElementById("page");
+            pageInput.value = pageNumber;
+            await renderTeamsAsync();
+        }
+
+        /*** EVENTS HANDLER ***/
+        const handleSearchAsync = async (ev) => {
+            await renderTeamsAsync();
+        }
+
+        /*** EVENTS LISTENER ***/
+        document.getElementById("search-button").addEventListener("click", handleSearchAsync, false);
+    </script>
+}

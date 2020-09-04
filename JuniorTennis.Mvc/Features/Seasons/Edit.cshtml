@@ -1,0 +1,58 @@
+﻿@model JuniorTennis.Mvc.Features.Seasons.EditViewModel
+
+@{
+    ViewData["Title"] = "年度 - 年度編集";
+}
+
+<h2>年度編集</h2>
+<div class="single-column-form">
+    <div class="horizontal-items right">
+        <a class="button-link" asp-action="Index">戻る</a>
+    </div>
+    <form asp-action="Edit">
+        <div class="form-item">
+            <label asp-for="SeasonName"></label>
+            <sapn>@Model.SeasonName</sapn>
+        </div>
+        <fieldset class="form-item">
+            <legend>期間</legend>
+            <div class="horizontal-items">
+                <input asp-for="FromDate" />
+                <span>～</span>
+                <input asp-for="ToDate" />
+            </div>
+            <span asp-validation-for="FromDate"></span>
+            <span asp-validation-for="ToDate"></span>
+        </fieldset>
+        <div class="form-item">
+            <label asp-for="RegistrationFromDate"></label>
+            <input asp-for="RegistrationFromDate" />
+            <span asp-validation-for="RegistrationFromDate"></span>
+        </div>
+        <div class="form-item">
+            <label asp-for="TeamRegistrationFee"></label>
+            <input asp-for="TeamRegistrationFee" />
+            <span asp-validation-for="TeamRegistrationFee"></span>
+        </div>
+        <div class="form-item">
+            <label asp-for="PlayerRegistrationFee"></label>
+            <input asp-for="PlayerRegistrationFee" />
+            <span asp-validation-for="PlayerRegistrationFee"></span>
+        </div>
+        <div class="form-item">
+            <label asp-for="PlayerTradeFee"></label>
+            <input asp-for="PlayerTradeFee" />
+            <span asp-validation-for="PlayerTradeFee"></span>
+        </div>
+        <div class="form-item">
+            <div class="horizontal-items">
+                <button class="button-primary" type="submit">登録</button>
+            </div>
+        </div>
+        <input type="hidden" asp-for="SeasonId" />
+    </form>
+</div>
+
+@section Scripts{
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

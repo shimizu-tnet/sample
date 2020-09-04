@@ -1,0 +1,41 @@
+﻿@model JuniorTennis.Mvc.Features.Teams.RequestContinuedTeamViewModel
+
+@{
+    ViewData["Title"] = "団体 - 継続登録";
+}
+
+<h2>編集</h2>
+<div class="single-column-form">   
+    <form asp-action="RequestContinuedTeam">
+
+        <span>@Model.DisplayMessage</span>
+        @if (Model.IsDisplaySubmitButton)
+        {
+            <div class="form-item">
+                <div class="horizontal-items">
+                    <button class="button-primary" type="submit">登録</button>
+                </div>
+            </div>
+        }
+        <input type="hidden" asp-for="TeamId" />
+        <input type="hidden" asp-for="TeamType" />
+        <input type="hidden" asp-for="RequestedFee" />
+        <input type="hidden" asp-for="SeasonId" />
+        <div class="form-item">
+            <label asp-for="SeasonName"></label>
+            <span>@Model.SeasonName</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="TeamCode"></label>
+            <span>@Model.TeamCode</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="TeamName"></label>
+            <span>@Model.TeamName</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="RepresentativeName"></label>
+            <span>@Model.RepresentativeName</span>
+        </div>
+    </form>
+</div>

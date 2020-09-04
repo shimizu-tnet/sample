@@ -1,0 +1,20 @@
+﻿@model JuniorTennis.Mvc.Features.Identity.Accounts.ChangeMailAddressViewModel
+
+@{
+    ViewData["Title"] = "メールアドレス再設定";
+}
+
+<div>
+    新しく使用するメールアドレスを入力してください
+    <form method="post" asp-action="ChangeMailAddress">
+        <input type="hidden" asp-for="AuthorizationCode" />
+        <input asp-for="MailAddress" />
+        <span asp-validation-for="MailAddress"></span>
+        @if (Model.IsDuplicated)
+        {
+            <span>既に使用されているメールアドレスです</span>
+        }
+        <input type="submit" value="送信">
+    </form>
+</div>
+

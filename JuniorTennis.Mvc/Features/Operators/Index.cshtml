@@ -1,0 +1,34 @@
+﻿@model JuniorTennis.Mvc.Features.Operators.IndexViewModel
+
+@{
+    ViewData["Title"] = "全般 - 管理ユーザー一覧";
+}
+
+<h2>管理ユーザー一覧</h2>
+
+<div class="horizontal-items right">
+    <a class="button-link" asp-action="Register">新規登録</a>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>権限</th>
+            <th>氏名</th>
+            <th>メールアドレス</th>
+            <th>ログインID</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var operaitor in Model.Operators)
+        {
+            <tr>
+                <td>@operaitor.RoleName</td>
+                <td>
+                    <a class="button-link" asp-action="Edit" asp-route-id="@operaitor.OperatorId">@operaitor.Name</a>
+                </td>
+                <td>@operaitor.EmailAddress</td>
+                <td>@operaitor.LoginId</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,77 @@
+﻿@model JuniorTennis.Mvc.Features.Players.IndexViewModel
+
+@{
+    ViewData["Title"] = "選手一覧";
+}
+
+<h2>選手一覧</h2>
+<form id="search">
+    <div class="search-form">
+        <div class="horizontal-items">
+            <div class="search-item">
+                <label>氏名：</label>
+                <input name="playerName" />
+            </div>
+
+        </div>
+
+
+        <fieldset class="form-item">
+            <div class="horizontal-items">
+                @for (var i = 0; i < Model.CategoryButton.Count; i++)
+                {
+                    <label>
+                        <input type="checkbox" name="category" value="@Model.CategoryButton[i].Value" checked="@Model.CategoryButton[i].Selected">
+                        <span>@Model.CategoryButton[i].Text</span>
+                    </label>
+                }
+                @for (var i = 0; i < Model.GenderButton.Count; i++)
+                {
+                    <label>
+                        <input type="checkbox" name="gender" value="@Model.GenderButton[i].Value" checked="@Model.GenderButton[i].Selected">
+                        <span>@Model.GenderButton[i].Text</span>
+                    </label>
+                }
+                <button id="search-button" type="button" class="button">検索</button>
+            </div>
+        </fieldset>
+    </div>
+
+    <div id="search-result">
+        @await Html.PartialAsync("_PlayersTable", Model.Players)
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        /*** API ***/
+        const fetchTeamsAsync = async () => {
+            const queryString = createQueryString(document.forms.search);
+            const res = await fetch(`@Url.Action("list")?${queryString}`);
+            const htmlText = await res.text();
+            return htmlText;
+        }
+
+        /*** FUNCTIONS ***/
+        const renderTeamsAsync = async () => {
+            const html = await fetchTeamsAsync();
+            const dom = convertToDom(html);
+            const searchResult = document.getElementById("search-result");
+            // awaitで待機すると一瞬ちらつくので変換後に実行
+            removeChildren(searchResult);
+            if (dom === "") {
+                return;
+            }
+
+            Array.from(dom.children).forEach(element => searchResult.append(element));
+        }
+
+        /*** EVENTS HANDLER ***/
+        const handleSearchAsync = async (ev) => {
+            await renderTeamsAsync();
+        }
+
+        /*** EVENTS LISTENER ***/
+        document.getElementById("search-button").addEventListener("click", handleSearchAsync, false);
+    </script>
+}

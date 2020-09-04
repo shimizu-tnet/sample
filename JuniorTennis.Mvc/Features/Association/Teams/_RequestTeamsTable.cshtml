@@ -1,0 +1,44 @@
+﻿@model JuniorTennis.Mvc.Features.Shared.Pagination.PagedList<JuniorTennis.Domain.RequestTeams.RequestTeam>
+@{
+    Layout = "";
+}
+
+@if (Model.Any())
+{
+    <div>
+        <div class="horizontal-container">
+            <pagination list="Model" click="changePage()"></pagination>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>選択</th>
+                    <th>状態</th>
+                    <th>予約番号</th>
+                    <th>予約受付日</th>
+                    <th>団体番号</th>
+                    <th>団体種別</th>
+                    <th>名称</th>
+                    <th>メール</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var requestTeam in Model)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="SelectedRequestTeamIds" value="@requestTeam.Id" />
+                        </td>
+                        <td>@requestTeam.ApproveState</td>
+                        <td>@requestTeam.ReservationNumber.Value</td>
+                        <td>@requestTeam.RequestedDateTime.ToString("yyyy/MM/dd")</td>
+                        <td>@requestTeam.Team.TeamCode?.Value</td>
+                        <td>@requestTeam.Team.TeamType.Name</td>
+                        <td>@requestTeam.Team.TeamName.Value</td>
+                        <td>@requestTeam.MailState</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

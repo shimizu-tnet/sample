@@ -1,0 +1,757 @@
+﻿@model JuniorTennis.Mvc.Features.DrawTables.CreateViewModel
+
+@{
+    ViewData["Title"] = "ドロー表管理 - ドロー作成";
+}
+
+<div class="text-center create-draw-table">
+    <div class="page-title">
+        <h2 class="display-4">@ViewData["Title"]</h2>
+    </div>
+    <div class="navigations">
+        <form method="post">
+            <input type="hidden" asp-for="TournamentId" />
+            <input type="hidden" asp-for="TournamentName" />
+            <input type="hidden" asp-for="TennisEventId" />
+            <input type="hidden" asp-for="TennisEventName" />
+            <table>
+                <tr>
+                    <td>
+                        <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Index" value="大会・種目選択" />
+                    </td>
+                    <td>
+                        <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Players" value="選手情報設定" />
+                    </td>
+                    <td>
+                        <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Settings" value="ドロー設定" />
+                    </td>
+                    <td>
+                        <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Create" value="ドロー作成" />
+                    </td>
+                    <td>
+                        <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Results" value="試合結果入力" />
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div class="functions">
+        <table>
+            <tr>
+                <td>
+                    <select id="ParticipationClassification" asp-items="@Model.ParticipationClassifications"></select>
+                </td>
+                <td>
+                    <input type="button" id="GameDates" class="button" value="試合日一覧" />
+                </td>
+                <td>
+                    <input type="button" id="BlankDraws" class="button" value="空きドロー一覧" />
+                </td>
+                <td>
+                    <input type="button" class="button" value="同団体戦一覧" />
+                </td>
+                <td>
+                    <input type="button" id="ExecuteDrawing" class="button" value="抽選" />
+                </td>
+                <td>
+                    <input type="button" id="CancelDrawing" class="button" value="抽選取消" />
+                </td>
+                <td>
+                    <input type="button" class="button" value="印刷" />
+                </td>
+                <td>
+                    <input type="button" id="Draft" class="button" value="登録" />
+                </td>
+                <td>
+                    <input type="button" id="Publish" class="button" value="公開" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="informations">
+        <div style="display: grid;
+        grid-template-rows: repeat(3, auto);
+        grid-template-columns: repeat(7, auto) 1fr;">
+            <div>シード</div>
+            <div>必要数：</div>
+            <div id="NumberOfSeeds"></div>
+            <div>残り：</div>
+            <div>0</div>
+            <div><input id="SeedFrameSetting" type="button" class="button" value="自動設定" /></div>
+            <div><input id="SeedFrameRemove" type="button" class="button" value="すべて削除" /></div>
+            <div style="grid-row: 1 / 4; grid-column: 8 / 9; text-align: right;">
+                <input id="IntakeQualifyingWinners" class="button" style="height: 100%; text-align: center;" value="予選勝者取り込み">
+            </div>
+            <div>BYE</div>
+            <div>必要数：</div>
+            <div id="NumberOfByes"></div>
+            <div>残り：</div>
+            <div>0</div>
+            <div><input id="ByeFrameSetting" type="button" class="button" value="自動設定" /></div>
+            <div><input id="ByeFrameRemove" type="button" class="button" value="すべて削除" /></div>
+            <div>選手一覧</div>
+            <div style="grid-column: 2 / 8;">
+                <label><input type="checkbox" />設定済み</label>
+                <label><input type="checkbox" />未設定</label>
+                <label><input type="checkbox" />シード選手</label>
+                <label><input type="checkbox" />一般選手</label>
+            </div>
+        </div>
+    </div>
+    <div class="players">
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="2">不出場</th>
+                    <th rowspan="2">St.</th>
+                    <th rowspan="2">ブロック</th>
+                    <th rowspan="2">No.</th>
+                    <th rowspan="2">氏名</th>
+                    <th rowspan="2">団体名</th>
+                    <th rowspan="2">シード</th>
+                    <th rowspan="2">ポイント</th>
+                    <th rowspan="2">順位</th>
+                    <th colspan="@Model.HoldingDates.Count">出場不可日</th>
+                </tr>
+                <tr>
+                    @foreach (var holdingDate in Model.HoldingDates)
+                    {
+                        <th>@holdingDate</th>
+                    }
+                </tr>
+            </thead>
+            <tbody id="EntryDetailList">
+            </tbody>
+        </table>
+    </div>
+    <div class="draw-table-wrap">
+        <div>
+            <select id="BlockNames"></select>
+        </div>
+        <div id="DrawTable" class="draw-table-area">
+        </div>
+    </div>
+</div>
+<div id="GameDatesDialog" class="dialog"></div>
+<div id="BlankDrawsDialog" class="dialog"></div>
+<div id="LoadingDialog" class="dialog">
+    <p>読込中です</p>
+</div>
+
+@section CSS{
+    <link rel="stylesheet" type="text/css" href="~/css/drawTable.css">
+    <style>
+        .create-draw-table {
+            display: grid;
+            grid-template-rows: auto auto auto auto 1fr;
+            grid-template-columns: 1fr 400px;
+            height: 100%;
+        }
+
+        .page-title {
+            grid-row: 1 / 2;
+            grid-column: 1 / 3;
+        }
+
+        .navigations {
+            grid-row: 2 / 3;
+            grid-column: 1 / 3;
+        }
+
+        .functions {
+            grid-row: 3 / 4;
+            grid-column: 1 / 3;
+        }
+
+        .informations {
+            grid-row: 4 / 5;
+            grid-column: 1 / 2;
+        }
+
+        .players {
+            grid-row: 5 / 6;
+            grid-column: 1 / 2;
+        }
+
+        .draw-table-wrap {
+            grid-row: 4 / 6;
+            grid-column: 2 / 3;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/dialog.js"></script>
+    <script src="~/js/drawTable.js"></script>
+    <script>
+        /*** VALUES ***/
+        let entryDetails = [];
+        let assignedPlayers = [];
+        let blocks = [];
+        const tournamentId = "@Model.TournamentId";
+        const tennisEventId = "@Model.TennisEventId";
+        const useQualifyingMenu = ("@Model.UseQualifyingMenu" === "True");
+        const isSingles = ("@Model.IsSingles" === "True");
+        const getParticipationClassificationId = () => Number(document.getElementById("ParticipationClassification").value);
+        const getBlockNumber = () => Number(document.getElementById("BlockNames").value);
+
+        /*** API ***/
+        const baseUrl = `/DrawTables/${tournamentId}/${tennisEventId}`;
+        const fetchDrawSettingsAsync = async () => {
+            const res = await fetch(`${baseUrl}/draw_settings?participationClassification=${getParticipationClassificationId()}`);
+            const json = await res.json();
+            return json;
+        }
+        const fetchEntryDetailsAsync = async () => {
+            const res = await fetch(`${baseUrl}/entry_players?participationClassification=${getParticipationClassificationId()}`);
+            const json = await res.json();
+            return json;
+        }
+        const fetchGameDatesAsync = async () => {
+            const res = await fetch(`${baseUrl}/game_dates`);
+            const json = await res.json();
+            return json;
+        }
+        const registerGameDatesAsync = async () => {
+            const url = `${baseUrl}/game_dates`;
+            const option = {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify(blocks)
+            };
+            await fetch(url, option);
+        }
+        const fetchBlankDrawsAsync = async () => {
+            const res = await fetch(`${baseUrl}/blank_draws`);
+            const json = await res.json();
+            return json;
+        }
+        const registerBlankDrawsAsync = async () => {
+            const url = `${baseUrl}/blank_draws`;
+            const option = {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify(blocks)
+            };
+            await fetch(url, option);
+        }
+        const executeSeedFrameSetting = async () => {
+            const url = `${baseUrl}/execute_seed_frame_setting?participationClassification=${getParticipationClassificationId()}`;
+            const option = {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                }
+            };
+            await fetch(url, option);
+        }
+        const executeSeedFrameRemove = async () => {
+            const url = `${baseUrl}/execute_seed_frame_remove?participationClassification=${getParticipationClassificationId()}`;
+            const option = {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                }
+            };
+            await fetch(url, option);
+        }
+        const executeByeFrameSetting = async () => {
+            const url = `${baseUrl}/execute_bye_frame_setting?participationClassification=${getParticipationClassificationId()}`;
+            const option = {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                }
+            };
+            await fetch(url, option);
+        }
+        const executeByeFrameRemove = async () => {
+            const url = `${baseUrl}/execute_bye_frame_remove?participationClassification=${getParticipationClassificationId()}`;
+            const option = {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                }
+            };
+            await fetch(url, option);
+        }
+        const intakeQualifyingWinnersAsync = async () => {
+            const url = `${baseUrl}/intake_qualifying_winners?participationClassification=${getParticipationClassificationId()}`;
+            const option = {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                }
+            };
+            await fetch(url, option);
+        }
+        const executeDrawingAsync = async () => {
+            const url = `${baseUrl}/execute_drawing?participationClassification=${getParticipationClassificationId()}`;
+            const option = {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+            };
+            const res = await fetch(url, option);
+            const json = JSON.parse(await res.json());
+            return json;
+        }
+        const cancelDrawingAsync = async () => {
+            const url = `${baseUrl}/cancel_drawing?participationClassification=${getParticipationClassificationId()}`;
+            const option = {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify(entryDetails)
+            };
+            await fetch(url, option);
+        }
+        const fetchAssignedPlayersAsync = async () => {
+            const res = await fetch(`${baseUrl}/assigned_players?participationClassificationId=${getParticipationClassificationId()}&blockNumber=${getBlockNumber()}`);
+            const json = await res.json();
+            return json;
+        }
+        const fetchGameResults = async () => {
+            const res = await fetch(`${baseUrl}/game_results?participationClassificationId=${getParticipationClassificationId()}&blockNumber=${getBlockNumber()}`);
+            const json = await res.json();
+            return json;
+        }
+        const fetchBlockNamesAsync = async () => {
+            const res = await fetch(`${baseUrl}/block_names?participationClassificationId=${getParticipationClassificationId()}`);
+            const json = await res.json();
+            return json;
+        }
+        const updateToDraftAsync = async () => {
+            const url = `${baseUrl}/update_to_draft`;
+            const option = {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+            };
+            await fetch(url, option);
+        }
+        const updateToPublishAsync = async () => {
+            const url = `${baseUrl}/update_to_publish`;
+            const option = {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify(entryDetails)
+            };
+            await fetch(url, option);
+        }
+        const assignPlayersToDrawAsync = async (fromEntryNumber, toDrawNumber) => {
+            const url = `/DrawTables/assign_players_to_draw`;
+            const option = {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify({
+                    tournamentId: Number(tournamentId),
+                    tennisEventId,
+                    participationClassificationId: getParticipationClassificationId(),
+                    fromEntryNumber: Number(fromEntryNumber),
+                    toBlockNumber: getBlockNumber(),
+                    toDrawNumber: Number(toDrawNumber)
+                })
+            };
+
+            const res = await fetch(url, option);
+            const json = JSON.parse(await res.json());
+            return json;
+        }
+
+        /*** FUNCTIONS ***/
+        const accumulatePoints = (accumulator, currentValue) => accumulator + Number(currentValue);
+        const createRow = entryDetail => {
+            const tr = document.createElement("tr");
+            tr.draggable = true;
+            tr.dataset.entryNumber = entryDetail.entryNumber;
+            tr.addEventListener("dragstart", handleEntryDetailDragstart, false);
+
+            {
+                // 不出場
+                const td = document.createElement("td");
+                const checkbox = document.createElement("input");
+                checkbox.id = `checkbox-isparticipate-${entryDetail.entryNumber}`;
+                checkbox.type = "checkbox";
+                checkbox.checked = !entryDetail.isParticipate;
+                checkbox.addEventListener("click", e => {
+                    entryDetail.isParticipate = !e.target.checked;
+
+                    if (!entryDetail.isParticipate) {
+                        entryDetail.isDa = false;
+                        entryDetail.seedNumber = 0;
+                        entryDetail.participationClassificationId = participationClassification.notParticipate.id;
+                        updateElement(`checkbox-isda-${entryDetail.entryNumber}`, "checked", entryDetail.isDa);
+                        updateElement(`input-seednumber-${entryDetail.entryNumber}`, "value", "");
+                        return;
+                    }
+
+                    entryDetail.participationClassificationId = participationClassification.qualifying.id;
+                    return;
+                }, false);
+                td.appendChild(checkbox);
+                tr.appendChild(td);
+            }
+
+            {
+                // St.
+                const td = document.createElement("td");
+                td.innerText = entryDetail.fromQualifying ? "Q" : "";
+                tr.appendChild(td);
+            }
+
+            {
+                // ブロック
+                const td = document.createElement("td");
+                td.innerText = entryDetail.blockNumber ? entryDetail.blockNumber : "";
+                tr.appendChild(td);
+            }
+
+            {
+                // No.
+                const td = document.createElement("td");
+                tr.appendChild(td);
+            }
+
+            {
+                // 氏名
+                const td = document.createElement("td");
+                td.innerText = [...entryDetail.playerNames].join("\n");
+                tr.appendChild(td);
+            }
+
+            {
+                // 団体名
+                const td = document.createElement("td");
+                td.innerText = [...entryDetail.teamNames].join("\n");
+                tr.appendChild(td);
+            }
+
+            {
+                // シード
+                const td = document.createElement("td");
+                td.innerText = Number(entryDetail.seedNumber) === 0 ? "" : entryDetail.seedNumber;
+                tr.appendChild(td);
+            }
+
+            {
+                // ポイント
+                const td = document.createElement("td");
+                td.innerText = [...entryDetail.points].reduce(accumulatePoints, 0);
+                tr.appendChild(td);
+            }
+
+            {
+                // 順位
+                const td = document.createElement("td");
+                td.innerText = entryDetail.rank;
+                tr.appendChild(td);
+            }
+
+            {
+                // 出場不可日
+                [...entryDetail.canParticipationDates].forEach(o => {
+                    const td = document.createElement("td");
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.checked = !o.isParticipate;
+                    checkbox.addEventListener("click", e => {
+                        o.isParticipate = !e.target.checked
+                    }, false);
+                    td.appendChild(checkbox);
+                    tr.appendChild(td);
+                });
+            }
+
+            return tr;
+        }
+        const updateDrawSettingsAsync = async () => {
+            const { numberOfByes } = await fetchDrawSettingsAsync();
+            $("#NumberOfByes").text(numberOfByes);
+        }
+        const updateEntryDetailsAsync = async () => {
+            const entryDetailList = document.getElementById("EntryDetailList");
+            while (entryDetailList.firstChild) entryDetailList.removeChild(entryDetailList.firstChild);
+
+            entryDetails = await fetchEntryDetailsAsync();
+
+            const numberOfSeeds= entryDetails.filter(o => o.seedNumber !== 0).length;
+            $("#NumberOfSeeds").text(numberOfSeeds);
+
+            entryDetails.forEach(o => {
+                const row = createRow(o);
+                entryDetailList.appendChild(row);
+            });
+        }
+        const updateGameDatesAsync = async () => {
+            blocks = await fetchGameDatesAsync();
+            const gameDates = blocks[0].gameDates;
+
+            const table = $('<table class="table">');
+
+            $("<thead>").append($("<tr>")
+                .append($("<th>", { rowspan: 2 }).append("ブロック名"))
+                .append($("<th>", { colspan: gameDates.length }).append("試合日"))
+            ).append($("<tr>")
+                .append(gameDates.map(gameDate => $("<th>").append(gameDate.text)))
+            ).appendTo(table);
+
+            $("<tfoot>").append($("<tr>")
+                .append($("<th>", { colspan: gameDates.length + 1 })
+                    .append($("<input>", {
+                        type: "button",
+                        value: "確定",
+                        on: {
+                            click: async () => {
+                                await handleGameDatesConfirmClickedAsync();
+                                closeDialog("GameDatesDialog");
+                            }
+                        },
+                    }))
+                )
+            ).appendTo(table);
+
+            $("<tbody>").append(blocks.map(block => {
+                return $("<tr>")
+                    .append($("<td>").append(block.text))
+                    .append(block.gameDates.map(gameDate => {
+                        return $("<td>")
+                            .append($("<input>", {
+                                type: "radio",
+                                value: gameDate.value,
+                                checked: gameDate.selected,
+                                name: `GameDatesBlock${block.blockNumber}`,
+                                on: {
+                                    change: ev => block.gameDates.forEach(gameDate => { gameDate.selected = (gameDate.value === ev.target.value) })
+                                }
+                            }));
+                    }));
+            })).appendTo(table);
+
+            $("#GameDatesDialog").append(table);
+        }
+        const updateBlankDrawsAsync = async () => {
+            const blankDraws = await fetchBlankDrawsAsync();
+
+            $("#BlankDrawsDialog").empty();
+            const table = $('<table class="table">');
+
+            $("<thead>").append($("<tr>")
+                .append($("<th>").append("ブロック名"))
+                .append($("<th>").append("ドロー"))
+            ).appendTo(table);
+
+            $("<tfoot>").append($("<tr>")
+                .append($("<th>", { colspan: 2 })
+                    .append($("<input>", {
+                        type: "button",
+                        value: "閉じる",
+                        on: {
+                            click: async () => {
+                                closeDialog("BlankDrawsDialog");
+                            }
+                        },
+                    }))
+                )
+            ).appendTo(table);
+
+            $("<tbody>").append(blankDraws.map(blankDraw => {
+                return $("<tr>")
+                    .append($('<td class="text-center">').append(blankDraw.blockName))
+                    .append($('<td class="text-center">').append(blankDraw.drawNumber));
+            })).appendTo(table);
+
+            $("#BlankDrawsDialog").append(table);
+        }
+        const updateAssignedPlayersAsync = async () => {
+            assignedPlayers = await fetchAssignedPlayersAsync();
+            await updateDrawTableAsync();
+        }
+        const updateBlockNamesAsync = async () => {
+            const blockNames = await fetchBlockNamesAsync();
+
+            $("#BlockNames").empty();
+            $("#BlockNames").append(blockNames.map(o => {
+                return $(`<option value="${o.blockNumber}" data-pid="${o.participationClassificationId}">${o.name}</ option>`);
+            }));
+        }
+        const addEventPlayerBoxes = () => {
+            const playerBoxes = [...document.querySelectorAll("div.player-box")];
+            for (const playerBox of playerBoxes) {
+                playerBox.addEventListener("dragover", handlePlayerBoxDragover, false);
+                playerBox.addEventListener("drop", handlePlayerBoxDroppedAsync, false);
+            }
+        }
+        const updateDrawTableAsync = async () => {
+            const { numberOfDraws } = await fetchDrawSettingsAsync();
+            const table = createTournament(numberOfDraws, assignedPlayers, isSingles);
+
+            while (document.getElementById("DrawTable").firstChild)
+                document.getElementById("DrawTable").removeChild(document.getElementById("DrawTable").firstChild);
+            document.getElementById("DrawTable").appendChild(table);
+
+            addEventPlayerBoxes();
+        }
+        const toggleIntakeQualifyingWinners = () => {
+            if (!useQualifyingMenu) {
+                document.getElementById("IntakeQualifyingWinners").style.visibility = "hidden";
+                return;
+            }
+
+            if (participationClassification.qualifying.id === getParticipationClassificationId()) {
+                document.getElementById("IntakeQualifyingWinners").style.visibility = "hidden";
+            } else {
+                document.getElementById("IntakeQualifyingWinners").style.visibility = "visible";
+            }
+        }
+        const showLaodingDialog = () => showDialog("LoadingDialog");
+        const closeLaodingDialog = () => closeDialog("LoadingDialog");
+
+        /*** EVENTS HANDLER ***/
+        const handleParticipationClassificationChangedAsync = async () => {
+            await updateEntryDetailsAsync();
+            await updateBlockNamesAsync();
+            await updateAssignedPlayersAsync();
+            await updateDrawSettingsAsync();
+            toggleIntakeQualifyingWinners();
+        }
+        const handleGameDatesClicked = () => {
+            showDialog("GameDatesDialog");
+        }
+        const handleBlankDrawsClicked = async () => {
+            await updateBlankDrawsAsync();
+            showDialog("BlankDrawsDialog");
+        }
+        const handleExecuteDrawingClicked = async () => {
+            assignedPlayers = await executeDrawingAsync();
+            await updateDrawTableAsync();
+        }
+        const handleCancelDrawingClicked = async () => {
+            await cancelDrawingAsync();
+        }
+        const handleSeedFrameSettingClicked = async () => {
+            if (confirm("シード位置の自動設定を行います。\n\nよろしいですか？")) {
+                await executeSeedFrameSetting();
+                alert("シード自動設定");
+            }
+        }
+        const handleSeedFrameRemoveClicked = async () => {
+            if (confirm("割当済みのシード位置を全て削除します。\n\nよろしいですか？")) {
+                await executeSeedFrameRemove();
+                alert("シード全て削除");
+            }
+        }
+        const handleByeFrameSettingClicked = async () => {
+            if (confirm("BYE位置の自動設定を行います。\n\nよろしいですか？")) {
+                await executeByeFrameSetting();
+                alert("BYE 自動設定");
+            }
+        }
+        const handleByeFrameRemoveClicked = async () => {
+            if (confirm("割当済みのBYE位置を全て削除します。\n\nよろしいですか？")) {
+                await executeByeFrameRemove();
+                alert("BYE 全て削除");
+            }
+        }
+        const handleIntakeQualifyingWinnersClicked = async () => {
+            await intakeQualifyingWinnersAsync();
+            await updateEntryDetailsAsync();
+        }
+        const handleGameDatesConfirmClickedAsync = async () => {
+            await registerGameDatesAsync();
+        }
+        const handleSubmitButtonClicked = ev => {
+            document.forms[0].action = ev.target.attributes.formaction.value;
+            document.forms[0].submit();
+        }
+        const handleBlockNamesChangedAsync = async () => {
+            await updateAssignedPlayersAsync();
+        }
+        const handleDraftClicked = async () => {
+            if (confirm("ドロー表を登録します。\n\nよろしいですか。")) {
+                await updateToDraftAsync();
+                alert("ドロー表を登録しました。");
+            }
+        }
+        const handlePublishClicked = async () => {
+            if (confirm("ドロー表を公開します。\n\nよろしいですか。")) {
+                await updateToPublishAsync();
+                alert("ドロー表を公開しました。");
+            }
+        }
+        const handleEntryDetailDragstart = ev => {
+            ev.dataTransfer.effectAllowed = "copy";
+            const { entryNumber } = ev.target.dataset;
+            ev.dataTransfer.setData("application/json", JSON.stringify({ entryNumber }));
+        }
+        const handlePlayerBoxDragover = ev => {
+            ev.preventDefault();
+            ev.dataTransfer.dropEffect = "copy";
+        }
+        const handlePlayerBoxDroppedAsync = async ev => {
+            ev.preventDefault();
+            const { entryNumber } = JSON.parse(ev.dataTransfer.getData("application/json"));
+            const { drawNumber } = ev.target.dataset;
+
+            assignedPlayers = await assignPlayersToDrawAsync(entryNumber, drawNumber);
+            await updateDrawTableAsync();
+        }
+
+        /*** EVENTS LISTENER ***/
+        document.getElementById("ParticipationClassification").addEventListener("change", handleParticipationClassificationChangedAsync, false);
+        document.getElementById("GameDates").addEventListener("click", handleGameDatesClicked, false);
+        document.getElementById("BlankDraws").addEventListener("click", handleBlankDrawsClicked, false);
+        document.getElementById("ExecuteDrawing").addEventListener("click", handleExecuteDrawingClicked, false);
+        document.getElementById("CancelDrawing").addEventListener("click", handleCancelDrawingClicked, false);
+        document.getElementById("SeedFrameSetting").addEventListener("click", handleSeedFrameSettingClicked, false);
+        document.getElementById("SeedFrameRemove").addEventListener("click", handleSeedFrameRemoveClicked, false);
+        document.getElementById("ByeFrameSetting").addEventListener("click", handleByeFrameSettingClicked, false);
+        document.getElementById("ByeFrameRemove").addEventListener("click", handleByeFrameRemoveClicked, false);
+        document.getElementById("IntakeQualifyingWinners").addEventListener("click", handleIntakeQualifyingWinnersClicked, false);
+        document.getElementById("BlockNames").addEventListener("change", handleBlockNamesChangedAsync, false);
+        document.getElementById("Draft").addEventListener("click", handleDraftClicked, false);
+        document.getElementById("Publish").addEventListener("click", handlePublishClicked, false);
+        [...document.querySelectorAll(".submit-button")].forEach(el => {
+            el.addEventListener("click", handleSubmitButtonClicked, false);
+        });
+
+        (async () => {
+            showLaodingDialog();
+
+            await Promise.all([
+                updateDrawSettingsAsync(),
+                updateGameDatesAsync(),
+            ]);
+            await updateEntryDetailsAsync();
+            await updateBlockNamesAsync();
+            await updateAssignedPlayersAsync();
+            toggleIntakeQualifyingWinners();
+
+            closeLaodingDialog();
+        })();
+    </script>
+}

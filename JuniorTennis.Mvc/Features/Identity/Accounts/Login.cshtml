@@ -1,0 +1,47 @@
+﻿@model JuniorTennis.Mvc.Features.Identity.Accounts.LoginViewModel
+
+@{
+    ViewData["Title"] = "ログイン";
+}
+
+<h1>ログイン</h1>
+<div class="row">
+    <div class="single-column-form">
+        <form asp-action="Login" class="login-form">
+            <div class="form-item">
+                <label asp-for="LoginId"></label>
+                <input asp-for="LoginId" />
+                <span asp-validation-for="LoginId"></span>
+            </div>
+            <div class="form-item">
+                <label asp-for="Password">パスワード</label>
+                <input asp-for="Password" />
+                <span asp-validation-for="Password"></span>
+            </div>
+            <div>
+                @Html.ValidationMessage("LoginError")
+            </div>
+            <div class="form-item">
+                <div class="horizontal-items">
+                    <button type="submit" class="button-primary">ログイン</button>
+                </div>
+            </div>
+        </form>
+        <div class="horizontal-container">
+            <p>
+                新規登録する場合は
+                <a class="button-link shrink" asp-area="Identity" asp-action="ConfirmMail">こちら</a>
+                をクリックしてください。
+            </p>
+            <p>
+                パスワードをお忘れの方は
+                <a class="button-link shrink" asp-area="Identity" asp-action="ChangePasswordInquiry">こちら</a>
+                をクリックしてください。
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

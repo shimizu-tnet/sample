@@ -1,0 +1,79 @@
+﻿@model JuniorTennis.Mvc.Features.Teams.RequestTeamViewModel
+
+@{
+    ViewData["Title"] = "団体新規登録";
+}
+
+<h2>団体登録</h2>
+<div class="single-column-form">
+
+    <form asp-action="RequestTeam">
+        <div class="form-item">
+            <fieldset class="form-item">
+                <legend asp-for="TeamType"></legend>
+                <div class="horizontal-items">
+                    <label>
+                        <input type="radio" asp-for="TeamType" value="1" checked="checked" />
+                        <span>学校</span>
+                    </label>
+                    <label>
+                        <input type="radio" asp-for="TeamType" value="2" />
+                        <span>民間クラブ</span>
+                    </label>
+                </div>
+            </fieldset>
+
+        </div>
+        <div class="form-item">
+            <label asp-for="TeamName"></label>
+            <input asp-for="TeamName" />
+            <span asp-validation-for="TeamName"></span>
+        </div>
+        <div class="form-item">
+            <label asp-for="TeamAbbreviatedName"></label>
+            <input asp-for="TeamAbbreviatedName"/>
+            <span asp-validation-for="TeamAbbreviatedName"></span>
+        </div>
+        <div class="form-item">
+            <label asp-for="RepresentativeName"></label>
+            <input asp-for="RepresentativeName" />
+            <span asp-validation-for="RepresentativeName"></span>
+        </div>
+        <div class="form-item">
+            <label asp-for="RepresentativeEmailAddress"></label>
+            <input type="hidden" asp-for="RepresentativeEmailAddress" />
+            <span>@Model.RepresentativeEmailAddress</span>
+            @if (Model.IsDuplicated)
+            {
+                <span>既に使用されているメールアドレスです お手数ですがトップ画面に戻りもう一度メールアドレスをご確認ください。</span>
+            }
+        </div>
+        <div class="form-item">
+            <label asp-for="TelephoneNumber"></label>
+            <input asp-for="TelephoneNumber" />
+            <span asp-validation-for="TelephoneNumber"></span>
+        </div>
+        <div class="form-item">
+            <label asp-for="Address"></label>
+            <p>大阪府</p>
+            <input asp-for="Address" />
+            <span asp-validation-for="Address"></span>
+        </div>
+        <div class="form-item">
+            <label asp-for="CoachName"></label>
+            <input asp-for="CoachName" />
+            <span asp-validation-for="CoachName"></span>
+        </div>
+        <div class="form-item">
+            <label asp-for="CoachEmailAddress"></label>
+            <p>代表者と異なる場合入力してください。</p>
+            <input asp-for="CoachEmailAddress" />
+            <span asp-validation-for="CoachEmailAddress"></span>
+        </div>
+        <div class="form-item">
+            <div class="horizontal-items">
+                <button class="button-primary" type="submit">登録</button>
+            </div>
+        </div>
+    </form>
+</div>

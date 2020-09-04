@@ -1,0 +1,40 @@
+﻿.button-base {
+  @apply px-6 py-px;
+}
+
+%templete {
+  @extend .button-base;
+}
+
+.button {
+  @extend %templete;
+  @apply border-2 border-gray-dark border-solid;
+
+  &:hover {
+    @apply bg-gray text-white;
+  }
+}
+
+.button-primary {
+  @extend %templete;
+  @apply border-2 border-accent border-solid;
+  @apply text-accent;
+
+  &:hover {
+    @apply bg-accent-dark text-white;
+  }
+}
+
+.button-link {
+  @extend %templete;
+  @apply border-none;
+  @apply text-main-dark;
+
+  &.shrink {
+    @apply px-0;
+  }
+
+  &:hover {
+    @apply text-main-hover;
+  }
+}

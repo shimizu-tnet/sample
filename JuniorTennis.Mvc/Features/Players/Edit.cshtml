@@ -1,0 +1,54 @@
+﻿@model JuniorTennis.Mvc.Features.Players.EditViewModel
+
+@{
+    ViewData["Title"] = "選手 - 編集";
+}
+
+<h2>編集</h2>
+<div class="single-column-form">
+    <div class="horizontal-items right">
+        <a class="button-link" asp-controller="Players" asp-action="Index">戻る</a>
+    </div>
+
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="PlayerCode" />
+        <div class="form-item">
+            <label asp-for="PlayerCode"></label>
+            <span>@Model.PlayerCode</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="PlayerName"></label>
+            <span>@Model.PlayerName</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="PlayerNameKana"></label>
+            <span>@Model.PlayerNameKana</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="Gender"></label>
+            <span>@Model.Gender</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="PlayerJpin"></label>
+            <span>@Model.PlayerJpin</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="Category"></label>
+            <span>@Model.Category</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="BirthDate"></label>
+            <span>@Model.BirthDate</span>
+        </div>
+        <div class="form-item">
+            <label asp-for="TelephoneNumber"></label>
+            <input asp-for="TelephoneNumber" />
+            <span asp-validation-for="TelephoneNumber"></span>
+        </div>
+        <div class="form-item">
+            <div class="horizontal-items">
+                <button class="button-primary" type="submit">登録</button>
+            </div>
+        </div>
+    </form>
+</div>

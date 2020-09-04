@@ -1,0 +1,67 @@
+﻿@model JuniorTennis.Mvc.Features.Announcements.RegisterViewModel
+
+@{
+    ViewData["Title"] = "お知らせ一覧 - 新規登録";
+}
+
+<h2>お知らせ登録</h2>
+<div class="single-column-form">
+    <div class="horizontal-items right">
+        <a class="button-link" asp-action="Index">戻る</a>
+    </div>
+    <form asp-action="Register" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly"></div>
+        <fieldset class="form-item">
+            <legend>お知らせ種別</legend>
+            <div class="horizontal-items">
+                <label>
+                    <input type="radio" asp-for="SelectedAnnouncementGenre" value="@Model.AnnouncementGenres[0].Value" checked="@Model.AnnouncementGenres[0].Selected">
+                    <span>@Model.AnnouncementGenres[0].Text</span>
+                </label>
+                <label>
+                    <input type="radio" asp-for="SelectedAnnouncementGenre" value="@Model.AnnouncementGenres[1].Value" checked="@Model.AnnouncementGenres[1].Selected">
+                    <span>@Model.AnnouncementGenres[1].Text</span>
+                </label>
+            </div>
+        </fieldset>
+        <div class="form-item">
+            <label asp-for="AnnouncementTitle"></label>
+            <input asp-for="AnnouncementTitle" />
+            <span asp-validation-for="AnnouncementTitle"></span>
+        </div>
+        <div class="form-item">
+            <label asp-for="EndDate"></label>
+            <input asp-for="EndDate" value="" />
+            <span asp-validation-for="EndDate"></span>
+        </div>
+        <div class="form-item">
+            <label asp-for="Body"></label>
+            <div class="wysiwyg-styles" style="height: 540px;">
+                <textarea class="wysiwyg-editor" asp-for="Body"></textarea>
+            </div>
+        </div>
+        <div class="form-item">
+            <label asp-for="UploadFile"></label>
+            <input asp-for="UploadFile" type="file">
+            <span asp-validation-for="UploadFile"></span>
+            <button class="button-base" type="button" onclick="clearAttachedFile()">Clear</button>
+        </div>
+        <div class="form-item">
+            <button class="button-primary" type="submit">登録</button>
+        </div>
+    </form>
+</div>
+
+@section CSS{
+    @await Html.PartialAsync("/Features/Shared/Wysiwyg/_WysiwygCss.cshtml")
+}
+
+@section Scripts{
+    @await Html.PartialAsync("/Features/Shared/Wysiwyg/_WysiwygJavascripts.cshtml")
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        const clearAttachedFile = () => {
+            document.getElementById(`UploadFile`).value = null;
+        }
+    </script>
+}

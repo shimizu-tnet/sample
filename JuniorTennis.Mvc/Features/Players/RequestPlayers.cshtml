@@ -1,0 +1,42 @@
+﻿@model JuniorTennis.Mvc.Features.Players.RequestPlayersViewModel
+
+@{
+    ViewData["Title"] = "選手 - 新規登録申請一覧";
+}
+
+<h2>新規登録申請一覧</h2>
+
+<a class="button-link" asp-action="Register">追加</a>
+<form asp-action="RequestPlayers">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>氏名</th>
+                <th>フリガナ</th>
+                <th>カテゴリー</th>
+                <th>性別</th>
+                <th>生年月日</th>
+                <th>取消</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var player in Model.Players)
+            {
+                <tr>
+                    <td>
+                        <input type="hidden" name="PlayerIds" value="@player.Id" />
+                        @player.PlayerFamilyName.Value @player.PlayerFirstName.Value
+                    </td>
+                    <td>@player.PlayerFamilyNameKana.Value @player.PlayerFirstNameKana.Value</td>
+                    <td>@player.Category.Name</td>
+                    <td>@player.Gender.Name</td>
+                    <td>@player.BirthDate.DisplayValue</td>
+                    <td>
+                        <button class="button-primary" type="submit" name="playerId" value="@player.Id" formaction="Cancel">取消</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="button-primary" type="submit">申込</button>
+</form>

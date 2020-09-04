@@ -1,0 +1,42 @@
+﻿@model JuniorTennis.Mvc.Features.Tournaments.IndexViewModel
+
+@{
+    ViewData["Title"] = "大会管理 - 大会一覧";
+}
+
+<h2>大会一覧</h2>
+
+<div class="horizontal-items right">
+    <a class="button-link" href="/Tournaments/Register">新規登録</a>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>大会名</th>
+            <th>大会種別</th>
+            <th>開催期間</th>
+            <th>申込期間</th>
+            <th>会場</th>
+            <th>参加費</th>
+            <th>参加者一覧</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tournament in Model.Tournaments)
+        {
+            <tr>
+                <td>
+                    <a class="button-link" asp-action="Details" asp-route-id="@tournament.TournamentId">@tournament.TournamentName</a>
+                </td>
+                <td>@tournament.TournamentType</td>
+                <td>@tournament.HoldingPeriod</td>
+                <td>@tournament.ApplicationPeriod</td>
+                <td>@tournament.Venue</td>
+                <td>@tournament.EntryFee</td>
+                <td>
+                    <button type="button">ダウンロード</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

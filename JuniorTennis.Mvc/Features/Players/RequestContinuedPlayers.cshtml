@@ -1,0 +1,63 @@
+﻿@model JuniorTennis.Mvc.Features.Players.RequestContinuedPlayersViewModel
+
+@{
+    ViewData["Title"] = "選手 - 継続登録申請";
+}
+
+<h2>選手継続登録申込</h2>
+
+<form asp-action="RequestContinuedPlayers">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>選択</th>
+                <th>氏名</th>
+                <th>フリガナ</th>
+                <th>カテゴリー</th>
+                <th>性別</th>
+                <th>生年月日</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.RequestContinuedPlayers.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <input type="hidden" asp-for="@Model.RequestContinuedPlayers[i].PlayerId" />
+                        <input type="hidden" asp-for="@Model.RequestContinuedPlayers[i].IsRequested" />
+                        @if (Model.RequestContinuedPlayers[i].IsRequested)
+                        {
+                            <span>済</span>
+                            <input type="hidden" asp-for="@Model.RequestContinuedPlayers[i].IsSelected" />
+                        }
+                        else
+                        {
+                            <input asp-for="@Model.RequestContinuedPlayers[i].IsSelected" />
+
+                        }
+                    </td>
+                    <td>@Model.RequestContinuedPlayers[i].PlayerName</td>
+                    <td>@Model.RequestContinuedPlayers[i].PlayerNameKana </td>
+                    <td>
+                        @if (Model.RequestContinuedPlayers[i].IsRequested)
+                        {
+                            <span>@Model.RequestContinuedPlayers[i].CategoryName</span>
+                        }
+                        else
+                        {
+                            <select asp-for="@Model.RequestContinuedPlayers[i].CategoryId">
+                                @foreach (var item in Model.RequestContinuedPlayers[i].CategorySelect)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        }
+                    </td>
+                    <td>@Model.RequestContinuedPlayers[i].Gender</td>
+                    <td>@Model.RequestContinuedPlayers[i].BirthDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="button-primary" type="submit">申込</button>
+</form>

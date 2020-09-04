@@ -1,0 +1,616 @@
+﻿@model JuniorTennis.Mvc.Features.DrawTables.PlayerViewModel
+
+@{
+    ViewData["Title"] = "ドロー表管理 - 選手情報設定";
+}
+
+<h2>@ViewData["Title"]</h2>
+<form method="post">
+    <input type="hidden" asp-for="TournamentId" />
+    <input type="hidden" asp-for="TournamentName" />
+    <input type="hidden" asp-for="TennisEventId" />
+    <input type="hidden" asp-for="TennisEvent" />
+    <div style="padding-bottom: 20px;">
+        <table>
+            <tr>
+                <td>
+                    <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Index" value="大会・種目選択" />
+                </td>
+                <td>
+                    <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Players" value="選手情報設定" />
+                </td>
+                <td>
+                    <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Settings" value="ドロー設定" />
+                </td>
+                <td>
+                    <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Create" value="ドロー作成" />
+                </td>
+                <td>
+                    <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Results" value="試合結果入力" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>
+        <label asp-for="TournamentName"></label>
+    </h3>
+    <div>
+        @Model.TournamentName
+    </div>
+    <h3>
+        <label asp-for="TennisEvent"></label>
+    </h3>
+    <div>
+        @Model.TennisEvent
+    </div>
+    <fieldset class="form-item">
+        <legend>選手取り込み</legend>
+        <div class="horizontal-items">
+            <label>
+                <input type="radio" asp-for="EligiblePlayersTypeId" value="@Model.EligiblePlayersTypes[0].Value" checked="@Model.EligiblePlayersTypes[0].Selected" />
+                <span>@Model.EligiblePlayersTypes[0].Text</span>
+            </label>
+            <label>
+                <input type="radio" asp-for="EligiblePlayersTypeId" value="@Model.EligiblePlayersTypes[1].Value" checked="@Model.EligiblePlayersTypes[1].Selected" />
+                <span>@Model.EligiblePlayersTypes[1].Text</span>
+            </label>
+            <button type="button" class="button" id="reacquisition">再取得</button>
+        </div>
+    </fieldset>
+    <div id="NumberOfEntries">申込者数： 名</div>
+    <table class="table player-filter">
+        <tr>
+            <th>
+                <input type="checkbox" id="UseConditions" />
+                <label for="UseConditions">参加条件</label>
+            </th>
+            <td colspan="3">
+                <div class="horizontal-items">
+                    <input type="number" id="LimitPoint" style="width: 80px;" value="0" disabled />
+                    <label for="LimitPoint">ポイント</label>
+                    <select id="PointLimitType" style="width: 80px;" disabled>
+                        <option value="1">以上</option>
+                        <option value="2">以下</option>
+                    </select>
+                    <span>、</span>
+                    <select id="PersonsLimitType" style="width: 80px;" disabled>
+                        <option value="1">上位</option>
+                        <option value="2">下位</option>
+                    </select>
+                    <span>&nbsp;</span>
+                    <input type="number" id="NumberOfPersons" style="width: 80px;" disabled />
+                    <label for="NumberOfPersons">名迄</label>
+                </div>
+            </td>
+            <td rowspan="2">
+                <button type="button" class="button" id="ApplyConditions">適用</button>
+            </td>
+        </tr>
+        <tr>
+            <th>本戦参加者（DA）</th>
+            <td>
+                <input type="number" id="ParticipantsOfDa" style="width: 80px;" />
+                <label for="ParticipantsOfDa">名</label>
+            </td>
+            <th>予選参加者</th>
+            <td>
+                <input type="number" id="ParticipantsOfQualifying" style="width: 80px;" @(Model.UseQualifyingMenu ? "" : "disabled") />
+                <label for="ParticipantsOfQualifying">名</label>
+            </td>
+        </tr>
+    </table>
+    <br />
+    <table class="table">
+        <thead>
+            <tr>
+                <th rowspan="2">ＤＡ</th>
+                <th rowspan="2">シード</th>
+                <th rowspan="2">不出場</th>
+                <th rowspan="2">氏名</th>
+                <th rowspan="2">団体名</th>
+                <th rowspan="2">ポイント</th>
+                <th rowspan="2">順位</th>
+                <th colspan="@Model.HoldingDates.Count">出場不可日</th>
+            </tr>
+            <tr>
+                @foreach (var holdingDate in Model.HoldingDates)
+                {
+                    <th>@holdingDate</th>
+                }
+            </tr>
+        </thead>
+        <tbody id="EntryDetailList">
+        </tbody>
+    </table>
+</form>
+<div id="LoadingDialog" class="dialog">
+    <p>読込中です</p>
+</div>
+
+@section CSS{
+    <style>
+        .player-filter {
+            border-collapse: collapse;
+        }
+
+            .player-filter td,
+            .player-filter th {
+                border: 2px solid #808080;
+            }
+    </style>
+}
+
+@section Scripts {
+    <script src="~/js/dialog.js"></script>
+    <script>
+        /*** VALUES ***/
+        let entryDetails = [];
+        const tournamentId = "@Model.TournamentId";
+        const tennisEventId = "@Model.TennisEventId";
+        const useQualifyingMenu = ("@Model.UseQualifyingMenu" === "True");
+        const participationClassification = {
+            main: {
+                id: 1,
+                name: "本戦"
+            },
+            qualifying: {
+                id: 2,
+                name: "予選"
+            },
+            notParticipate: {
+                id: 3,
+                name: "不出場"
+            },
+        }
+
+        /*** API ***/
+        const baseUrl = `/DrawTables/${tournamentId}/${tennisEventId}`;
+        const fetchEntryDetailsAsync = async ({ reacquisition }) => {
+            const eligiblePlayersTypeId = Number(document.querySelector("input[name=EligiblePlayersTypeId]:checked").value);
+            const url = `${baseUrl}/entry_players?eligiblePlayersTypeId=${eligiblePlayersTypeId}&reacquisition=${reacquisition}`;
+            const res = await fetch(url);
+            entryDetails = await res.json();
+        }
+        const fetchQualifyingDrawSettingsAsync = async () => {
+            const res = await fetch(`${baseUrl}/draw_settings?participationClassification=2`);
+            const json = await res.json();
+            return json;
+        }
+        const registerEntryDetailsAsync = async () => {
+            const url = `${baseUrl}/entry_players`;
+            const option = {
+                method: "post",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify(entryDetails)
+            };
+            await fetch(url, option);
+        }
+
+        /*** FUNCTIONS ***/
+        const accumulatePoints = (accumulator, currentValue) => accumulator + Number(currentValue);
+        const updateElement = (id, prop, value) => {
+            document.getElementById(`${id}`)[`${prop}`] = value;
+        }
+        const assigningSeedNumber = (participationClassificationId, entryNumber, seedNumber) => {
+            const targetPlayer = [...entryDetails]
+                .filter(player => player.participationClassificationId === participationClassificationId)
+                .filter(player => player.entryNumber === entryNumber)[0];
+
+            if (seedNumber === targetPlayer.seedNumber) {
+                return;
+            }
+
+            const isAssigned = value => value !== 0;
+            const getTargetPlayers = players => {
+                if (seedNumber === 0 && targetPlayer.seedNumber !== 0) {
+                    // 消した
+                    return players
+                        .filter(player => player.participationClassificationId === participationClassificationId)
+                        .filter(player => isAssigned(player.seedNumber))
+                        .filter(player => player.seedNumber > targetPlayer.seedNumber);
+                }
+
+                if (seedNumber !== 0 && targetPlayer.seedNumber === 0) {
+                    // 入力した
+                    return players
+                        .filter(player => player.participationClassificationId === participationClassificationId)
+                        .filter(player => isAssigned(player.seedNumber))
+                        .filter(player => player.seedNumber >= seedNumber);
+                }
+
+                if (targetPlayer.seedNumber < seedNumber) {
+                    // 増やした
+                    return players
+                        .filter(player => player.participationClassificationId === participationClassificationId)
+                        .filter(player => isAssigned(player.seedNumber))
+                        .filter(player => targetPlayer.seedNumber < player.seedNumber && player.seedNumber <= seedNumber);
+                }
+
+                // 減らした
+                return players
+                    .filter(player => player.participationClassificationId === participationClassificationId)
+                    .filter(player => isAssigned(player.seedNumber))
+                    .filter(player => seedNumber <= player.seedNumber && player.seedNumber < targetPlayer.seedNumber);
+            }
+            const sortTargetPlayers = players => {
+                return players.sort((a, b) => a.seedNumber - b.seedNumber);
+            }
+            const increaseSeedNumber = players => {
+                return players.map(player => {
+                    return ({
+                        ...player,
+                        seedNumber: player.seedNumber + 1
+                    });
+                });
+            }
+            const reduceSeedNumber = players => {
+                return players.map(player => {
+                    return ({
+                        ...player,
+                        seedNumber: player.seedNumber - 1
+                    });
+                });
+            }
+            const updateSeedNumber = players => {
+                if (seedNumber === 0 && targetPlayer.seedNumber !== 0) {
+
+                    // 消した
+                    return reduceSeedNumber(players);
+
+                } else if (seedNumber !== 0 && targetPlayer.seedNumber === 0) {
+
+                    // 入力した
+                    return increaseSeedNumber(players);
+
+                } else if (targetPlayer.seedNumber < seedNumber) {
+
+                    // 増やした
+                    return reduceSeedNumber(players);
+                }
+
+                // 減らした
+                return increaseSeedNumber(players);
+            }
+            const updateTargetPlayers = players => {
+                players.forEach(player => {
+                    const index = entryDetails.findIndex(player2 => {
+                        return player2.participationClassificationId === participationClassificationId
+                            && player2.entryNumber === player.entryNumber;
+                    });
+                    entryDetails[index].seedNumber = player.seedNumber;
+                    updateElement(`input-seednumber-${entryDetails[index].entryNumber}`, "value", player.seedNumber === 0 ? "" : player.seedNumber);
+                });
+
+                const index = entryDetails.findIndex(player => {
+                    return player.participationClassificationId === participationClassificationId
+                        && player.entryNumber === entryNumber;
+                });
+                entryDetails[index].seedNumber = seedNumber;
+                updateElement(`input-seednumber-${entryDetails[index].entryNumber}`, "value", seedNumber === 0 ? "" : seedNumber);
+            }
+
+            const targetPlayers = getTargetPlayers([...entryDetails]);
+            const sortedPlayers = sortTargetPlayers([...targetPlayers]);
+            const updatedPlayers = updateSeedNumber([...sortedPlayers]);
+            updateTargetPlayers([...updatedPlayers]);
+        }
+        const createRow = entryDetail => {
+            const tr = document.createElement("tr");
+
+            {
+                // DA
+                const td = document.createElement("td");
+                td.className = "text-center";
+                const checkbox = document.createElement("input");
+                checkbox.id = `checkbox-isda-${entryDetail.entryNumber}`;
+                checkbox.type = "checkbox";
+                checkbox.checked = entryDetail.isDa;
+                checkbox.addEventListener("click", e => {
+                    entryDetail.isDa = e.target.checked;
+
+                    if (entryDetail.isDa) {
+                        entryDetail.isParticipate = true;
+                        entryDetail.participationClassificationId = participationClassification.main.id;
+                        updateElement(`checkbox-isparticipate-${entryDetail.entryNumber}`, "checked", !entryDetail.isParticipate);
+                        return;
+                    }
+
+                    if (useQualifyingMenu) {
+                        entryDetail.participationClassificationId = participationClassification.qualifying.id;
+                    } else {
+                        entryDetail.isParticipate = false;
+                        entryDetail.participationClassificationId = participationClassification.notParticipate.id;
+                        updateElement(`checkbox-isparticipate-${entryDetail.entryNumber}`, "checked", !entryDetail.isParticipate);
+                    }
+                }, false);
+                td.appendChild(checkbox);
+                tr.appendChild(td);
+            }
+
+            {
+                // シード
+                const td = document.createElement("td");
+                td.className = "text-center";
+                const inumber = document.createElement("input");
+                inumber.id = `input-seednumber-${entryDetail.entryNumber}`;
+                inumber.type = "number";
+                inumber.size = 4;
+                inumber.style.width = "60px";
+                inumber.className = "text-right";
+                inumber.value = Number(entryDetail.seedNumber) === 0 ? "" : entryDetail.seedNumber;
+                inumber.addEventListener("blur", e => { assigningSeedNumber(entryDetail.participationClassificationId, entryDetail.entryNumber, Number(e.target.value)) }, false);
+                td.appendChild(inumber);
+                tr.appendChild(td);
+            }
+
+            {
+                // 不出場
+                const td = document.createElement("td");
+                td.className = "text-center";
+                const checkbox = document.createElement("input");
+                checkbox.id = `checkbox-isparticipate-${entryDetail.entryNumber}`;
+                checkbox.type = "checkbox";
+                checkbox.checked = !entryDetail.isParticipate;
+                checkbox.addEventListener("click", e => {
+                    entryDetail.isParticipate = !e.target.checked;
+
+                    if (!entryDetail.isParticipate) {
+                        entryDetail.isDa = false;
+                        entryDetail.seedNumber = 0;
+                        entryDetail.participationClassificationId = participationClassification.notParticipate.id;
+                        updateElement(`checkbox-isda-${entryDetail.entryNumber}`, "checked", entryDetail.isDa);
+                        updateElement(`input-seednumber-${entryDetail.entryNumber}`, "value", "");
+                        return;
+                    }
+
+                    if (useQualifyingMenu) {
+                        entryDetail.participationClassificationId = participationClassification.qualifying.id;
+                    } else {
+                        entryDetail.isDa = true;
+                        entryDetail.participationClassificationId = participationClassification.main.id;
+                        updateElement(`checkbox-isda-${entryDetail.entryNumber}`, "checked", entryDetail.isDa);
+                    }
+                }, false);
+                td.appendChild(checkbox);
+                tr.appendChild(td);
+            }
+
+            {
+                // 氏名
+                const td = document.createElement("td");
+                td.innerText = [...entryDetail.playerNames].join("\n");
+                tr.appendChild(td);
+            }
+
+            {
+                // 団体名
+                const td = document.createElement("td");
+                td.innerText = [...entryDetail.teamNames].join("\n");
+                tr.appendChild(td);
+            }
+
+            {
+                // ポイント
+                const td = document.createElement("td");
+                td.innerText = [...entryDetail.points].reduce(accumulatePoints, 0);
+                td.className = "text-right";
+                tr.appendChild(td);
+            }
+
+            {
+                // 順位
+                const td = document.createElement("td");
+                td.innerText = entryDetail.rank;
+                td.className = "text-right";
+                tr.appendChild(td);
+            }
+
+            {
+                // 出場不可日
+                [...entryDetail.canParticipationDates].forEach(o => {
+                    const td = document.createElement("td");
+                    td.className = "text-center";
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.checked = !o.isParticipate;
+                    checkbox.addEventListener("click", e => {
+                        o.isParticipate = !e.target.checked
+                    }, false);
+                    td.appendChild(checkbox);
+                    tr.appendChild(td);
+                });
+            }
+
+            return tr;
+        }
+        const calculateParticipantsOfDa = () => {
+            return entryDetails
+                .filter(o => o.isParticipate)
+                .filter(o => o.isDa)
+                .length;
+        }
+        const calculateParticipantsOfQualifying = () => {
+            return entryDetails
+                .filter(o => o.isParticipate)
+                .filter(o => !o.isDa)
+                .length;
+        }
+        const updateNumberOfEntries = () => {
+            document.getElementById("NumberOfEntries").innerText = `申込者数：${entryDetails.length} 名`;
+            document.getElementById("NumberOfPersons").value = calculateParticipantsOfDa() + calculateParticipantsOfQualifying();
+            document.getElementById("ParticipantsOfDa").value = calculateParticipantsOfDa();
+            document.getElementById("ParticipantsOfQualifying").value = calculateParticipantsOfQualifying();
+        }
+        const updateEntryDetails = () => {
+            const entryDetailList = document.getElementById("EntryDetailList");
+            while (entryDetailList.firstChild) entryDetailList.removeChild(entryDetailList.firstChild);
+
+            entryDetails.forEach(o => {
+                const row = createRow(o);
+                entryDetailList.appendChild(row);
+            });
+        }
+        const isBlank = value => `${value}`.trim().length === 0;
+        const applyConditions = async (ev) => {
+            const limitPoint = document.getElementById("LimitPoint");
+            const pointLimitType = document.getElementById("PointLimitType");
+            const personsLimitType = document.getElementById("PersonsLimitType");
+            const numberOfPersons = document.getElementById("NumberOfPersons");
+            const pointLimitTypes = { higher: 1, lower: 2 }
+            const personsLimitTypes = { top: 1, bottom: 2 }
+
+            // 選手の参加状態をリセット
+            entryDetails.forEach(player => {
+                player.isDa = false;
+                player.seedNumber = "";
+                player.isParticipate = false;
+                player.participationClassificationId = participationClassification.notParticipate.id;
+            });
+
+            // 足切り処理
+            const fromHigher = `${pointLimitType.value}` === `${pointLimitTypes.higher}`;
+            const fromTop = `${personsLimitType.value}` === `${personsLimitTypes.top}`;
+            const limitOfPoints = Number(limitPoint.value || 0);
+            const limitOfCount = Number(numberOfPersons.value || 0);
+            const pointFilter = totalPoint =>
+                fromHigher
+                    ? totalPoint >= limitOfPoints
+                    : totalPoint <= limitOfPoints;
+            const countFilter = index =>
+                fromTop
+                    ? index < limitOfCount
+                    : (entryDetails.length - (index + 1)) < limitOfCount;
+
+            entryDetails
+                .filter(player => pointFilter(player.totalPoint))
+                .filter((player, index) => countFilter(index))
+                .forEach(player => player.isParticipate = true);
+
+            // 本選出場者設定
+            const participantsOfDa = Number(document.getElementById("ParticipantsOfDa").value);
+            const participantsOfDaLimit = calculateNumberOfSeeds(participantsOfDa);
+            let seedNumber = 0;
+            entryDetails
+                .filter(player => player.isParticipate)
+                .forEach(player => {
+                    if (++seedNumber <= participantsOfDa) {
+                        player.isDa = true;
+                        player.seedNumber = seedNumber <= participantsOfDaLimit ? seedNumber : 0;
+                        player.participationClassificationId = participationClassification.main.id;
+                    }
+                });
+
+            // 予選出場者設定
+            const participantsOfQualifying = Number(document.getElementById("ParticipantsOfQualifying").value);
+            const qualifyingDrawSettings = await fetchQualifyingDrawSettingsAsync();
+            const { numberOfBlocks } = qualifyingDrawSettings;
+            const participantsOfQualifyingLimit = Number(numberOfBlocks) * 2;　// 1ブロックあたり2人のシード。
+            let seedQualify = 0;
+            entryDetails
+                .filter(player => player.isParticipate && !player.isDa)
+                .forEach(player => {
+                    if (++seedQualify <= participantsOfQualifying) {
+                        player.seedNumber = seedQualify <= participantsOfQualifyingLimit ? seedQualify : 0;
+                        player.participationClassificationId = participationClassification.qualifying.id;
+                    }
+                });
+        }
+        const calculateNumberOfSeeds = participantsOfDa => {
+            const maxNumberOfSeeds = 16;
+
+            for (var i = 2; i < 9; i++) {
+                const numberOfDraws = Math.pow(2, i);
+                if (numberOfDraws < participantsOfDa) {
+                    continue;
+                }
+
+                const numberOfSeeds = numberOfDraws / 4;
+                return numberOfSeeds > maxNumberOfSeeds
+                    ? maxNumberOfSeeds
+                    : numberOfSeeds;
+            }
+
+            return maxNumberOfSeeds;
+        }
+        const showLaodingDialog = () => showDialog("LoadingDialog");
+        const closeLaodingDialog = () => closeDialog("LoadingDialog");
+
+        /*** EVENTS HANDLER ***/
+        const inputConditions = ev => {
+            const useConditions = document.getElementById("UseConditions").checked;
+            const numberOfPersons = document.getElementById("NumberOfPersons");
+            const participantsOfDa = document.getElementById("ParticipantsOfDa");
+            const participantsOfQualifying = document.getElementById("ParticipantsOfQualifying");
+
+            if (useConditions) {
+                if (useQualifyingMenu) {
+                    participantsOfQualifying.value = Number(numberOfPersons.value) - Number(participantsOfDa.value);
+                } else {
+                    participantsOfDa.value = Number(numberOfPersons.value);
+                }
+            } else {
+                numberOfPersons.value = Number(participantsOfDa.value) + Number(participantsOfQualifying.value);
+            }
+        }
+        const toggleConditions = ev => {
+            const useConditions = ev.target.checked;
+            const limitPoint = document.getElementById("LimitPoint");
+            const pointLimitType = document.getElementById("PointLimitType");
+            const personsLimitType = document.getElementById("PersonsLimitType");
+            const numberOfPersons = document.getElementById("NumberOfPersons");
+            const participantsOfDa = document.getElementById("ParticipantsOfDa");
+            const participantsOfQualifying = document.getElementById("ParticipantsOfQualifying");
+
+            if (useConditions) {
+                limitPoint.disabled = false;
+                pointLimitType.disabled = false;
+                personsLimitType.disabled = false;
+                numberOfPersons.disabled = false;
+                participantsOfDa.disabled = false;
+                participantsOfQualifying.disabled = true;
+            } else {
+                limitPoint.disabled = true;
+                pointLimitType.disabled = true;
+                personsLimitType.disabled = true;
+                numberOfPersons.disabled = true;
+                participantsOfDa.disabled = false;
+                participantsOfQualifying.disabled = !useQualifyingMenu;
+            }
+        }
+
+        /*** EVENTS LISTENER ***/
+        document.getElementById("NumberOfPersons").addEventListener("change", inputConditions, false);
+        document.getElementById("ParticipantsOfDa").addEventListener("change", inputConditions, false);
+        document.getElementById("ParticipantsOfQualifying").addEventListener("change", inputConditions, false);
+        document.getElementById("UseConditions").addEventListener("click", toggleConditions, false);
+        document.getElementById("ApplyConditions").addEventListener("click", async () => {
+            await applyConditions();
+            await updateEntryDetails();
+        }, false);
+        document.getElementById("reacquisition").addEventListener("click", async () => {
+            await fetchEntryDetailsAsync({ reacquisition: true });
+            await updateNumberOfEntries();
+            await updateEntryDetails();
+        }, false);
+        [...document.querySelectorAll(".submit-button")].forEach(el => {
+            el.addEventListener("click", async (ev) => {
+                await registerEntryDetailsAsync();
+                document.forms[0].action = ev.target.attributes.formaction.value;
+                document.forms[0].submit();
+            }, false);
+        });
+
+        (async () => {
+            showLaodingDialog();
+
+            await fetchEntryDetailsAsync({ reacquisition: false })
+            updateNumberOfEntries();
+            updateEntryDetails();
+
+            closeLaodingDialog();
+        })();
+    </script>
+}

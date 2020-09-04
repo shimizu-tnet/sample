@@ -1,0 +1,23 @@
+﻿@model JuniorTennis.Mvc.Features.Home.ViewModel
+@section CSS{
+    @await Html.PartialAsync("/Features/Shared/Wysiwyg/_WysiwygCss.cshtml")
+}
+
+@section Scripts{
+    @await Html.PartialAsync("/Features/Shared/Wysiwyg/_WysiwygJavascripts.cshtml")
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
+
+@{
+    ViewData["Title"] = "Privacy Policy";
+}
+
+<h1>@ViewData["Title"]</h1>
+<p>Use this page to detail your site's privacy policy.</p>
+<form asp-action="Privacy">
+    <span asp-validation-for="Text"></span>
+    <div class="wysiwyg-styles" style="height: 550px;">
+        <textarea class="wysiwyg-editor" asp-for="Text"></textarea>
+    </div>
+    <input type="submit" value="Post" />
+</form>

@@ -1,0 +1,262 @@
+﻿@model JuniorTennis.Mvc.Features.DrawTables.SettingsViewModel
+
+@{
+    ViewData["Title"] = "ドロー表管理 - ドロー設定";
+}
+
+<h2>@ViewData["Title"]</h2>
+<form method="post">
+    <input type="hidden" asp-for="TournamentId" />
+    <input type="hidden" asp-for="TournamentName" />
+    <input type="hidden" asp-for="TennisEventId" />
+    <input type="hidden" asp-for="TennisEvent" />
+    <div style="padding-bottom: 20px;">
+        <table>
+            <tr>
+                <td>
+                    <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Index" value="大会・種目選択" />
+                </td>
+                <td>
+                    <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Players" value="選手情報設定" />
+                </td>
+                <td>
+                    <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Settings" value="ドロー設定" />
+                </td>
+                <td>
+                    <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Create" value="ドロー作成" />
+                </td>
+                <td>
+                    <input type="button" class="button submit-button" formaction="/DrawTables/@Model.TournamentId/@Model.TennisEventId/@ViewData["Action"]?next=Results" value="試合結果入力" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <h3>
+        <label asp-for="TournamentName"></label>
+    </h3>
+    <div>
+        @Model.TournamentName
+    </div>
+    <h3>
+        <label asp-for="TennisEvent"></label>
+    </h3>
+    <div>
+        @Model.TennisEvent
+    </div>
+    <div class="draw-settings">
+        <div class="draw-settings-one-column ">
+            <h3>本戦</h3>
+        </div>
+
+        <div class="draw-settings-one-column top-border">
+            <hr class="border" />
+        </div>
+
+        <div></div>
+        <div></div>
+        <div>ドロー数</div>
+        <div></div>
+        <div>総ドロー数</div>
+        <div></div>
+        <div>出場</div>
+        <div></div>
+        <div>勝抜</div>
+        <div></div>
+        <div>合計</div>
+        <div></div>
+        <div>BYE</div>
+        <div></div>
+        <div>グレード</div>
+
+        <div>
+            <input id="EnteredMainNumberOfBlocks" style="visibility: hidden;" type="number" value="1" />
+        </div>
+        <div></div>
+        <div>
+            <select asp-for="SelectedMainNumberOfDraws" asp-items="@Model.MainNumberOfDraws"></select>
+        </div>
+        <div class="text-center">＝</div>
+        <div id="MainTotalNumberOfDraws"></div>
+        <div>　</div>
+        <div id="MainNumberOfEntries">@Model.MainNumberOfEntries</div>
+        <div>＋</div>
+        <div id="MainNumberOfWinners">@Model.EnteredQualifyingNumberOfBlocks</div>
+        <div class="text-center">＝</div>
+        <div id="MainTotalNumberOfEntries"></div>
+        <div>　</div>
+        <div id="MainNumberOfByes"></div>
+        <div>　</div>
+        <div>
+            <select asp-for="SelectedMainTournamentGrade" asp-items="@Model.MainTournamentGrades"></select>
+        </div>
+
+        <div class="draw-settings-one-column bottom-border">
+            <hr class="border" />
+        </div>
+
+        @if (Model.ShowQualifyingDrawSettings)
+        {
+            <div class="draw-settings-one-column ">
+                <h3>予選</h3>
+            </div>
+
+            <div class="draw-settings-one-column top-border">
+                <hr class="border" />
+            </div>
+
+            <div>ブロック数</div>
+            <div></div>
+            <div>ドロー数</div>
+            <div></div>
+            <div>総ドロー数</div>
+            <div></div>
+            <div>出場</div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div>合計</div>
+            <div></div>
+            <div>BYE</div>
+            <div></div>
+            <div>グレード</div>
+
+            <div>
+                <input type="number" asp-for="EnteredQualifyingNumberOfBlocks" />
+            </div>
+            <div class="text-center">×</div>
+            <div>
+                <select asp-for="SelectedQualifyingNumberOfDraws" asp-items="@Model.QualifyingNumberOfDraws"></select>
+            </div>
+            <div class="text-center">＝</div>
+            <div id="QualifyingTotalNumberOfDraws"></div>
+            <div>　</div>
+            <div id="QualifyingNumberOfEntries">@Model.QualifyingNumberOfEntries</div>
+            <div></div>
+            <div id="QualifyingNumberOfWinners"></div>
+            <div class="text-center">＝</div>
+            <div id="QualifyingTotalNumberOfEntries"></div>
+            <div>　</div>
+            <div id="QualifyingNumberOfByes"></div>
+            <div>　</div>
+            <div>
+                <select asp-for="SelectedQualifyingTournamentGrade" asp-items="@Model.QualifyingTournamentGrades"></select>
+            </div>
+
+            <div class="draw-settings-one-column bottom-border">
+                <hr class="border" />
+            </div>
+        }
+    </div>
+</form>
+
+@section CSS{
+    <style>
+        .draw-settings {
+            display: grid;
+            grid-template-columns: repeat(15, auto);
+        }
+
+        .draw-settings-one-column {
+            grid-column: 1 / 16;
+        }
+
+        .top-border {
+            padding-bottom: 5px;
+        }
+
+        .bottom-border {
+            padding-top: 5px;
+            padding-bottom: 15px;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        const baseUrl = "/DrawTables/@Model.TournamentId/@Model.TennisEventId";
+        const participationClassification = {
+            main: { id: 1, name: "Main" },
+            qualifying: { id: 2, name: "Qualifying" },
+        }
+        const calculateTotalNumberOfDraws = participationClassification => {
+            const numberOfBlocks = Number(document.getElementById(`Entered${participationClassification.name}NumberOfBlocks`).value);
+            const numberOfDraws = Number(document.getElementById(`Selected${participationClassification.name}NumberOfDraws`).value);
+            const totalNumberOfDraws = numberOfBlocks * numberOfDraws;
+            document.getElementById(`${participationClassification.name}TotalNumberOfDraws`).innerText = `${totalNumberOfDraws}`;
+            calculateNumberOfByes(participationClassification);
+        }
+        const calculateTotalNumberOfEntries = participationClassification => {
+            const numberOfEntries = Number(document.getElementById(`${participationClassification.name}NumberOfEntries`).innerText || 0);
+            const numberOfWinners = Number(document.getElementById(`${participationClassification.name}NumberOfWinners`).innerText || 0);
+            const totalNumberOfEntries = numberOfEntries + numberOfWinners;
+            document.getElementById(`${participationClassification.name}TotalNumberOfEntries`).innerText = `${totalNumberOfEntries}`;
+            calculateNumberOfByes(participationClassification);
+        }
+        const calculateNumberOfByes = participationClassification => {
+            const totalNumberOfDraws = Number(document.getElementById(`${participationClassification.name}TotalNumberOfDraws`).innerText || 0);
+            const totalNumberOfEntries = Number(document.getElementById(`${participationClassification.name}TotalNumberOfEntries`).innerText || 0);
+            const numberOfByes = totalNumberOfDraws - totalNumberOfEntries;
+            document.getElementById(`${participationClassification.name}NumberOfByes`).innerText = `${numberOfByes}`;
+        }
+        const handleQualifyingNumberOfBlocksChanged = () => {
+            document.getElementById("MainNumberOfWinners").innerText = document.getElementById("EnteredQualifyingNumberOfBlocks").value;
+            calculateTotalNumberOfEntries(participationClassification.main);
+        }
+        const registerDrawSettings = async (participationClassification) => {
+            const url = `${baseUrl}/draw_settings`;
+            const numberOfBlocks = Number(document.getElementById(`Entered${participationClassification.name}NumberOfBlocks`).value);
+            const numberOfDraws = Number(document.getElementById(`Selected${participationClassification.name}NumberOfDraws`).value);
+            const numberOfEntries = Number(document.getElementById(`${participationClassification.name}NumberOfEntries`).innerText || 0);
+            const numberOfWinners = Number(document.getElementById(`${participationClassification.name}NumberOfWinners`).innerText || 0);
+            const tournamentGrade = Number(document.getElementById(`Selected${participationClassification.name}TournamentGrade`).value);
+            const drawSettings = {
+                participationClassification: participationClassification.id,
+                numberOfBlocks,
+                numberOfDraws,
+                numberOfEntries,
+                numberOfWinners,
+                tournamentGrade
+            }
+            const option = {
+                method: "post",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify(drawSettings)
+            };
+            await fetch(url, option);
+        }
+
+        document.getElementById(`Selected${participationClassification.main.name}NumberOfDraws`).addEventListener("change", () => calculateTotalNumberOfDraws(participationClassification.main), false);
+        if ("@Model.ShowQualifyingDrawSettings" === "True") {
+            document.getElementById(`Entered${participationClassification.qualifying.name}NumberOfBlocks`).addEventListener("change", () => {
+                handleQualifyingNumberOfBlocksChanged();
+                calculateTotalNumberOfDraws(participationClassification.qualifying);
+            }, false);
+            document.getElementById(`Selected${participationClassification.qualifying.name}NumberOfDraws`).addEventListener("change", () => calculateTotalNumberOfDraws(participationClassification.qualifying), false);
+        }
+
+        [...document.querySelectorAll(".submit-button")].forEach(el => {
+            el.addEventListener("click", async (ev) => {
+                if ("@Model.ShowQualifyingDrawSettings" === "True") {
+                    await registerDrawSettings(participationClassification.qualifying);
+                }
+                await registerDrawSettings(participationClassification.main);
+                document.forms[0].action = ev.target.attributes.formaction.value;
+                document.forms[0].submit();
+            }, false);
+        });
+
+        (async () => {
+            if ("@Model.ShowQualifyingDrawSettings" === "True") {
+                calculateTotalNumberOfDraws(participationClassification.qualifying);
+                calculateTotalNumberOfEntries(participationClassification.qualifying);
+                calculateNumberOfByes(participationClassification.qualifying);
+            }
+            calculateTotalNumberOfDraws(participationClassification.main);
+            calculateTotalNumberOfEntries(participationClassification.main);
+            calculateNumberOfByes(participationClassification.main);
+        })()
+    </script>
+}

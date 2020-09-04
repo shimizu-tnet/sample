@@ -1,0 +1,46 @@
+﻿@model JuniorTennis.Mvc.Features.Identity.Roles.ShowRoleClaimsViewModel
+
+<h2>Claimの一覧・登録</h2>
+
+<h3>Role:@Model.RoleName</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>ClaimType</th>
+            <th>解除</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.RoleClaims)
+        {
+            <tr>
+                <td>
+                    @item.Type
+                </td>
+                <td>
+                    <form asp-controller="Roles" asp-action="DeleteRoleClaims">
+                        <input type="hidden" name="RoleName" value="@Model.RoleName" />
+                        <input type="hidden" name="ClaimType" value="@item.Type" />
+                        <input type="submit" value="解除" />
+                    </form>
+                    </td>
+            </tr>
+        }   
+    </tbody>
+</table>
+
+<div>
+    <div>
+        <section>
+            <form asp-controller="Roles" asp-action="AddRoleClaims">
+                <div>
+                    <label asp-for="ClaimType">Roleの追加</label>
+                    <select asp-for="ClaimType" asp-items="Model.AppClaimTypes"></select>
+                </div>
+                <input type="hidden" name="RoleName" value="@Model.RoleName" />
+                <input type="submit" value="登録" />
+            </form>
+        </section>
+    </div>
+</div>

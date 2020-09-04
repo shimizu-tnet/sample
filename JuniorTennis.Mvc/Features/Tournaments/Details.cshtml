@@ -1,0 +1,153 @@
+﻿@model JuniorTennis.Mvc.Features.Tournaments.DetailsViewModel
+
+@{
+    ViewData["Title"] = "大会管理 - 詳細";
+}
+
+<h2>詳細</h2>
+<div class="single-column-form">
+    <div class="horizontal-items right">
+        <a class="button-link" asp-action="Edit" asp-route-id="@Model.TournamentId">編集</a>
+        <a class="button-link" asp-action="Index">戻る</a>
+    </div>
+    <div class="form-item">
+        <label asp-for="TournamentName"></label>
+        <div class="horizontal-items">
+            <span>@Model.TournamentName</span>
+            <span>@Model.TournamentType</span>
+        </div>
+    </div>
+    <div class="form-item">
+        <label asp-for="RegistrationYear"></label>
+        <div class="horizontal-items">
+            <span>@Model.RegistrationYear</span>
+            <span>@Model.TypeOfYear</span>
+        </div>
+    </div>
+    <div class="form-item">
+        <label asp-for="AggregationMonth"></label>
+        <span>@Model.AggregationMonth</span>
+    </div>
+    <div class="form-item">
+        <label asp-for="TennisEvents"></label>
+        <table class="table fullwidth text-center overlay">
+            <thead>
+                <tr>
+                    <th rowspan="2">年齢</th>
+                    <th colspan="2">男子</th>
+                    <th colspan="2">女子</th>
+                </tr>
+                <tr>
+                    <th>シングルス</th>
+                    <th>ダブルス</th>
+                    <th>シングルス</th>
+                    <th>ダブルス</th>
+                </tr>
+            </thead>
+            <tr>
+                <th>17/18歳以下</th>
+                <td><input asp-for="@Model.TennisEvents[0].Selected" /></td>
+                <td><input asp-for="@Model.TennisEvents[1].Selected" /></td>
+                <td><input asp-for="@Model.TennisEvents[2].Selected" /></td>
+                <td><input asp-for="@Model.TennisEvents[3].Selected" /></td>
+            </tr>
+            <tr>
+                <th>15/16歳以下</th>
+                <td><input asp-for="@Model.TennisEvents[4].Selected" /></td>
+                <td><input asp-for="@Model.TennisEvents[5].Selected" /></td>
+                <td><input asp-for="@Model.TennisEvents[6].Selected" /></td>
+                <td><input asp-for="@Model.TennisEvents[7].Selected" /></td>
+            </tr>
+            <tr>
+                <th>13/14歳以下</th>
+                <td><input asp-for="@Model.TennisEvents[8].Selected" /></td>
+                <td><input asp-for="@Model.TennisEvents[9].Selected" /></td>
+                <td><input asp-for="@Model.TennisEvents[10].Selected" /></td>
+                <td><input asp-for="@Model.TennisEvents[11].Selected" /></td>
+            </tr>
+            <tr>
+                <th>11/12歳以下</th>
+                <td><input asp-for="@Model.TennisEvents[12].Selected" /></td>
+                <td><input asp-for="@Model.TennisEvents[13].Selected" /></td>
+                <td><input asp-for="@Model.TennisEvents[14].Selected" /></td>
+                <td><input asp-for="@Model.TennisEvents[15].Selected" /></td>
+            </tr>
+        </table>
+    </div>
+    <div class="form-item with-draw-menu">
+        <label asp-for="HoldingPeriod"></label>
+        <span>@Model.HoldingPeriod</span>
+    </div>
+    <div class="form-item with-draw-menu">
+        <label asp-for="HoldingDates"></label>
+        <table id="holding-dates-table" class="table fullwidth overlay">
+            <thead>
+                <tr>
+                    <th>月</th>
+                    <th>火</th>
+                    <th>水</th>
+                    <th>木</th>
+                    <th>金</th>
+                    <th>土</th>
+                    <th>日</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var holdingDates in Model.HoldingDates)
+                {
+                    <tr>
+                        @foreach (var holdingDate in holdingDates)
+                        {
+                            <td>
+                                <label>
+                                    <input asp-for="@holdingDate.Selected">
+                                    <span>@holdingDate.Text</span>
+                                </label>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="form-item with-draw-menu">
+        <label asp-for="Venue"></label>
+        <span>@Model.Venue</span>
+    </div>
+    <div class="form-item with-draw-menu">
+        <label asp-for="MethodOfPayment"></label>
+        <span>@Model.MethodOfPayment</span>
+    </div>
+    @if (Model.ShowEntryFee)
+    {
+        <div class="form-item with-draw-menu entry-fee">
+            <label asp-for="EntryFee"></label>
+            <span>@Model.EntryFee</span>
+        </div>
+    }
+    <div class="with-draw-menu">
+        <div class="form-item">
+            <label asp-for="TournamentEntryReceptionMailSubject"></label>
+            <p>@Model.TournamentEntryReceptionMailSubject</p>
+        </div>
+        <div class="form-item">
+            <label asp-for="TournamentEntryReceptionMailBody"></label>
+            <pre>@Model.TournamentEntryReceptionMailBody</pre>
+        </div>
+    </div>
+    <div class="form-item with-draw-menu">
+        <label asp-for="ApplicationPeriod"></label>
+        <span>@Model.ApplicationPeriod</span>
+    </div>
+    <div class="form-item with-draw-menu">
+        <label asp-for="Outline"></label>
+        <div class="wysiwyg-styles">
+            @Html.Raw(@Model.Outline)
+        </div>
+    </div>
+    <div class="form-item">
+        <form asp-action="Delete" asp-route-id="@Model.TournamentId">
+            <button type="submit" class="button">削除</button>
+        </form>
+    </div>
+</div>
