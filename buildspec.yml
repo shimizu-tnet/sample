@@ -3,8 +3,7 @@ version: 0.2
 phases:
   build:
     commands:
-      - dotnet restore
       - dotnet build
 artifacts:
   files:
-    - .\bin\Debug\netcoreapp3.1\*
+    - /codebuild/output/src867779053/src/JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/*
