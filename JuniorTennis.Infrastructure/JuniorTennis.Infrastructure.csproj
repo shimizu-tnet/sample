@@ -19,8 +19,4 @@
     <ProjectReference Include="..\JuniorTennis.Domain\JuniorTennis.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DataBase\Migrations\" />
-  </ItemGroup>
-
 </Project>

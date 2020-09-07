@@ -38,6 +38,7 @@ namespace JuniorTennis.Infrastructure.DataBase.Configurations
                .HasConversion(o => o.Value, o => new BirthDate(o))
                .HasSnakeCaseColumnName();
             builder.Property(o => o.TelephoneNumber).HasSnakeCaseColumnName();
+            builder.HasOne(o => o.Team);
             builder.Ignore(o => o.PlayerName);
             builder.Ignore(o => o.PlayerNameKana);
         }

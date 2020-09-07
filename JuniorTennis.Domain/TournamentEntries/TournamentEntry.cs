@@ -1,6 +1,4 @@
-﻿using JuniorTennis.Domain.Players;
-using JuniorTennis.Domain.Teams;
-using JuniorTennis.Domain.Tournaments;
+﻿using JuniorTennis.Domain.Tournaments;
 using JuniorTennis.SeedWork;
 using System;
 
@@ -22,24 +20,9 @@ namespace JuniorTennis.Domain.TournamentEntries
         public ReservationDate ReservationDate { get; private set; }
 
         /// <summary>
-        /// 申込団体一覧を取得します。
+        /// エントリー詳細を取得します。
         /// </summary>
-        public EntryTeams EntryTeams { get; private set; }
-
-        /// <summary>
-        /// 大会名を取得します。
-        /// </summary>
-        public TournamentName TournamentName { get; private set; }
-
-        /// <summary>
-        /// 種目を取得します。
-        /// </summary>
-        public TennisEvent TennisEvent { get; private set; }
-
-        /// <summary>
-        /// 申込選手一覧を取得します。
-        /// </summary>
-        public EntryPlayers EntryPlayers { get; private set; }
+        public EntryDetail EntryDetail { get; private set; }
 
         /// <summary>
         /// 参加費を取得します。
@@ -66,10 +49,7 @@ namespace JuniorTennis.Domain.TournamentEntries
         /// </summary>
         /// <param name="reservationNumber">予約番号。</param>
         /// <param name="reservationDate">予約受付日。</param>
-        /// <param name="teams">申込団体。</param>
-        /// <param name="tournamentName">大会名。</param>
-        /// <param name="tennisEvent">種目。</param>
-        /// <param name="players">申込選手。</param>
+        /// <param name="entryDetail">エントリー詳細。</param>
         /// <param name="entryFee">参加費。</param>
         /// <param name="receiptStatus">受領状況。</param>
         /// <param name="receivedDate">受領日。</param>
@@ -77,10 +57,7 @@ namespace JuniorTennis.Domain.TournamentEntries
         public TournamentEntry(
             string reservationNumber,
             DateTime reservationDate,
-            Team[] teams,
-            TournamentName tournamentName,
-            TennisEvent tennisEvent,
-            Player[] players,
+            EntryDetail entryDetail,
             EntryFee entryFee,
             ReceiptStatus receiptStatus,
             DateTime? receivedDate,
@@ -88,14 +65,16 @@ namespace JuniorTennis.Domain.TournamentEntries
         {
             this.ReservationNumber = new ReservationNumber(reservationNumber);
             this.ReservationDate = new ReservationDate(reservationDate);
-            this.EntryTeams = new EntryTeams(tennisEvent, teams);
-            this.TournamentName = tournamentName;
-            this.TennisEvent = tennisEvent;
-            this.EntryPlayers = new EntryPlayers(tennisEvent, players);
+            this.EntryDetail = entryDetail;
             this.EntryFee = entryFee;
             this.ReceiptStatus = receiptStatus;
             this.ReceivedDate = new ReceivedDate(receivedDate);
             this.Applicant = applicant;
         }
+
+        /// <summary>
+        /// 大会申込の新しいインスタンスを生成します。
+        /// </summary>
+        private TournamentEntry() { }
     }
 }

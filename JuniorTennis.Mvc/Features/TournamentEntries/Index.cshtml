@@ -9,7 +9,7 @@
     <form asp-action="SelectPlayer">
         <div class="form-item">
             <label asp-for="SelectedTournamentId"></label>
-            <select asp-for="SelectedTournamentId">
+            <select asp-for="SelectedTournamentId" asp-items="@Model.TournamentNames">
                 <option value="0">------大会を選択してください。------</option>
             </select>
         </div>
@@ -29,8 +29,85 @@
         </div>
         <div class="form-item">
             <div class="horizontal-items">
-                <button type="submit" class="button-primary">次へ</button>
+                <button type="submit" class="button-primary" id="SelectPlayers">次へ</button>
             </div>
         </div>
     </form>
 </div>
+<div id="LoadingDialog" class="dialog">
+    <p>読込中です</p>
+</div>
+
+@section Scripts{
+    <script src="~/js/dialog.js"></script>
+    <script>
+        /*** FUNCTIONS ***/
+        const isOptionSelected = value => `${value}` !== "0";
+        const showLaodingDialog = () => showDialog("LoadingDialog");
+        const closeLaodingDialog = () => closeDialog("LoadingDialog");
+
+        /*** EVENTS HANDLER ***/
+        const handleTournamentChanged = async e => {
+            showLaodingDialog();
+            const tournamentId = e.target.value;
+
+            const res = await fetch(`@Url.Action("selectedTournament")/${tournamentId}`);
+            const json = await res.json();
+            const { tennisEvents, holdingPeriod, applicationPeriod } = json;
+
+            const tennisEventsChildren = document.getElementById("SelectedTennisEventId");
+            removeChildren(tennisEventsChildren);
+
+            const option = document.createElement("option");
+            option.value = "0";
+            option.textContent =
+                isOptionSelected(document.getElementById("SelectedTournamentId").value)
+                    ? "------種目を選択してください。------"
+                    : "------大会を選択してください。------";
+            tennisEventsChildren.appendChild(option);
+
+            if (isOptionSelected(tournamentId)) {
+                tennisEvents.forEach(o => {
+                    const option = document.createElement("option");
+                    option.value = o.id;
+                    option.textContent = o.name;
+                    tennisEventsChildren.appendChild(option);
+                });
+            }
+
+            document.getElementById("HoldingPeriod").innerText
+                = isOptionSelected(tournamentId)
+                    ? holdingPeriod
+                    : "------大会を選択してください。------";
+
+            document.getElementById("ApplicationPeriod").innerText
+                = isOptionSelected(tournamentId)
+                    ? applicationPeriod
+                    : "------大会を選択してください。------";
+
+            closeLaodingDialog();
+        };
+
+        const handleSelectPlayersClicked = e => {
+            const tournaments = document.getElementById("SelectedTournamentId");
+            if (!isOptionSelected(tournaments.value)) {
+                alert("大会を選択してください。");
+                tournaments.focus();
+                e.preventDefault();
+                return false;
+            }
+
+            const tennisEvents = document.getElementById("SelectedTennisEventId");
+            if (!isOptionSelected(tennisEvents.value)) {
+                alert("種目を選択してください。");
+                tennisEvents.focus();
+                e.preventDefault();
+                return false;
+            }
+        }
+
+        /*** EVENTS LISTENER ***/
+        document.getElementById("SelectedTournamentId").addEventListener("change", handleTournamentChanged, false);
+        document.getElementById("SelectPlayers").addEventListener("click", handleSelectPlayersClicked, false);
+    </script>
+}

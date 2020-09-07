@@ -1,6 +1,7 @@
 ﻿using JuniorTennis.Domain.DrawTables;
 using JuniorTennis.Domain.Players;
 using JuniorTennis.Domain.Ranking;
+using JuniorTennis.Domain.Repositoies;
 using JuniorTennis.Domain.Teams;
 using JuniorTennis.Domain.TournamentEntries;
 using JuniorTennis.Domain.Tournaments;
@@ -78,7 +79,8 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                         new Point(1000 + entry))
                     },
                     canParticipationDates: tournament.HoldingDates.Select(o => new CanParticipationDate(o.Value)),
-                    receiptStatus: ReceiptStatus.Received))
+                    receiptStatus: ReceiptStatus.Received,
+                    usageFeatures: UsageFeatures.DrawTable))
                 .ToList();
 
             var mainSeedNumberLimit
@@ -107,7 +109,8 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                         new Point(1000 + entry))
                     },
                     canParticipationDates: tournament.HoldingDates.Select(o => new CanParticipationDate(o.Value)),
-                    receiptStatus: ReceiptStatus.Received))
+                    receiptStatus: ReceiptStatus.Received,
+                    usageFeatures: UsageFeatures.DrawTable))
                 .ToList();
 
             var entryDetails = Enumerable
@@ -122,13 +125,11 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                     var blockNumber = new BlockNumber(o);
                     var participationClassification = ParticipationClassification.Main;
                     var gameDate = new GameDate(tournament.HoldingDates.First().Value);
-                    var games = new Games();
 
                     return new Block(
                         blockNumber,
                         participationClassification,
                         gameDate,
-                        games,
                         mainDrawSettings
                     );
                 }));
@@ -139,13 +140,11 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                     var blockNumber = new BlockNumber(o);
                     var participationClassification = ParticipationClassification.Qualifying;
                     var gameDate = new GameDate(tournament.HoldingDates.First().Value);
-                    var games = new Games();
 
                     return new Block(
                         blockNumber,
                         participationClassification,
                         gameDate,
-                        games,
                         qualifyingDrawSettings
                     );
                 }));
@@ -325,7 +324,8 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                         new Point(1000 + entry))
                     },
                     canParticipationDates: tournament.HoldingDates.Select(o => new CanParticipationDate(o.Value)),
-                    receiptStatus: ReceiptStatus.Received))
+                    receiptStatus: ReceiptStatus.Received,
+                    usageFeatures: UsageFeatures.DrawTable))
                 .ToList();
 
             var mainSeedNumberLimit
@@ -354,7 +354,8 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                         new Point(1000 + entry))
                     },
                     canParticipationDates: tournament.HoldingDates.Select(o => new CanParticipationDate(o.Value)),
-                    receiptStatus: ReceiptStatus.Received))
+                    receiptStatus: ReceiptStatus.Received,
+                    usageFeatures: UsageFeatures.DrawTable))
                 .ToList();
 
             var entryDetails = Enumerable
@@ -369,13 +370,11 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                     var blockNumber = new BlockNumber(o);
                     var participationClassification = ParticipationClassification.Main;
                     var gameDate = new GameDate(tournament.HoldingDates.First().Value);
-                    var games = new Games();
 
                     return new Block(
                         blockNumber,
                         participationClassification,
                         gameDate,
-                        games,
                         mainDrawSettings
                     );
                 }));
@@ -386,13 +385,11 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                     var blockNumber = new BlockNumber(o);
                     var participationClassification = ParticipationClassification.Qualifying;
                     var gameDate = new GameDate(tournament.HoldingDates.First().Value);
-                    var games = new Games();
 
                     return new Block(
                         blockNumber,
                         participationClassification,
                         gameDate,
-                        games,
                         qualifyingDrawSettings
                     );
                 }));
@@ -598,7 +595,8 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                         new Point(1000 + entry))
                     },
                     canParticipationDates: tournament.HoldingDates.Select(o => new CanParticipationDate(o.Value)),
-                    receiptStatus: ReceiptStatus.Received))
+                    receiptStatus: ReceiptStatus.Received,
+                    usageFeatures: UsageFeatures.DrawTable))
                 .ToList();
 
             var mainSeedNumberLimit
@@ -627,7 +625,8 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                         new Point(1000 + entry))
                     },
                     canParticipationDates: tournament.HoldingDates.Select(o => new CanParticipationDate(o.Value)),
-                    receiptStatus: ReceiptStatus.Received))
+                    receiptStatus: ReceiptStatus.Received,
+                    usageFeatures: UsageFeatures.DrawTable))
                 .ToList();
 
             var entryDetails = Enumerable
@@ -642,13 +641,11 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                     var blockNumber = new BlockNumber(o);
                     var participationClassification = ParticipationClassification.Main;
                     var gameDate = new GameDate(tournament.HoldingDates.First().Value);
-                    var games = new Games();
 
                     return new Block(
                         blockNumber,
                         participationClassification,
                         gameDate,
-                        games,
                         mainDrawSettings
                     );
                 }));
@@ -659,13 +656,11 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                     var blockNumber = new BlockNumber(o);
                     var participationClassification = ParticipationClassification.Qualifying;
                     var gameDate = new GameDate(tournament.HoldingDates.First().Value);
-                    var games = new Games();
 
                     return new Block(
                         blockNumber,
                         participationClassification,
                         gameDate,
-                        games,
                         qualifyingDrawSettings
                     );
                 }));
@@ -911,7 +906,8 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                         new Point(1000 + entry))
                     },
                     canParticipationDates: tournament.HoldingDates.Select(o => new CanParticipationDate(o.Value)),
-                    receiptStatus: ReceiptStatus.Received))
+                    receiptStatus: ReceiptStatus.Received,
+                    usageFeatures: UsageFeatures.DrawTable))
                 .ToList();
 
             var mainSeedNumberLimit
@@ -940,7 +936,8 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                         new Point(1000 + entry))
                     },
                     canParticipationDates: tournament.HoldingDates.Select(o => new CanParticipationDate(o.Value)),
-                    receiptStatus: ReceiptStatus.Received))
+                    receiptStatus: ReceiptStatus.Received,
+                    usageFeatures: UsageFeatures.DrawTable))
                 .ToList();
 
             var entryDetails = Enumerable
@@ -955,13 +952,11 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                     var blockNumber = new BlockNumber(o);
                     var participationClassification = ParticipationClassification.Main;
                     var gameDate = new GameDate(tournament.HoldingDates.First().Value);
-                    var games = new Games();
 
                     return new Block(
                         blockNumber,
                         participationClassification,
                         gameDate,
-                        games,
                         mainDrawSettings
                     );
                 }));
@@ -972,13 +967,11 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                     var blockNumber = new BlockNumber(o);
                     var participationClassification = ParticipationClassification.Qualifying;
                     var gameDate = new GameDate(tournament.HoldingDates.First().Value);
-                    var games = new Games();
 
                     return new Block(
                         blockNumber,
                         participationClassification,
                         gameDate,
-                        games,
                         qualifyingDrawSettings
                     );
                 }));
@@ -1427,7 +1420,8 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                         new Point(1000 + entry))
                     },
                     canParticipationDates: tournament.HoldingDates.Select(o => new CanParticipationDate(o.Value)),
-                    receiptStatus: ReceiptStatus.Received))
+                    receiptStatus: ReceiptStatus.Received,
+                    usageFeatures: UsageFeatures.DrawTable))
                 .ToList();
 
             var mainSeedNumberLimit
@@ -1456,7 +1450,8 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                         new Point(1000 + entry))
                     },
                     canParticipationDates: tournament.HoldingDates.Select(o => new CanParticipationDate(o.Value)),
-                    receiptStatus: ReceiptStatus.Received))
+                    receiptStatus: ReceiptStatus.Received,
+                    usageFeatures: UsageFeatures.DrawTable))
                 .ToList();
 
             var entryDetails = Enumerable
@@ -1471,13 +1466,11 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                     var blockNumber = new BlockNumber(o);
                     var participationClassification = ParticipationClassification.Main;
                     var gameDate = new GameDate(tournament.HoldingDates.First().Value);
-                    var games = new Games();
 
                     return new Block(
                         blockNumber,
                         participationClassification,
                         gameDate,
-                        games,
                         mainDrawSettings
                     );
                 }));
@@ -1488,13 +1481,11 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
                     var blockNumber = new BlockNumber(o);
                     var participationClassification = ParticipationClassification.Qualifying;
                     var gameDate = new GameDate(tournament.HoldingDates.First().Value);
-                    var games = new Games();
 
                     return new Block(
                         blockNumber,
                         participationClassification,
                         gameDate,
-                        games,
                         qualifyingDrawSettings
                     );
                 }));
@@ -1739,6 +1730,380 @@ namespace JuniorTennis.DomainTests.UseCases.DrawTables
             Assert.Equal(drawA.PlayerClassification, PlayerClassification.Seed);
             Assert.Contains(drawA.SeedNumber, new SeedNumber[] { new SeedNumber(3), new SeedNumber(4) });
             Assert.Equal(drawB.PlayerClassification, PlayerClassification.Bye);
+        }
+
+        [Fact]
+        public async Task ドロー表初期化及び枠の自動設定()
+        {
+            #region テストデータ
+            var tournament = new Tournament(
+                new TournamentName("ジュニア選手権"),
+                TournamentType.WithDraw,
+                new RegistrationYear(new DateTime(2020, 4, 1)),
+                TypeOfYear.Odd,
+                new AggregationMonth(new DateTime(2020, 6, 1)),
+                new List<TennisEvent>() { TennisEvent.FromId("1_1_1"), TennisEvent.FromId("1_1_2") },
+                new HoldingPeriod(new DateTime(2020, 6, 10), new DateTime(2020, 6, 20)),
+                new List<HoldingDate>() { new HoldingDate(new DateTime(2020, 6, 12)), new HoldingDate(new DateTime(2020, 6, 13)) },
+                new Venue("日本テニスコート"),
+                new EntryFee(100),
+                MethodOfPayment.PrePayment,
+                new ApplicationPeriod(new DateTime(2020, 5, 1), new DateTime(2020, 5, 31)),
+                new Outline("大会名：ジュニア選手　権場所：日本テニスコート"),
+                "メール本文",
+                "メール件名",
+                1
+            )
+            {
+                Id = 1
+            };
+
+            var qualifyingDrawSettings = new DrawSettings(
+                numberOfBlocks: new NumberOfBlocks(2),
+                numberOfDraws: new NumberOfDraws(8),
+                numberOfEntries: new NumberOfEntries(6),
+                numberOfWinners: new NumberOfWinners(0),
+                tournamentGrade: TournamentGrade.D);
+
+            var mainDrawSettings = new DrawSettings(
+                numberOfBlocks: new NumberOfBlocks(1),
+                numberOfDraws: new NumberOfDraws(8),
+                numberOfEntries: new NumberOfEntries(6),
+                numberOfWinners: new NumberOfWinners(qualifyingDrawSettings.NumberOfBlocks.Value),
+                tournamentGrade: TournamentGrade.B
+            );
+
+            var random = new Random();
+            var entryNumber = 1;
+
+            var qualifyingSeedNumberLimit = qualifyingDrawSettings.NumberOfBlocks.Value * 2;
+            var qualifyingEntryDetails = Enumerable
+                .Range(1, qualifyingDrawSettings.NumberOfEntries.Value)
+                .Select((entry, index) => new EntryDetail(
+                    entryNumber: new EntryNumber(entryNumber++),
+                    participationClassification: ParticipationClassification.Qualifying,
+                    seedNumber: new SeedNumber(entry <= qualifyingSeedNumberLimit ? entry : 0),
+                    entryPlayers: new EntryPlayer[] { new EntryPlayer(
+                        new TeamCode($"C{entry:0000}A"),
+                        new TeamName($"TEAM{entry:0000}A"),
+                        new TeamAbbreviatedName($"TEAM{entry:0000}A"),
+                        new PlayerCode($"CD{entry:0000}A"),
+                        new PlayerFamilyName("NAME"),
+                        new PlayerFirstName($"{entry:0000}A"),
+                        new Point(1000 + entry))
+                    },
+                    canParticipationDates: tournament.HoldingDates.Select(o => new CanParticipationDate(o.Value)),
+                    receiptStatus: ReceiptStatus.Received,
+                    usageFeatures: UsageFeatures.DrawTable))
+                .ToList();
+
+            var mainSeedNumberLimit = 2;
+            var mainEntryDetails = Enumerable
+                .Range(1, mainDrawSettings.NumberOfEntries.Value)
+                .Select((entry, index) => new EntryDetail(
+                    entryNumber: new EntryNumber(entryNumber++),
+                    participationClassification: ParticipationClassification.Main,
+                    seedNumber: new SeedNumber((entry <= mainSeedNumberLimit ? entry : 0)),
+                    entryPlayers: new EntryPlayer[] { new EntryPlayer(
+                        new TeamCode($"C{entry:0000}A"),
+                        new TeamName($"TEAM{entry:0000}A"),
+                        new TeamAbbreviatedName($"TEAM{entry:0000}A"),
+                        new PlayerCode($"CD{entry:0000}A"),
+                        new PlayerFamilyName("NAME"),
+                        new PlayerFirstName($"{entry:0000}A"),
+                        new Point(1000 + entry))
+                    },
+                    canParticipationDates: tournament.HoldingDates.Select(o => new CanParticipationDate(o.Value)),
+                    receiptStatus: ReceiptStatus.Received,
+                    usageFeatures: UsageFeatures.DrawTable))
+                .ToList();
+
+            var entryDetails = Enumerable
+                .Concat(qualifyingEntryDetails, mainEntryDetails)
+                .ToList();
+
+            var blocks_temp = new List<Block>() {
+                new Block(
+                    new BlockNumber(0),
+                    ParticipationClassification.Main,
+                    new GameDate(tournament.HoldingDates.First().Value),
+                    mainDrawSettings),
+                new Block(
+                        new BlockNumber(1),
+                        ParticipationClassification.Qualifying,
+                        new GameDate(tournament.HoldingDates.First().Value),
+                        qualifyingDrawSettings),
+                new Block(
+                        new BlockNumber(2),
+                        ParticipationClassification.Qualifying,
+                        new GameDate(tournament.HoldingDates.First().Value),
+                        qualifyingDrawSettings),
+            };
+            var blocks = new Blocks(blocks_temp);
+
+            var drawTable = new DrawTable(
+                tournament: tournament,
+                tennisEvent: tournament.TennisEvents.First(),
+                tournamentFormat: TournamentFormat.WithQualifying,
+                eligiblePlayersType: EligiblePlayersType.AllPlayers,
+                entryDetails: entryDetails,
+                mainDrawSettings: mainDrawSettings,
+                qualifyingDrawSettings: qualifyingDrawSettings,
+                blocks: blocks,
+                editStatus: EditStatus.Editing
+            );
+            #endregion テストデータ
+
+            Assert.Null(drawTable.Blocks[0].Games);
+            Assert.Null(drawTable.Blocks[1].Games);
+            Assert.Null(drawTable.Blocks[2].Games);
+
+            var mockDrawTableRepository = new Mock<IDrawTableRepository>();
+            var mockTournamentRepository = new Mock<ITournamentRepository>();
+            var mockTournamentEntryRepository = new Mock<ITournamentEntryRepository>();
+            var mockRankingRepository = new Mock<IRankingRepository>();
+
+            mockDrawTableRepository.Setup(r => r.FindByDtoAsync(It.IsAny<DrawTableRepositoryDto>(), false))
+                .ReturnsAsync(drawTable)
+                .Verifiable();
+
+            var usecase = new DrawTableUseCase(
+                mockDrawTableRepository.Object,
+                mockTournamentRepository.Object,
+                mockTournamentEntryRepository.Object,
+                mockRankingRepository.Object
+            );
+
+            // 予選ドローの初期化
+            await usecase.InitializeDrawTable(It.IsAny<int>(), It.IsAny<string>(), ParticipationClassification.Qualifying.Id);
+            Assert.Null(drawTable.Blocks[0].Games);
+            Assert.NotNull(drawTable.Blocks[1].Games);
+            Assert.Equal(drawTable.Blocks[1].Games.Count, qualifyingDrawSettings.NumberOfDraws.Value / 2);
+            Assert.NotNull(drawTable.Blocks[2].Games);
+            Assert.Equal(drawTable.Blocks[2].Games.Count, qualifyingDrawSettings.NumberOfDraws.Value / 2);
+
+            // 本戦ドローの初期化
+            await usecase.InitializeDrawTable(It.IsAny<int>(), It.IsAny<string>(), ParticipationClassification.Main.Id);
+            Assert.NotNull(drawTable.Blocks[0].Games);
+            Assert.Equal(drawTable.Blocks[0].Games.Count, mainDrawSettings.NumberOfDraws.Value / 2);
+            Assert.NotNull(drawTable.Blocks[1].Games);
+            Assert.Equal(drawTable.Blocks[1].Games.Count, qualifyingDrawSettings.NumberOfDraws.Value / 2);
+            Assert.NotNull(drawTable.Blocks[2].Games);
+            Assert.Equal(drawTable.Blocks[2].Games.Count, qualifyingDrawSettings.NumberOfDraws.Value / 2);
+
+            var drawNumberSettings = DrawNumberSettingsRepository.FindByNumberOfDraws(qualifyingDrawSettings.NumberOfDraws.Value);
+
+            // シード枠の自動設定
+            await usecase.ExecuteSeedFrameSetting(It.IsAny<int>(), It.IsAny<string>(), ParticipationClassification.Qualifying.Id);
+
+            // DrawNumber
+            Assert.Equal(drawNumberSettings[0].DrawNumber, drawTable.Blocks[1].Games[0].Opponents[0].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[1].DrawNumber, drawTable.Blocks[1].Games[0].Opponents[1].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[2].DrawNumber, drawTable.Blocks[1].Games[1].Opponents[0].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[3].DrawNumber, drawTable.Blocks[1].Games[1].Opponents[1].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[4].DrawNumber, drawTable.Blocks[1].Games[2].Opponents[0].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[5].DrawNumber, drawTable.Blocks[1].Games[2].Opponents[1].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[6].DrawNumber, drawTable.Blocks[1].Games[3].Opponents[0].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[7].DrawNumber, drawTable.Blocks[1].Games[3].Opponents[1].DrawNumber.Value);
+
+            // SeedLevel
+            Assert.Equal(drawNumberSettings[0].SeedLevel, drawTable.Blocks[1].Games[0].Opponents[0].SeedLevel.Value);
+            Assert.Equal(drawNumberSettings[1].SeedLevel, drawTable.Blocks[1].Games[0].Opponents[1].SeedLevel.Value);
+            Assert.Equal(drawNumberSettings[2].SeedLevel, drawTable.Blocks[1].Games[1].Opponents[0].SeedLevel.Value);
+            Assert.Equal(drawNumberSettings[3].SeedLevel, drawTable.Blocks[1].Games[1].Opponents[1].SeedLevel.Value);
+            Assert.Equal(drawNumberSettings[4].SeedLevel, drawTable.Blocks[1].Games[2].Opponents[0].SeedLevel.Value);
+            Assert.Equal(drawNumberSettings[5].SeedLevel, drawTable.Blocks[1].Games[2].Opponents[1].SeedLevel.Value);
+            Assert.Equal(drawNumberSettings[6].SeedLevel, drawTable.Blocks[1].Games[3].Opponents[0].SeedLevel.Value);
+            Assert.Equal(drawNumberSettings[7].SeedLevel, drawTable.Blocks[1].Games[3].Opponents[1].SeedLevel.Value);
+
+            // AssignOrder
+            Assert.Equal(drawNumberSettings[0].AssignOrder, drawTable.Blocks[1].Games[0].Opponents[0].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[1].AssignOrder, drawTable.Blocks[1].Games[0].Opponents[1].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[2].AssignOrder, drawTable.Blocks[1].Games[1].Opponents[0].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[3].AssignOrder, drawTable.Blocks[1].Games[1].Opponents[1].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[4].AssignOrder, drawTable.Blocks[1].Games[2].Opponents[0].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[5].AssignOrder, drawTable.Blocks[1].Games[2].Opponents[1].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[6].AssignOrder, drawTable.Blocks[1].Games[3].Opponents[0].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[7].AssignOrder, drawTable.Blocks[1].Games[3].Opponents[1].AssignOrder.Value);
+
+            // PlayerClassification
+            Assert.Equal(PlayerClassification.Seed.Id, drawTable.Blocks[1].Games[0].Opponents[0].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[0].Opponents[1].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[1].Opponents[0].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[1].Opponents[1].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[2].Opponents[0].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[2].Opponents[1].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[3].Opponents[0].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.Seed.Id, drawTable.Blocks[1].Games[3].Opponents[1].FramePlayerClassification.Id);
+
+            // IsManuallySettingFrame
+            Assert.False(drawTable.Blocks[1].Games[0].Opponents[0].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[0].Opponents[1].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[1].Opponents[0].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[1].Opponents[1].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[2].Opponents[0].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[2].Opponents[1].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[3].Opponents[0].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[3].Opponents[1].IsManuallySettingFrame);
+
+            // BYE枠の自動設定
+            await usecase.ExecuteByeFrameSetting(It.IsAny<int>(), It.IsAny<string>(), ParticipationClassification.Qualifying.Id);
+
+            // DrawNumber
+            Assert.Equal(drawNumberSettings[0].DrawNumber, drawTable.Blocks[1].Games[0].Opponents[0].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[1].DrawNumber, drawTable.Blocks[1].Games[0].Opponents[1].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[2].DrawNumber, drawTable.Blocks[1].Games[1].Opponents[0].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[3].DrawNumber, drawTable.Blocks[1].Games[1].Opponents[1].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[4].DrawNumber, drawTable.Blocks[1].Games[2].Opponents[0].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[5].DrawNumber, drawTable.Blocks[1].Games[2].Opponents[1].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[6].DrawNumber, drawTable.Blocks[1].Games[3].Opponents[0].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[7].DrawNumber, drawTable.Blocks[1].Games[3].Opponents[1].DrawNumber.Value);
+
+            // SeedLevel
+            Assert.Equal(drawNumberSettings[0].SeedLevel, drawTable.Blocks[1].Games[0].Opponents[0].SeedLevel.Value);
+            Assert.Equal(drawNumberSettings[1].SeedLevel, drawTable.Blocks[1].Games[0].Opponents[1].SeedLevel.Value);
+            Assert.Equal(drawNumberSettings[2].SeedLevel, drawTable.Blocks[1].Games[1].Opponents[0].SeedLevel.Value);
+            Assert.Equal(drawNumberSettings[3].SeedLevel, drawTable.Blocks[1].Games[1].Opponents[1].SeedLevel.Value);
+            Assert.Equal(drawNumberSettings[4].SeedLevel, drawTable.Blocks[1].Games[2].Opponents[0].SeedLevel.Value);
+            Assert.Equal(drawNumberSettings[5].SeedLevel, drawTable.Blocks[1].Games[2].Opponents[1].SeedLevel.Value);
+            Assert.Equal(drawNumberSettings[6].SeedLevel, drawTable.Blocks[1].Games[3].Opponents[0].SeedLevel.Value);
+            Assert.Equal(drawNumberSettings[7].SeedLevel, drawTable.Blocks[1].Games[3].Opponents[1].SeedLevel.Value);
+
+            // AssignOrder
+            Assert.Equal(drawNumberSettings[0].AssignOrder, drawTable.Blocks[1].Games[0].Opponents[0].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[1].AssignOrder, drawTable.Blocks[1].Games[0].Opponents[1].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[2].AssignOrder, drawTable.Blocks[1].Games[1].Opponents[0].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[3].AssignOrder, drawTable.Blocks[1].Games[1].Opponents[1].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[4].AssignOrder, drawTable.Blocks[1].Games[2].Opponents[0].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[5].AssignOrder, drawTable.Blocks[1].Games[2].Opponents[1].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[6].AssignOrder, drawTable.Blocks[1].Games[3].Opponents[0].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[7].AssignOrder, drawTable.Blocks[1].Games[3].Opponents[1].AssignOrder.Value);
+
+            // PlayerClassification
+            Assert.Equal(PlayerClassification.Seed.Id, drawTable.Blocks[1].Games[0].Opponents[0].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.Bye.Id, drawTable.Blocks[1].Games[0].Opponents[1].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[1].Opponents[0].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[1].Opponents[1].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[2].Opponents[0].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[2].Opponents[1].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.Bye.Id, drawTable.Blocks[1].Games[3].Opponents[0].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.Seed.Id, drawTable.Blocks[1].Games[3].Opponents[1].FramePlayerClassification.Id);
+
+            // IsManuallySettingFrame
+            Assert.False(drawTable.Blocks[1].Games[0].Opponents[0].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[0].Opponents[1].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[1].Opponents[0].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[1].Opponents[1].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[2].Opponents[0].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[2].Opponents[1].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[3].Opponents[0].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[3].Opponents[1].IsManuallySettingFrame);
+
+            // シード枠の割当解除
+            await usecase.ExecuteSeedFrameRemove(It.IsAny<int>(), It.IsAny<string>(), ParticipationClassification.Qualifying.Id);
+
+            // DrawNumber
+            Assert.Equal(drawNumberSettings[0].DrawNumber, drawTable.Blocks[1].Games[0].Opponents[0].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[1].DrawNumber, drawTable.Blocks[1].Games[0].Opponents[1].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[2].DrawNumber, drawTable.Blocks[1].Games[1].Opponents[0].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[3].DrawNumber, drawTable.Blocks[1].Games[1].Opponents[1].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[4].DrawNumber, drawTable.Blocks[1].Games[2].Opponents[0].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[5].DrawNumber, drawTable.Blocks[1].Games[2].Opponents[1].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[6].DrawNumber, drawTable.Blocks[1].Games[3].Opponents[0].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[7].DrawNumber, drawTable.Blocks[1].Games[3].Opponents[1].DrawNumber.Value);
+
+            // SeedLevel
+            Assert.Equal(0, drawTable.Blocks[1].Games[0].Opponents[0].SeedLevel.Value);
+            Assert.Equal(0, drawTable.Blocks[1].Games[0].Opponents[1].SeedLevel.Value);
+            Assert.Equal(0, drawTable.Blocks[1].Games[1].Opponents[0].SeedLevel.Value);
+            Assert.Equal(0, drawTable.Blocks[1].Games[1].Opponents[1].SeedLevel.Value);
+            Assert.Equal(0, drawTable.Blocks[1].Games[2].Opponents[0].SeedLevel.Value);
+            Assert.Equal(0, drawTable.Blocks[1].Games[2].Opponents[1].SeedLevel.Value);
+            Assert.Equal(0, drawTable.Blocks[1].Games[3].Opponents[0].SeedLevel.Value);
+            Assert.Equal(0, drawTable.Blocks[1].Games[3].Opponents[1].SeedLevel.Value);
+
+            // AssignOrder
+            Assert.Equal(drawNumberSettings[0].AssignOrder, drawTable.Blocks[1].Games[0].Opponents[0].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[1].AssignOrder, drawTable.Blocks[1].Games[0].Opponents[1].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[2].AssignOrder, drawTable.Blocks[1].Games[1].Opponents[0].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[3].AssignOrder, drawTable.Blocks[1].Games[1].Opponents[1].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[4].AssignOrder, drawTable.Blocks[1].Games[2].Opponents[0].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[5].AssignOrder, drawTable.Blocks[1].Games[2].Opponents[1].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[6].AssignOrder, drawTable.Blocks[1].Games[3].Opponents[0].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[7].AssignOrder, drawTable.Blocks[1].Games[3].Opponents[1].AssignOrder.Value);
+
+            // PlayerClassification
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[0].Opponents[0].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.Bye.Id, drawTable.Blocks[1].Games[0].Opponents[1].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[1].Opponents[0].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[1].Opponents[1].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[2].Opponents[0].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[2].Opponents[1].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.Bye.Id, drawTable.Blocks[1].Games[3].Opponents[0].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[3].Opponents[1].FramePlayerClassification.Id);
+
+            // IsManuallySettingFrame
+            Assert.False(drawTable.Blocks[1].Games[0].Opponents[0].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[0].Opponents[1].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[1].Opponents[0].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[1].Opponents[1].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[2].Opponents[0].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[2].Opponents[1].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[3].Opponents[0].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[3].Opponents[1].IsManuallySettingFrame);
+
+            // BYE枠の割当解除
+            await usecase.ExecuteByeFrameRemove(It.IsAny<int>(), It.IsAny<string>(), ParticipationClassification.Qualifying.Id);
+
+            // DrawNumber
+            Assert.Equal(drawNumberSettings[0].DrawNumber, drawTable.Blocks[1].Games[0].Opponents[0].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[1].DrawNumber, drawTable.Blocks[1].Games[0].Opponents[1].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[2].DrawNumber, drawTable.Blocks[1].Games[1].Opponents[0].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[3].DrawNumber, drawTable.Blocks[1].Games[1].Opponents[1].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[4].DrawNumber, drawTable.Blocks[1].Games[2].Opponents[0].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[5].DrawNumber, drawTable.Blocks[1].Games[2].Opponents[1].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[6].DrawNumber, drawTable.Blocks[1].Games[3].Opponents[0].DrawNumber.Value);
+            Assert.Equal(drawNumberSettings[7].DrawNumber, drawTable.Blocks[1].Games[3].Opponents[1].DrawNumber.Value);
+
+            // SeedLevel
+            Assert.Equal(0, drawTable.Blocks[1].Games[0].Opponents[0].SeedLevel.Value);
+            Assert.Equal(0, drawTable.Blocks[1].Games[0].Opponents[1].SeedLevel.Value);
+            Assert.Equal(0, drawTable.Blocks[1].Games[1].Opponents[0].SeedLevel.Value);
+            Assert.Equal(0, drawTable.Blocks[1].Games[1].Opponents[1].SeedLevel.Value);
+            Assert.Equal(0, drawTable.Blocks[1].Games[2].Opponents[0].SeedLevel.Value);
+            Assert.Equal(0, drawTable.Blocks[1].Games[2].Opponents[1].SeedLevel.Value);
+            Assert.Equal(0, drawTable.Blocks[1].Games[3].Opponents[0].SeedLevel.Value);
+            Assert.Equal(0, drawTable.Blocks[1].Games[3].Opponents[1].SeedLevel.Value);
+
+            // AssignOrder
+            Assert.Equal(drawNumberSettings[0].AssignOrder, drawTable.Blocks[1].Games[0].Opponents[0].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[1].AssignOrder, drawTable.Blocks[1].Games[0].Opponents[1].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[2].AssignOrder, drawTable.Blocks[1].Games[1].Opponents[0].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[3].AssignOrder, drawTable.Blocks[1].Games[1].Opponents[1].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[4].AssignOrder, drawTable.Blocks[1].Games[2].Opponents[0].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[5].AssignOrder, drawTable.Blocks[1].Games[2].Opponents[1].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[6].AssignOrder, drawTable.Blocks[1].Games[3].Opponents[0].AssignOrder.Value);
+            Assert.Equal(drawNumberSettings[7].AssignOrder, drawTable.Blocks[1].Games[3].Opponents[1].AssignOrder.Value);
+
+            // PlayerClassification
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[0].Opponents[0].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[0].Opponents[1].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[1].Opponents[0].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[1].Opponents[1].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[2].Opponents[0].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[2].Opponents[1].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[3].Opponents[0].FramePlayerClassification.Id);
+            Assert.Equal(PlayerClassification.General.Id, drawTable.Blocks[1].Games[3].Opponents[1].FramePlayerClassification.Id);
+
+            // IsManuallySettingFrame
+            Assert.False(drawTable.Blocks[1].Games[0].Opponents[0].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[0].Opponents[1].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[1].Opponents[0].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[1].Opponents[1].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[2].Opponents[0].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[2].Opponents[1].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[3].Opponents[0].IsManuallySettingFrame);
+            Assert.False(drawTable.Blocks[1].Games[3].Opponents[1].IsManuallySettingFrame);
         }
     }
 }

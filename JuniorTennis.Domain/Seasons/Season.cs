@@ -104,12 +104,22 @@ namespace JuniorTennis.Domain.Seasons
         }
 
         /// <summary>
-        /// 団体種別に応じた選手登録料を取得します。
+        /// 選手登録料を取得します。
         /// </summary>
         /// <param name="teamType">団体種別</param>
-        public PlayerRegistrationFee GetPlayerRegistrationFee(TeamType teamType)
+        public PlayerRegistrationFee GetPlayerRegistrationFee()
         {
-            return teamType == TeamType.School ? new PlayerRegistrationFee(0) : this.PlayerRegistrationFee;
+            return this.PlayerRegistrationFee;
+        }
+
+        /// <summary>
+        /// 今年度の登録有無に応じた選手移籍料を取得します。
+        /// </summary>
+        /// <param name="isRegisteredThisSeason">今年度既に登録されている/いない</param>
+        /// <returns>選手移籍料。</returns>
+        public PlayerRegistrationFee GetPlayerTradeFee(bool isRegisteredThisSeason)
+        {
+            return isRegisteredThisSeason ? new PlayerRegistrationFee(this.PlayerTradeFee.Value) : this.PlayerRegistrationFee;
         }
     }
 }

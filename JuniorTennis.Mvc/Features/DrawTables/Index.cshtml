@@ -87,7 +87,7 @@
             });
         }
         const fetchTennisEventsAsync = async tournamentId => {
-            const res = await fetch(`DrawTables/${tournamentId}/tennis_events`);
+            const res = await fetch(`/DrawTables/${tournamentId}/tennis_events`);
             const json = await res.json();
 
             const tennisEvents = document.getElementById("SelectedTennisEventId");
@@ -114,7 +114,7 @@
             document.getElementById("NumberOfEntries").innerText = count === 0 ? "" : `${count} 名`;
         }
         const fetchTournamentFormatAsync = async (tournamentId, tennisEventId) => {
-            const res = await fetch(`DrawTables/${tournamentId}/${tennisEventId}/tournament_format`);
+            const res = await fetch(`/DrawTables/${tournamentId}/${tennisEventId}/tournament_format`);
             const json = await res.json();
             existsDrawTable = json.existsDrawTable;
             selectedTournamentFormatId = json.tournamentFormatId;

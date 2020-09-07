@@ -1,4 +1,5 @@
-﻿using JuniorTennis.SeedWork;
+﻿using JuniorTennis.Domain.TournamentEntries;
+using JuniorTennis.SeedWork;
 using System.Linq;
 
 namespace JuniorTennis.Domain.DrawTables
@@ -275,30 +276,34 @@ namespace JuniorTennis.Domain.DrawTables
         /// <summary>
         /// シード枠に変更します。
         /// </summary>
-        public void AsSeedFrame()
+        /// <param name="seedLevel">アサインレベル。</param>
+        /// <param name="isManual">手動設定フラグ。</param>
+        public void AsSeedFrame(SeedLevel seedLevel = null, bool isManual = false)
         {
             this.FramePlayerClassification = PlayerClassification.Seed;
-            this.IsManuallySettingFrame = true;
-            this.SeedLevel = new SeedLevel(Block.LowPriorityLevelSeed);
+            this.IsManuallySettingFrame = isManual;
+            this.SeedLevel = seedLevel ?? new SeedLevel(Block.LowPriorityLevelSeed);
         }
 
         /// <summary>
         /// 一般枠に変更します。
         /// </summary>
-        public void AsGeneralFrame()
+        /// <param name="isManual">手動設定フラグ。</param>
+        public void AsGeneralFrame(bool isManual = false)
         {
             this.FramePlayerClassification = PlayerClassification.General;
-            this.IsManuallySettingFrame = true;
+            this.IsManuallySettingFrame = isManual;
             this.SeedLevel = new SeedLevel(0);
         }
 
         /// <summary>
         /// BYE 枠に変更します。
         /// </summary>
-        public void AsByeFrame()
+        /// <param name="isManual">手動設定フラグ。</param>
+        public void AsByeFrame(bool isManual = false)
         {
             this.FramePlayerClassification = PlayerClassification.Bye;
-            this.IsManuallySettingFrame = true;
+            this.IsManuallySettingFrame = isManual;
             this.SeedLevel = new SeedLevel(0);
         }
         #endregion methods

@@ -62,6 +62,11 @@ namespace JuniorTennis.Domain.RequestPlayers
         public Category Category { get; private set; }
 
         /// <summary>
+        /// 申請種別を取得します。
+        /// </summary>
+        public RequestType RequestType { get; private set; }
+
+        /// <summary>
         /// 受領状態を取得します。
         /// </summary>
         public ApproveState ApproveState { get; private set; }
@@ -88,6 +93,9 @@ namespace JuniorTennis.Domain.RequestPlayers
         /// <param name="teamId">団体id。</param>
         /// <param name="seasonId">年度id。</param>
         /// <param name="reservationNumber">予約番号。</param>
+        /// <param name="reservationBranchNumber">予約番号枝番。</param>
+        /// <param name="category">カテゴリー。</param>
+        /// <param name="requestType">申請種別。</param>
         /// <param name="approveState">受領状態。</param>
         /// <param name="requestedDateTime">申請受付日。</param>
         /// <param name="playerRegistrationFee">選手登録料。</param>
@@ -99,6 +107,7 @@ namespace JuniorTennis.Domain.RequestPlayers
             ReservationNumber reservationNumber,
             int reservationBranchNumber,
             Category category,
+            RequestType requestType,
             ApproveState approveState,
             DateTime requestedDateTime,
             PlayerRegistrationFee playerRegistrationFee,
@@ -111,6 +120,7 @@ namespace JuniorTennis.Domain.RequestPlayers
             this.ReservationNumber = reservationNumber;
             this.ReservationBranchNumber = reservationBranchNumber;
             this.Category = category;
+            this.RequestType = requestType;
             this.ApproveState = approveState;
             this.RequestedDateTime = requestedDateTime;
             this.PlayerRegistrationFee = playerRegistrationFee;

@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Routing;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -70,6 +73,43 @@ namespace JuniorTennis.MvcTests
                 new Mock<ILogger<SignInManager<ApplicationUser>>>().Object,
                 new Mock<IAuthenticationSchemeProvider>().Object,
                 new Mock<IUserConfirmation<ApplicationUser>>().Object);
+        }
+
+        /// <summary>
+        /// IUrlHelperのモックを生成します。
+        /// </summary>
+        /// <param name="context">HTTPリクエストの一部として選択されたアクションを実行するためのコンテキストオブジェクト。</param>
+        /// <see cref="https://github.com/dotnet/aspnetcore/blob/4c3996f8241df09ad811008111440e8c6cf20c9d/src/Mvc/Mvc.Core/test/Routing/UrlHelperExtensionsTest.cs#L856"/>
+        /// <returns>IUrlHelperのモック</returns>
+        public static Mock<IUrlHelper> MakeIUrlHelper(ActionContext context = null)
+        {
+            if (context == null)
+            {
+                context = new ActionContext
+                {
+                    ActionDescriptor = new ActionDescriptor
+                    {
+                        RouteValues = new Dictionary<string, string>
+                        {
+                            { "page", "/Page" },
+                        },
+                    },
+                    RouteData = new RouteData
+                    {
+                        Values =
+                        {
+                            [ "page" ] = "/Page"
+                        },
+                    },
+                    HttpContext = new DefaultHttpContext()
+                };
+            }
+
+            var urlHelper = new Mock<IUrlHelper>();
+            urlHelper
+                .SetupGet(h => h.ActionContext)
+                .Returns(context);
+            return urlHelper;
         }
     }
 }

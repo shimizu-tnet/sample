@@ -188,28 +188,6 @@ namespace JuniorTennis.Mvc.Features.Players
             }
         }
 
-        #region WEB API
-        /// <summary>
-        /// 選手一覧を取得します。
-        /// </summary>
-        /// <param name="playerName">氏名。</param>
-        /// <param name="teamTypes">カテゴリー。</param>
-        /// <param name="teamName">性別。</param>
-        /// <returns>IndexViewModel。</returns>
-        [HttpGet]
-        [ActionName("list")]
-        public async Task<ActionResult> GetTeams(string playerName, int[] category, int[] gender)
-        {
-            var viewModel = await this.CreateIndexViewModel(playerName, category, gender);
-            if (!viewModel.Players.Any())
-            {
-                return new EmptyResult();
-            }
-
-            return this.View("_PlayersTable", viewModel.Players);
-        }
-        #endregion
-
         private async Task<IndexViewModel> CreateIndexViewModel(string playerName = null, int[] category = null, int[] gender = null)
         {
             var result = await this.playerUseCase.SearchPlayers(playerName, category, gender);
@@ -257,5 +235,90 @@ namespace JuniorTennis.Mvc.Features.Players
             await this.playerUseCase.AddRequestPlayers(dtos, teamId);
             return this.RedirectToAction(nameof(RequestState));
         }
+
+        /// <summary>
+        /// 選手所属変更申込画面を表示します。
+        /// </summary>
+        /// <returns>選手所属変更申込画面。</returns>
+        [HttpGet]
+        public ActionResult Transfer()
+        {
+            var viewModel = new TransferViewModel(new List<Player>());
+            return this.View(viewModel);
+        }
+
+        private async Task<TransferViewModel> CreateTransferViewModel(string playerName = null)
+        {
+            var teamId = 1; //TODO ログイン機能出来次第現在のidを取る
+            var result = playerName == null ? new List<Player>() : await this.playerUseCase.SearchOtherTeamPlayers(playerName, teamId);
+            return new TransferViewModel(result);
+        }
+
+        /// <summary>
+        /// 選択された選手を所属変更画面の一覧に表示します。
+        /// </summary>
+        /// <param name="viewModel">選手所属変更申込画面ViewModel。</param>
+        /// <returns>選手登録申込状況一覧画面。</returns>
+        [HttpPost]
+        public async Task<ActionResult> Transfer([Bind("SelectedPlayerIds")] TransferViewModel viewModel)
+        {
+            var result = await this.playerUseCase.GetTransferPlayers(viewModel.SelectedPlayerIds);
+            viewModel.SearchedPlayers = new List<Player>();
+            viewModel.TransferPlayers = result;
+            return this.View(viewModel);
+        }
+
+        /// <summary>
+        /// 選手所属変更を申込します。
+        /// </summary>
+        /// <param name="viewModel">選手所属変更申込画面ViewModel。</param>
+        /// <returns>選手登録申込状況一覧画面。</returns>
+        [HttpPost]
+        public async Task<ActionResult> RequestTransfer([Bind("TransferPlayerIds")] TransferViewModel viewModel)
+        {
+            var teamId = 1; //TODO ログイン機能出来次第現在のidを取る
+            await this.playerUseCase.AddRequestTransferPlayers(viewModel.TransferPlayerIds, teamId);
+            return this.RedirectToAction(nameof(RequestState));
+        }
+
+        #region WEB API
+        /// <summary>
+        /// 選手一覧を取得します。
+        /// </summary>
+        /// <param name="playerName">氏名。</param>
+        /// <param name="teamTypes">カテゴリー。</param>
+        /// <param name="teamName">性別。</param>
+        /// <returns>IndexViewModel。</returns>
+        [HttpGet]
+        [ActionName("list")]
+        public async Task<ActionResult> GetTeams(string playerName, int[] category, int[] gender)
+        {
+            var viewModel = await this.CreateIndexViewModel(playerName, category, gender);
+            if (!viewModel.Players.Any())
+            {
+                return new EmptyResult();
+            }
+
+            return this.View("_PlayersTable", viewModel.Players);
+        }
+
+        /// <summary>
+        /// 変更候補選手一覧を取得します。
+        /// </summary>
+        /// <param name="playerName">氏名。</param>
+        /// <returns>選手所属変更申込画面。</returns>
+        [HttpGet]
+        [ActionName("transferList")]
+        public async Task<ActionResult> GetOtherTeamPlayers(string playerName)
+        {
+            var viewModel = await this.CreateTransferViewModel(playerName);
+            if (!viewModel.SearchedPlayers.Any())
+            {
+                return new EmptyResult();
+            }
+
+            return this.View("_SearchedTable", viewModel.SearchedPlayers);
+        }
+        #endregion
     }
 }

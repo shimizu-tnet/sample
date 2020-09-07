@@ -1,4 +1,5 @@
 ﻿using JuniorTennis.Domain.DrawTables;
+using JuniorTennis.Domain.TournamentEntries;
 using JuniorTennis.Domain.Tournaments;
 using JuniorTennis.SeedWork;
 using Microsoft.AspNetCore.Mvc.Rendering;

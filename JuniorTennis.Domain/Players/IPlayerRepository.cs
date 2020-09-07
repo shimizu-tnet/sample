@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JuniorTennis.Domain.UseCases.Shared;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -31,6 +32,13 @@ namespace JuniorTennis.Domain.Players
         Task<Player> FindByIdAsync(int playerId);
 
         /// <summary>
+        /// 選手idリストに紐づく選手一覧を取得します。
+        /// </summary>
+        /// <param name="playerIds">選手idリスト。</param>
+        /// <returns>選手一覧。</returns>
+        Task<List<Player>> FindAllByIdsAsync(List<int> playerIds);
+
+        /// <summary>
         /// 氏名と誕生日に紐づく選手の存在を判定します。
         /// </summary>
         /// <param name="playerFamilyName">姓。</param>
@@ -58,5 +66,26 @@ namespace JuniorTennis.Domain.Players
         /// </summary>
         /// <param name="player">選手。</param>
         Task DeleteAsync(Player player);
+
+        /// <summary>
+        /// 検索条件に応じた選手の一覧を取得します。
+        /// </summary>
+        /// <param name="condition">検索条件</param>
+        /// <returns>選手一覧。</returns>
+        Task<List<Player>> SearchAsync(PlayerSearchCondition condition);
+
+        /// <summary>
+        /// 検索条件に応じた選手の一覧を取得します。
+        /// </summary>
+        /// <param name="condition">検索条件</param>
+        /// <returns>選手一覧。</returns>
+        Task<Pagable<Player>> SearchPagedListAsync(PlayerSearchCondition condition, int seasonId);
+
+        /// <summary>
+        /// 検索条件に応じた選手の一覧(ページングなし)を取得します。
+        /// </summary>
+        /// <param name="condition">検索条件</param>
+        /// <returns>選手一覧。</returns>
+        Task<List<Player>> SearchListAsync(PlayerSearchCondition condition, int seasonId);
     }
 }

@@ -31,10 +31,17 @@ namespace JuniorTennis.Infrastructure.DataBase.Repositories
                 .Include(o => o.Player)
                 .ToListAsync();
 
-        public async Task<bool> ExistsInOtherTeamAsync(int teamId) =>
+        public async Task<bool> ExistsInOtherTeamAsync(int teamId, int playerId) =>
             await this.context.RequestPlayers
                 .Where(o => o.TeamId != teamId)
+                .Where(o => o.PlayerId != playerId)
                 .AnyAsync();
+
+        public async Task<List<RequestPlayer>> FindAllByPlayerIdsAndSeasonId(List<int> playerIds, int seasonId) =>
+            await this.context.RequestPlayers
+                .Where(o => playerIds.Contains(o.PlayerId))
+                .Where(o => o.SeasonId == seasonId)
+                .ToListAsync();
 
         public async Task<RequestPlayer> UpdateAsync(RequestPlayer requestPlayer)
         {

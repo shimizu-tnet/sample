@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using JuniorTennis.Domain.RequestPlayers;
+using JuniorTennis.Domain.ReservationNumbers;
 
 namespace JuniorTennis.Mvc.Features.Players
 {
@@ -10,16 +11,25 @@ namespace JuniorTennis.Mvc.Features.Players
     public class RequestStateViewModel
     {
         /// <summary>
-        /// 登録選手一覧を取得または設定します。
+        /// 予約番号ごとの登録選手一覧を取得または設定します。
         /// </summary>
-        public List<RequestPlayer> RequestPlayers { get; set; }
+        public Dictionary<string, List<RequestStateDisplayViewModel>> RequestPlayersMap { get; set; }
 
         /// <summary>
-        /// 登録選手のリストをもとにViewModelの新しいインスタンスを生成します。
+        /// 予約番号リスト。
+        /// </summary>
+        public List<string> ReservationNumbers { get; set; }
+
+        /// <summary>
+        /// 登録選手一覧をもとにViewModelの新しいインスタンスを生成します。
         /// </summary>
         public RequestStateViewModel(List<RequestPlayer> requestplayers)
         {
-            this.RequestPlayers = requestplayers;
+            this.RequestPlayersMap = requestplayers
+                .Select(o => new RequestStateDisplayViewModel(o))
+                .GroupBy(o => o.ReservationNumber)
+                .ToDictionary(o => o.Key, o => o.ToList());
+            this.ReservationNumbers = this.RequestPlayersMap.Keys.OrderByDescending(o => o).ToList();
         }
 
         /// <summary>

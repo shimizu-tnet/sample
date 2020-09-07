@@ -23,6 +23,7 @@ namespace JuniorTennis.DomainTests.RequestPlayers
                 reservationNumber: new ReservationNumber(),
                 reservationBranchNumber: 1,
                 category: Category.Under11Or12,
+                requestType: RequestType.NewRegistration,
                 approveState: ApproveState.Unapproved,
                 now,
                 new PlayerRegistrationFee(500),
@@ -34,6 +35,7 @@ namespace JuniorTennis.DomainTests.RequestPlayers
             Assert.Equal(1, act.SeasonId);
             Assert.Equal(new ReservationNumber(), act.ReservationNumber);
             Assert.Equal(Category.Under11Or12, act.Category);
+            Assert.Equal(RequestType.NewRegistration, act.RequestType);
             Assert.Equal(ApproveState.Unapproved, act.ApproveState);
             Assert.Equal(now, act.RequestedDateTime);
             Assert.Equal(500, act.PlayerRegistrationFee.Value);
@@ -50,6 +52,7 @@ namespace JuniorTennis.DomainTests.RequestPlayers
                 reservationNumber: new ReservationNumber(),
                 reservationBranchNumber: 1,
                 category: Category.Under11Or12,
+                requestType: RequestType.NewRegistration,
                 approveState: ApproveState.Unapproved,
                 DateTime.Now,
                 new PlayerRegistrationFee(500),
@@ -69,6 +72,7 @@ namespace JuniorTennis.DomainTests.RequestPlayers
                 reservationNumber: new ReservationNumber(),
                 reservationBranchNumber: 1,
                 category: Category.Under11Or12,
+                requestType: RequestType.NewRegistration,
                 approveState: ApproveState.Approved,
                 DateTime.Now,
                 new PlayerRegistrationFee(500),

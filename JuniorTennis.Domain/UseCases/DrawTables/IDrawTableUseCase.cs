@@ -1,4 +1,5 @@
 ﻿using JuniorTennis.Domain.DrawTables;
+using JuniorTennis.Domain.TournamentEntries;
 using JuniorTennis.Domain.Tournaments;
 using System;
 using System.Collections.Generic;
@@ -134,6 +135,22 @@ namespace JuniorTennis.Domain.UseCases.DrawTables
         string GetGameDatesJson(Tournament tournament, DrawTable drawTable);
 
         /// <summary>
+        /// JSON 文字列に変換された空きドロー一覧を取得します。
+        /// </summary>
+        /// <param name="tournamentId">大会 ID。</param>
+        /// <param name="tennisEventId">種目 ID。</param>
+        /// <returns>JSON 文字列に変換された空きドロー一覧。</returns>
+        Task<string> GetBlankDrawsJson(int tournamentId, string tennisEventId);
+
+        /// <summary>
+        /// JSON 文字列に変換された同団体戦一覧を取得します。
+        /// </summary>
+        /// <param name="tournamentId">大会 ID。</param>
+        /// <param name="tennisEventId">種目 ID。</param>
+        /// <returns>JSON 文字列に変換された同団体戦一覧。</returns>
+        Task<string> GetGameOfSameTeamsJson(int tournamentId, string tennisEventId);
+
+        /// <summary>
         /// 試合日を更新します。
         /// </summary>
         /// <param name="tournamentId">大会 ID。</param>
@@ -141,14 +158,6 @@ namespace JuniorTennis.Domain.UseCases.DrawTables
         /// <param name="gameDates">試合日一覧。</param>
         /// <returns>Task。</returns>
         Task UpdateGameDates(int tournamentId, string tennisEventId, IEnumerable<(int blockNumber, DateTime gameDate)> gameDates);
-
-        /// <summary>
-        /// JSON 文字列に変換された空きドロー一覧を取得します。
-        /// </summary>
-        /// <param name="tournamentId">大会 ID。</param>
-        /// <param name="tennisEventId">種目 ID。</param>
-        /// <returns>JSON 文字列に変換された空きドロー一覧。</returns>
-        Task<string> GetBlankDrawsJson(int tournamentId, string tennisEventId);
 
         /// <summary>
         /// 試合日を更新します。
@@ -202,6 +211,15 @@ namespace JuniorTennis.Domain.UseCases.DrawTables
         string GetBlocksJson(DrawTable drawTable, ParticipationClassification participationClassification, BlockNumber blockNumber);
 
         /// <summary>
+        /// ドロー表を初期化します。
+        /// </summary>
+        /// <param name="tournamentId">大会 ID。</param>
+        /// <param name="tennisEventId">種目 ID。</param>
+        /// <param name="participationClassificationId">出場区分 ID。</param>
+        /// <returns>Task。</returns>
+        Task InitializeDrawTable(int tournamentId, string tennisEventId, int participationClassificationId);
+
+        /// <summary>
         /// シード位置の自動設定を行います。
         /// </summary>
         /// <param name="tournamentId">大会 ID。</param>
@@ -209,6 +227,33 @@ namespace JuniorTennis.Domain.UseCases.DrawTables
         /// <param name="participationClassificationId">出場区分 ID。</param>
         /// <returns>Task。</returns>
         Task ExecuteSeedFrameSetting(int tournamentId, string tennisEventId, int participationClassificationId);
+
+        /// <summary>
+        /// 割当済みのシード位置を全て削除します。
+        /// </summary>
+        /// <param name="tournamentId">大会 ID。</param>
+        /// <param name="tennisEventId">種目 ID。</param>
+        /// <param name="participationClassificationId">出場区分 ID。</param>
+        /// <returns>Task。</returns>
+        Task ExecuteSeedFrameRemove(int tournamentId, string tennisEventId, int participationClassificationId);
+
+        /// <summary>
+        /// BYE 位置の自動設定を行います。
+        /// </summary>
+        /// <param name="tournamentId">大会 ID。</param>
+        /// <param name="tennisEventId">種目 ID。</param>
+        /// <param name="participationClassificationId">出場区分 ID。</param>
+        /// <returns>Task。</returns>
+        Task ExecuteByeFrameSetting(int tournamentId, string tennisEventId, int participationClassificationId);
+
+        /// <summary>
+        /// 割当済みの BYE 位置を全て削除します。
+        /// </summary>
+        /// <param name="tournamentId">大会 ID。</param>
+        /// <param name="tennisEventId">種目 ID。</param>
+        /// <param name="participationClassificationId">出場区分 ID。</param>
+        /// <returns>Task。</returns>
+        Task ExecuteByeFrameRemove(int tournamentId, string tennisEventId, int participationClassificationId);
 
         /// <summary>
         /// 予選勝者を取り込みます。
@@ -236,26 +281,6 @@ namespace JuniorTennis.Domain.UseCases.DrawTables
         void CancelDrawing(DrawTable drawTable, ParticipationClassification participationClassification);
 
         /// <summary>
-        /// 選手をドローにを割り当てます。
-        /// </summary>
-        /// <param name="tournamentId">大会 ID。</param>
-        /// <param name="tennisEventId">種目 ID。</param>
-        /// <param name="participationClassificationId">出場区分 ID。</param>
-        /// <param name="playerClassificationId">選手区分 ID。</param>
-        /// <param name="entryNumber">エントリー番号。</param>
-        /// <param name="blockNumber">ブロック番号。</param>
-        /// <param name="drawNumber">ドロー番号。</param>
-        /// <returns>Task。</returns>
-        Task AssignPlayersToDraw(
-            int tournamentId,
-            string tennisEventId,
-            int participationClassificationId,
-            int playerClassificationId,
-            int entryNumber,
-            int blockNumber,
-            int drawNumber);
-
-        /// <summary>
         /// JSON 文字列に変換された試合結果一覧を取得します。
         /// </summary>
         /// <param name="tournamentId">大会 ID。</param>
@@ -275,6 +300,32 @@ namespace JuniorTennis.Domain.UseCases.DrawTables
         /// <param name="gameResult">試合結果。</param>
         /// <returns>Task。</returns>
         Task UpdateGameStatus(int tournamentId, string tennisEventId, BlockNumber blockNumber, GameNumber gameNumber, GameResult gameResult);
+
+        /// <summary>
+        /// ドロー枠の選手区分を変更します。
+        /// </summary>
+        /// <param name="tournamentId">大会 ID。</param>
+        /// <param name="tennisEventId">種目 ID。</param>
+        /// <param name="blockNumber">ブロック番号。</param>
+        /// <param name="drawNumber">ドロー番号。</param>
+        /// <param name="playerClassificationId">選手区分 ID。</param>
+        /// <returns>Task。</returns>
+        Task DrawFramePlayerClassificationChange(
+            int tournamentId,
+            string tennisEventId,
+            int blockNumber,
+            int drawNumber,
+            int playerClassificationId);
+
+        /// <summary>
+        /// ドロー枠の選手割り当てを解除します。
+        /// </summary>
+        /// <param name="tournamentId">大会 ID。</param>
+        /// <param name="tennisEventId">種目 ID。</param>
+        /// <param name="blockNumber">ブロック番号。</param>
+        /// <param name="drawNumber">ドロー番号。</param>
+        /// <returns>Task。</returns>
+        Task UnassignPlayer(int tournamentId, string tennisEventId, int blockNumber, int drawNumber);
 
         /// <summary>
         /// ドローに対し、選手を個別に割り当てます。

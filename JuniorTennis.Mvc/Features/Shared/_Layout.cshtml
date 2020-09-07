@@ -31,6 +31,17 @@
                         </ul>
                     </li>
                     <li>
+                        <header>選手管理</header>
+                        <ul>
+                            <li>
+                                <a asp-area="Association" asp-controller="Players" asp-action="Receipt">申請一覧</a>
+                            </li>
+                            <li>
+                                <a asp-area="Association" asp-controller="Players" asp-action="Index">選手一覧</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
                         <header>大会管理</header>
                         <ul>
                             <li>
@@ -54,9 +65,17 @@
                         <ul>
                             <li>
                                 <a asp-controller="Seasons" asp-action="Index">年度</a>
-                            </li>                            
+                            </li>
                             <li>
                                 <a asp-controller="Operators" asp-action="Index">管理ユーザー</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <header>団体機能</header>
+                        <ul>
+                            <li>
+                                <a asp-controller="TournamentEntries" asp-action="Index">大会申込</a>
                             </li>
                         </ul>
                     </li>

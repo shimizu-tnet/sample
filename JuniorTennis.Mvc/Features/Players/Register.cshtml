@@ -104,20 +104,19 @@
 @section Scripts {
     <script>
         const disableIllegalCategory = () => {
-            const selectedMonth = document.getElementById("BirthMonth").value;
-            const selectedYear = selectedMonth < 4 ? document.getElementById("BirthYear").value - 1 : document.getElementById("BirthYear").value;
-            const schoolYear = @Model.CurrentYear - selectedYear;
-            if (schoolYear > 16) {
+            const selectedYear = document.getElementById("BirthYear").value;
+            const seasonAge = @Model.CurrentYear - selectedYear;
+            if (seasonAge > 16) {
                 document.getElementsByName("SelectedCategory")[1].disabled = true;
                 document.getElementsByName("SelectedCategory")[2].disabled = true;
                 document.getElementsByName("SelectedCategory")[3].disabled = true;
             }
-            else if (schoolYear > 14) {
+            else if (seasonAge > 14) {
                 document.getElementsByName("SelectedCategory")[1].disabled = false;
                 document.getElementsByName("SelectedCategory")[2].disabled = true;
                 document.getElementsByName("SelectedCategory")[3].disabled = true;
             }
-            else if (schoolYear > 12) {
+            else if (seasonAge > 12) {
                 document.getElementsByName("SelectedCategory")[1].disabled = false;
                 document.getElementsByName("SelectedCategory")[2].disabled = false;
                 document.getElementsByName("SelectedCategory")[3].disabled = true;

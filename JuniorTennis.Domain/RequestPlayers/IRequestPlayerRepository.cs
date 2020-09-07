@@ -28,7 +28,15 @@ namespace JuniorTennis.Domain.RequestPlayers
         /// </summary>
         /// <param name="teamId">団体id</param>
         /// <returns>選手が別団体に登録されている/いない。</returns>
-        Task<bool> ExistsInOtherTeamAsync(int teamId);
+        Task<bool> ExistsInOtherTeamAsync(int teamId, int playerId);
+
+        /// <summary>
+        /// 選手Idリストと年度idに紐づく、登録選手一覧を取得します。
+        /// </summary>
+        /// <param name="playerIds">選手idリスト</param>
+        /// <param name="seasonId">年度id</param>
+        /// <returns>登録選手一覧。</returns>
+        Task<List<RequestPlayer>> FindAllByPlayerIdsAndSeasonId(List<int> playerIds, int seasonId);
 
         /// <summary>
         /// 登録選手を更新します。

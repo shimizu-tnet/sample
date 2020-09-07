@@ -1,4 +1,5 @@
-﻿using JuniorTennis.SeedWork;
+﻿using JuniorTennis.Domain.TournamentEntries;
+using JuniorTennis.SeedWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,6 +58,11 @@ namespace JuniorTennis.Domain.DrawTables
         public Games Games { get; private set; }
 
         /// <summary>
+        /// 初期化済みかどうかを示します。
+        /// </summary>
+        public bool Initialized => (this.Games?.Count() ?? 0) != 0;
+
+        /// <summary>
         /// ブロックの画面表示用の文字列を取得します。
         /// </summary>
         public string DisplayValue => this.ParticipationClassification == ParticipationClassification.Main
@@ -87,13 +93,12 @@ namespace JuniorTennis.Domain.DrawTables
             BlockNumber blockNumber,
             ParticipationClassification participationClassification,
             GameDate gameDate,
-            Games games,
             DrawSettings drawSettings)
         {
             this.BlockNumber = blockNumber;
             this.ParticipationClassification = participationClassification;
             this.GameDate = gameDate;
-            this.Games = games;
+            this.Games = null;
             this.DrawSettings = drawSettings;
         }
 

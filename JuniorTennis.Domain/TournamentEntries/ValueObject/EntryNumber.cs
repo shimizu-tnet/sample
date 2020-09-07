@@ -1,7 +1,7 @@
 ﻿using JuniorTennis.SeedWork;
 using System.Collections.Generic;
 
-namespace JuniorTennis.Domain.DrawTables
+namespace JuniorTennis.Domain.TournamentEntries
 {
     /// <summary>
     /// エントリー番号。

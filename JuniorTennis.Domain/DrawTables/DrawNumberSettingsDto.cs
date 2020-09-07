@@ -29,5 +29,18 @@
         /// 割り当て順を取得または設定します。
         /// </summary>
         public int AssignOrder { get; set; }
+
+        /// <summary>
+        /// 対戦者インスタンスに変換します。
+        /// </summary>
+        /// <returns>対戦者。</returns>
+        public Opponent ToOpponent()
+        {
+            return new Opponent(
+                new DrawNumber(this.DrawNumber),
+                new SeedLevel(this.SeedLevel),
+                new AssignOrder(this.AssignOrder)
+            );
+        }
     }
 }

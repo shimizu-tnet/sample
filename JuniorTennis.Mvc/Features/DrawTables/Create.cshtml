@@ -42,13 +42,16 @@
                     <select id="ParticipationClassification" asp-items="@Model.ParticipationClassifications"></select>
                 </td>
                 <td>
+                    <input type="button" id="InitializeDrawTable" class="button" value="ドロー表初期化" />
+                </td>
+                <td>
                     <input type="button" id="GameDates" class="button" value="試合日一覧" />
                 </td>
                 <td>
                     <input type="button" id="BlankDraws" class="button" value="空きドロー一覧" />
                 </td>
                 <td>
-                    <input type="button" class="button" value="同団体戦一覧" />
+                    <input type="button" id="GameOfSameTeams" class="button" value="同団体戦一覧" />
                 </td>
                 <td>
                     <input type="button" id="ExecuteDrawing" class="button" value="抽選" />
@@ -134,8 +137,22 @@
 </div>
 <div id="GameDatesDialog" class="dialog"></div>
 <div id="BlankDrawsDialog" class="dialog"></div>
+<div id="GameOfSameTeamsDialog" class="dialog"></div>
 <div id="LoadingDialog" class="dialog">
     <p>読込中です</p>
+</div>
+<div class="contextmenu" data-selected-draw-number="">
+    <ul>
+        <li class="draw-frame-player-classification-change">
+            種類変更
+            <ul class="draw-frame-player-classification-items">
+                <li data-player-classification-id="2">一般選手</li>
+                <li data-player-classification-id="1">シード選手</li>
+                <li data-player-classification-id="3">BYE</li>
+            </ul>
+        </li>
+        <li class="unassign">割当解除</li>
+    </ul>
 </div>
 
 @section CSS{
@@ -177,6 +194,57 @@
             grid-row: 4 / 6;
             grid-column: 2 / 3;
         }
+
+        .contextmenu {
+            display: none;
+        }
+
+            .contextmenu.open {
+                display: block;
+                border: 2px outset lightgray;
+                position: absolute;
+                background-color: white;
+            }
+
+            .contextmenu ul > li {
+                padding-top: 2.5px;
+                padding-bottom: 2.5px;
+                padding-left: 10px;
+                width: 85px;
+            }
+
+                .contextmenu ul > li ul > li {
+                    width: 100px;
+                }
+
+                .contextmenu ul > li:first-child {
+                    padding-top: 5px;
+                }
+
+                .contextmenu ul > li:last-child {
+                    padding-bottom: 5px;
+                }
+
+            .contextmenu ul ul {
+                display: none;
+            }
+
+            .contextmenu ul:hover ul {
+                display: block;
+                position: absolute;
+                top: 0;
+                left: 85px;
+                border: 2px outset lightgray;
+                background-color: white;
+            }
+
+        .seed-frame {
+            background-color: limegreen;
+        }
+
+        .bye-frame {
+            background-color: lightcoral;
+        }
     </style>
 }
 
@@ -208,6 +276,19 @@
             const json = await res.json();
             return json;
         }
+        const initializeDrawTableAsync = async () => {
+            const url = `${baseUrl}/initialize_draw_table?participationClassification=${getParticipationClassificationId()}`;
+            const option = {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                }
+            };
+            const res = await fetch(url, option);
+            const json = await res.json();
+            return typeof json === "string" ? JSON.parse(json) : json;
+        }
         const fetchGameDatesAsync = async () => {
             const res = await fetch(`${baseUrl}/game_dates`);
             const json = await res.json();
@@ -230,17 +311,10 @@
             const json = await res.json();
             return json;
         }
-        const registerBlankDrawsAsync = async () => {
-            const url = `${baseUrl}/blank_draws`;
-            const option = {
-                method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json; charset=utf-8"
-                },
-                body: JSON.stringify(blocks)
-            };
-            await fetch(url, option);
+        const fetchGameOfSameTeamsAsync = async () => {
+            const res = await fetch(`${baseUrl}/game_of_same_teams`);
+            const json = await res.json();
+            return json;
         }
         const executeSeedFrameSetting = async () => {
             const url = `${baseUrl}/execute_seed_frame_setting?participationClassification=${getParticipationClassificationId()}`;
@@ -251,7 +325,9 @@
                     "Content-Type": "application/json; charset=utf-8"
                 }
             };
-            await fetch(url, option);
+            const res = await fetch(url, option);
+            const json = await res.json();
+            return typeof json === "string" ? JSON.parse(json) : json;
         }
         const executeSeedFrameRemove = async () => {
             const url = `${baseUrl}/execute_seed_frame_remove?participationClassification=${getParticipationClassificationId()}`;
@@ -262,7 +338,9 @@
                     "Content-Type": "application/json; charset=utf-8"
                 }
             };
-            await fetch(url, option);
+            const res = await fetch(url, option);
+            const json = await res.json();
+            return typeof json === "string" ? JSON.parse(json) : json;
         }
         const executeByeFrameSetting = async () => {
             const url = `${baseUrl}/execute_bye_frame_setting?participationClassification=${getParticipationClassificationId()}`;
@@ -273,7 +351,9 @@
                     "Content-Type": "application/json; charset=utf-8"
                 }
             };
-            await fetch(url, option);
+            const res = await fetch(url, option);
+            const json = await res.json();
+            return typeof json === "string" ? JSON.parse(json) : json;
         }
         const executeByeFrameRemove = async () => {
             const url = `${baseUrl}/execute_bye_frame_remove?participationClassification=${getParticipationClassificationId()}`;
@@ -284,7 +364,9 @@
                     "Content-Type": "application/json; charset=utf-8"
                 }
             };
-            await fetch(url, option);
+            const res = await fetch(url, option);
+            const json = await res.json();
+            return typeof json === "string" ? JSON.parse(json) : json;
         }
         const intakeQualifyingWinnersAsync = async () => {
             const url = `${baseUrl}/intake_qualifying_winners?participationClassification=${getParticipationClassificationId()}`;
@@ -359,6 +441,49 @@
                 body: JSON.stringify(entryDetails)
             };
             await fetch(url, option);
+        }
+        const drawFramePlayerClassificationChange = async (selectedDrawNumber, playerClassificationId) => {
+            const url = `/DrawTables/draw_frame_player_classification_change`;
+            const option = {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify({
+                    tournamentId: Number(tournamentId),
+                    tennisEventId,
+                    participationClassificationId: getParticipationClassificationId(),
+                    blockNumber: getBlockNumber(),
+                    drawNumber: Number(selectedDrawNumber),
+                    playerClassificationId: Number(playerClassificationId),
+                })
+            };
+
+            const res = await fetch(url, option);
+            const json = JSON.parse(await res.json());
+            return json;
+        }
+        const unassignPlayer = async selectedDrawNumber => {
+            const url = `/DrawTables/unassign_player`;
+            const option = {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify({
+                    tournamentId: Number(tournamentId),
+                    tennisEventId,
+                    participationClassificationId: getParticipationClassificationId(),
+                    blockNumber: getBlockNumber(),
+                    drawNumber: Number(selectedDrawNumber),
+                })
+            };
+
+            const res = await fetch(url, option);
+            const json = JSON.parse(await res.json());
+            return json;
         }
         const assignPlayersToDrawAsync = async (fromEntryNumber, toDrawNumber) => {
             const url = `/DrawTables/assign_players_to_draw`;
@@ -587,6 +712,43 @@
 
             $("#BlankDrawsDialog").append(table);
         }
+        const updateGameOfSameTeamsAsync = async () => {
+            const gameOfSameTeams = await fetchGameOfSameTeamsAsync();
+
+            $("#GameOfSameTeamsDialog").empty();
+            const table = $('<table class="table">');
+
+            $("<thead>").append($("<tr>")
+                .append($("<th>").append("ブロック名"))
+                .append($("<th>").append("ドロー"))
+                .append($("<th>").append("団体名"))
+                .append($("<th>").append("氏名"))
+            ).appendTo(table);
+
+            $("<tfoot>").append($("<tr>")
+                .append($("<th>", { colspan: 4 })
+                    .append($("<input>", {
+                        type: "button",
+                        value: "閉じる",
+                        on: {
+                            click: async () => {
+                                closeDialog("GameOfSameTeamsDialog");
+                            }
+                        },
+                    }))
+                )
+            ).appendTo(table);
+
+            $("<tbody>").append(gameOfSameTeams.map(gameOfSameTeam => {
+                return $("<tr>")
+                    .append($('<td class="text-center">').append(gameOfSameTeam.blockName))
+                    .append($('<td class="text-center">').append(gameOfSameTeam.drawNumber))
+                    .append($('<td class="text-center">').append(gameOfSameTeam.teamAbbreviatedNames.join("<br>")))
+                    .append($('<td class="text-center">').append(gameOfSameTeam.playerNames.join("<br>")));
+            })).appendTo(table);
+
+            $("#GameOfSameTeamsDialog").append(table);
+        }
         const updateAssignedPlayersAsync = async () => {
             assignedPlayers = await fetchAssignedPlayersAsync();
             await updateDrawTableAsync();
@@ -595,6 +757,9 @@
             const blockNames = await fetchBlockNamesAsync();
 
             $("#BlockNames").empty();
+            if (blockNames.length == 0) {
+                $("#BlockNames").append(`<option value="-1" data-pid="0">ドロー表が初期化されていません。</ option>`);
+            }
             $("#BlockNames").append(blockNames.map(o => {
                 return $(`<option value="${o.blockNumber}" data-pid="${o.participationClassificationId}">${o.name}</ option>`);
             }));
@@ -604,14 +769,21 @@
             for (const playerBox of playerBoxes) {
                 playerBox.addEventListener("dragover", handlePlayerBoxDragover, false);
                 playerBox.addEventListener("drop", handlePlayerBoxDroppedAsync, false);
+                playerBox.addEventListener("contextmenu", handlePlayerBoxContextMenu, false);
             }
         }
         const updateDrawTableAsync = async () => {
+            while (document.getElementById("DrawTable").firstChild) {
+                document.getElementById("DrawTable").removeChild(document.getElementById("DrawTable").firstChild);
+            }
+
+            if (getBlockNumber() === -1) {
+                return;
+            }
+
             const { numberOfDraws } = await fetchDrawSettingsAsync();
             const table = createTournament(numberOfDraws, assignedPlayers, isSingles);
 
-            while (document.getElementById("DrawTable").firstChild)
-                document.getElementById("DrawTable").removeChild(document.getElementById("DrawTable").firstChild);
             document.getElementById("DrawTable").appendChild(table);
 
             addEventPlayerBoxes();
@@ -646,6 +818,10 @@
             await updateBlankDrawsAsync();
             showDialog("BlankDrawsDialog");
         }
+        const handleGameOfSameTeamsClicked = async () => {
+            await updateGameOfSameTeamsAsync();
+            showDialog("GameOfSameTeamsDialog");
+        }
         const handleExecuteDrawingClicked = async () => {
             assignedPlayers = await executeDrawingAsync();
             await updateDrawTableAsync();
@@ -653,28 +829,35 @@
         const handleCancelDrawingClicked = async () => {
             await cancelDrawingAsync();
         }
+        const handleInitializeDrawTableClickedAsync = async () => {
+            if (confirm("ドロー表を初期化します。\n\nよろしいですか？")) {
+                assignedPlayers = await initializeDrawTableAsync();
+                await updateBlockNamesAsync();
+                await updateDrawTableAsync();
+            }
+        }
         const handleSeedFrameSettingClicked = async () => {
             if (confirm("シード位置の自動設定を行います。\n\nよろしいですか？")) {
-                await executeSeedFrameSetting();
-                alert("シード自動設定");
+                assignedPlayers = await executeSeedFrameSetting();
+                await updateDrawTableAsync();
             }
         }
         const handleSeedFrameRemoveClicked = async () => {
             if (confirm("割当済みのシード位置を全て削除します。\n\nよろしいですか？")) {
-                await executeSeedFrameRemove();
-                alert("シード全て削除");
+                assignedPlayers = await executeSeedFrameRemove();
+                await updateDrawTableAsync();
             }
         }
         const handleByeFrameSettingClicked = async () => {
             if (confirm("BYE位置の自動設定を行います。\n\nよろしいですか？")) {
-                await executeByeFrameSetting();
-                alert("BYE 自動設定");
+                assignedPlayers = await executeByeFrameSetting();
+                await updateDrawTableAsync();
             }
         }
         const handleByeFrameRemoveClicked = async () => {
             if (confirm("割当済みのBYE位置を全て削除します。\n\nよろしいですか？")) {
-                await executeByeFrameRemove();
-                alert("BYE 全て削除");
+                assignedPlayers = await executeByeFrameRemove();
+                await updateDrawTableAsync();
             }
         }
         const handleIntakeQualifyingWinnersClicked = async () => {
@@ -720,11 +903,41 @@
             assignedPlayers = await assignPlayersToDrawAsync(entryNumber, drawNumber);
             await updateDrawTableAsync();
         }
+        const handlePlayerBoxContextMenu = ev => {
+            ev.preventDefault();
+
+            const contextmenu = document.querySelector(".contextmenu");
+            contextmenu.style.top = `${ev.pageY}px`;
+            contextmenu.style.left = `${ev.pageX}px`;
+            contextmenu.classList.add("open");
+            contextmenu.dataset.selectedDrawNumber = ev.target.dataset.drawNumber;
+        }
+        const handleTypeChangeItemClickedAsync = async ev => {
+            const contextmenu = document.querySelector(".contextmenu");
+            const { selectedDrawNumber} = contextmenu.dataset;
+            const { playerClassificationId } = ev.target.dataset;
+            assignedPlayers = await drawFramePlayerClassificationChange(selectedDrawNumber, playerClassificationId);
+
+            await updateDrawTableAsync();
+        }
+        const handleUnassignClickedAsync = async () => {
+            const contextmenu = document.querySelector(".contextmenu");
+            const { selectedDrawNumber } = contextmenu.dataset;
+            assignedPlayers = await unassignPlayer(selectedDrawNumber);
+
+            await updateDrawTableAsync();
+        }
+        const handleDocumentClicked = () => {
+            const contextmenu = document.querySelector(".contextmenu");
+            contextmenu.classList.remove("open");
+        }
 
         /*** EVENTS LISTENER ***/
         document.getElementById("ParticipationClassification").addEventListener("change", handleParticipationClassificationChangedAsync, false);
+        document.getElementById("InitializeDrawTable").addEventListener("click", handleInitializeDrawTableClickedAsync, false);
         document.getElementById("GameDates").addEventListener("click", handleGameDatesClicked, false);
         document.getElementById("BlankDraws").addEventListener("click", handleBlankDrawsClicked, false);
+        document.getElementById("GameOfSameTeams").addEventListener("click", handleGameOfSameTeamsClicked, false);
         document.getElementById("ExecuteDrawing").addEventListener("click", handleExecuteDrawingClicked, false);
         document.getElementById("CancelDrawing").addEventListener("click", handleCancelDrawingClicked, false);
         document.getElementById("SeedFrameSetting").addEventListener("click", handleSeedFrameSettingClicked, false);
@@ -735,6 +948,11 @@
         document.getElementById("BlockNames").addEventListener("change", handleBlockNamesChangedAsync, false);
         document.getElementById("Draft").addEventListener("click", handleDraftClicked, false);
         document.getElementById("Publish").addEventListener("click", handlePublishClicked, false);
+        [...document.querySelectorAll(".draw-frame-player-classification-items li")].forEach(el => {
+            el.addEventListener("click", handleTypeChangeItemClickedAsync, false);
+        });
+        document.querySelector(".unassign").addEventListener("click", handleUnassignClickedAsync, false);
+        document.addEventListener("click", handleDocumentClicked, false);
         [...document.querySelectorAll(".submit-button")].forEach(el => {
             el.addEventListener("click", handleSubmitButtonClicked, false);
         });

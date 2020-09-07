@@ -1,11 +1,10 @@
-﻿using JuniorTennis.Domain.TournamentEntries;
+﻿using JuniorTennis.Domain.DrawTables;
 using JuniorTennis.SeedWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 
-namespace JuniorTennis.Domain.DrawTables
+namespace JuniorTennis.Domain.TournamentEntries
 {
     /// <summary>
     /// エントリー詳細。
@@ -49,6 +48,11 @@ namespace JuniorTennis.Domain.DrawTables
         public ReceiptStatus ReceiptStatus { get; private set; }
 
         /// <summary>
+        /// 利用機能を取得します。
+        /// </summary>
+        public UsageFeatures UsageFeatures { get; private set; }
+
+        /// <summary>
         /// 予選からの進出者かどうか示す値を取得します。
         /// </summary>
         public bool FromQualifying { get; private set; }
@@ -69,6 +73,7 @@ namespace JuniorTennis.Domain.DrawTables
         /// <param name="entryPlayers">選手情報一覧。</param>
         /// <param name="canParticipationDates">出場可能日一覧。</param>
         /// <param name="receiptStatus">受領状況。</param>
+        /// <param name="usageFeatures">利用機能。</param>
         /// <param name="fromQualifying">予選からの進出者かどうか示す値。</param>
         /// <param name="blockNumber">ブロック番号。</param>
         public EntryDetail(
@@ -78,6 +83,7 @@ namespace JuniorTennis.Domain.DrawTables
             IEnumerable<EntryPlayer> entryPlayers,
             IEnumerable<CanParticipationDate> canParticipationDates,
             ReceiptStatus receiptStatus,
+            UsageFeatures usageFeatures,
             bool fromQualifying = false,
             BlockNumber blockNumber = null)
         {
@@ -87,6 +93,7 @@ namespace JuniorTennis.Domain.DrawTables
             this.EntryPlayers = new EntryPlayers(entryPlayers);
             this.CanParticipationDates = new CanParticipationDates(canParticipationDates);
             this.ReceiptStatus = receiptStatus;
+            this.UsageFeatures = usageFeatures;
             this.FromQualifying = fromQualifying;
 
             if (!this.FromQualifying)
@@ -104,47 +111,23 @@ namespace JuniorTennis.Domain.DrawTables
         #endregion constructors
 
         #region methods
-        /// <summary>
-        /// エントリー詳細を JSON 文字列に変換します。
-        /// </summary>
-        /// <returns>JSON 文字列。</returns>
-        public string ToJson()
-        {
-            var json = new
-            {
-                drawTableId = this.DrawTableId,
-                entryNumber = this.EntryNumber.Value,
-                participationClassification = new
-                {
-                    id = this.ParticipationClassification.Id,
-                    name = this.ParticipationClassification.Name,
-                },
-                seedNumber = this.SeedNumber.Value,
-                teamNames = this.EntryPlayers.Select(o => o.TeamName.Value),
-                teamCodes = this.EntryPlayers.Select(o => o.TeamCode.Value),
-                TeamAbbreviatedNames = this.EntryPlayers.Select(o => o.TeamAbbreviatedName.Value),
-                playerCodes = this.EntryPlayers.Select(o => o.PlayerCode.Value),
-                playerNames = this.EntryPlayers.Select(o => o.PlayerName.Value),
-                points = this.EntryPlayers.Select(o => o.Point.Value),
-                totalPoint = this.TotalPoint,
-                canParticipationDates = this.CanParticipationDates.Select(o => o.Value),
-                receiptStatus = new
-                {
-                    id = this.ReceiptStatus.Id,
-                    name = this.ReceiptStatus.Name,
-                },
-                fromQualifying = this.FromQualifying,
-            };
-
-            return JsonSerializer.Serialize(json);
-        }
         #endregion methods
 
         #region foreign key
         /// <summary>
         /// 外部キー。
         /// </summary>
-        public int DrawTableId { get; set; }
+        public int? TournamentEntryId { get; set; }
+
+        /// <summary>
+        /// 外部キー。
+        /// </summary>
+        public TournamentEntry TournamentEntry { get; set; }
+
+        /// <summary>
+        /// 外部キー。
+        /// </summary>
+        public int? DrawTableId { get; set; }
 
         /// <summary>
         /// 外部キー。

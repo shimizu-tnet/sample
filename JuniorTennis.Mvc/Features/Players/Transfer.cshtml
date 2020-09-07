@@ -1,0 +1,71 @@
+﻿@model JuniorTennis.Mvc.Features.Players.TransferViewModel
+
+@{
+    ViewData["Title"] = "選手所属変更申込";
+}
+
+<h2>選手所属変更申込</h2>
+<form id="search">
+    <div class="search-form">
+        <div class="horizontal-items">
+            <div class="search-item">
+                <label>他所属検索：</label>
+                <input name="playerName" />
+            </div>
+            <button id="search-button" type="button" class="button">検索</button>
+        </div>
+    </div>
+
+    <div id="search-result">
+        @await Html.PartialAsync("_SearchedTable", Model.SearchedPlayers)
+    </div>
+    <div id="transfer-table">
+        @await Html.PartialAsync("_TransferTable", Model.TransferPlayers)
+    </div>
+</form>
+<div id="PlayersDialog" class="dialog"></div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/dialog.js"></script>
+    <script>
+        /*** API ***/
+        const fetchTransferListAsync = async () => {
+            const queryString = createQueryString(document.forms.search);
+            const res = await fetch(`@Url.Action("transferList")?${queryString}`);
+            const htmlText = await res.text();
+            return htmlText;
+        }
+
+        /*** FUNCTIONS ***/
+        const renderTransferListAsync = async () => {
+            const html = await fetchTransferListAsync();
+            const dom = convertToDom(html);
+            const searchResult = document.getElementById("PlayersDialog");
+            // awaitで待機すると一瞬ちらつくので変換後に実行
+            removeChildren(searchResult);
+            if (dom === "") {
+                return;
+            }
+
+            Array.from(dom.children).forEach(element => searchResult.append(element));
+        }
+
+        /*** EVENTS HANDLER ***/
+        const handleSearchClicked = async () => {
+            await renderTransferListAsync();
+            showDialog("PlayersDialog");
+        }
+
+        const closePlayersDialog = () => closeDialog("PlayersDialog");
+
+        const Cancel = (obj) => {
+            var tr = obj.parentNode.parentNode;
+            removeChildren(tr);
+        }
+
+        /*** EVENTS LISTENER ***/
+        document.getElementById("search-button").addEventListener("click", handleSearchClicked, false);
+
+    </script>
+}

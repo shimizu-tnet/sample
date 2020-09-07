@@ -1,6 +1,6 @@
 ﻿using JuniorTennis.SeedWork;
 
-namespace JuniorTennis.Domain.DrawTables
+namespace JuniorTennis.Domain.TournamentEntries
 {
     /// <summary>
     /// 出場区分を定義します。

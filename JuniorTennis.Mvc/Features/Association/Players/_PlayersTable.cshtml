@@ -1,0 +1,45 @@
+﻿@model  JuniorTennis.Mvc.Features.Shared.Pagination.PagedList<JuniorTennis.Domain.Players.Player>
+@{
+    Layout = "";
+}
+
+@if (Model.Any())
+{
+    <div>
+        <div class="horizontal-container">
+            <pagination list="Model" click="changePage()"></pagination>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>登録番号</th>
+                    <th>氏名</th>
+                    <th>団体番号</th>
+                    <th>団体名</th>
+                    <th>JPIN</th>
+                    <th>カテゴリー</th>
+                    <th>性別</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var player in Model)
+                {
+                    <tr>
+                        <td>
+                            <a class="button-link"
+                               asp-area="Association"
+                               asp-action="Edit"
+                               asp-route-playerId="@player.Id">@player.PlayerCode?.Value</a>
+                        </td>
+                        <td>@player.PlayerFamilyName.Value @player.PlayerFirstName.Value</td>
+                        <td>@player.Team.TeamCode?.Value</td>
+                        <td>@player.Team.TeamName.Value</td>
+                        <td>@player.PlayerJpin</td>
+                        <td>@player.Category.Name</td>
+                        <td>@player.Gender.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

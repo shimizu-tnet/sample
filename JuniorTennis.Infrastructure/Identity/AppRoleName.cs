@@ -24,6 +24,16 @@ namespace JuniorTennis.Mvc.Features.Identity
         public static readonly AppRoleName Recorder = new AppRoleName(3, "Recorder", "記録入力者");
 
         /// <summary>
+        /// 団体ユーザー。
+        /// </summary>
+        public static readonly AppRoleName Team = new AppRoleName(4, "Team", "団体ユーザー");
+
+        /// <summary>
+        /// 開発者。
+        /// </summary>
+        public static readonly AppRoleName Developer = new AppRoleName(5, "Developer", "開発者");
+
+        /// <summary>
         /// 表示名を取得します。
         /// </summary>
         public string DisplayName { get; }

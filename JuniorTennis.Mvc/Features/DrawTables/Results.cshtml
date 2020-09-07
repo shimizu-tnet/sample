@@ -126,7 +126,7 @@
             const block = document.getElementById("BlockNames")[index];
             const participationClassificationId = block.dataset.pid;
 
-            return participationClassificationId;
+            return Number(participationClassificationId);
         }
         const getBlockNumber = () => Number(document.getElementById("BlockNames").value);
 
@@ -158,6 +158,9 @@
             const blockNames = await fetchBlockNamesAsync();
 
             $("#BlockNames").empty();
+            if (blockNames.length == 0) {
+                $("#BlockNames").append(`<option value="0" data-pid="0">ドロー表が初期化されていません。</ option>`);
+            }
             $("#BlockNames").append(blockNames.map(o => {
                 return $(`<option value="${o.blockNumber}" data-pid="${o.participationClassificationId}">${o.name}</ option>`);
             }));
@@ -361,7 +364,9 @@
             showLaodingDialog();
 
             await updateBlockNamesAsync();
-            await updateAssignedPlayersAsync();
+            if (getParticipationClassificationId()) {
+                await updateAssignedPlayersAsync();
+            }
 
             closeLaodingDialog();
         })();

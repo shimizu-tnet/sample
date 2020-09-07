@@ -40,11 +40,15 @@ namespace JuniorTennis.MvcTests.Features.Identity.Accounts
                 .ReturnsAsync(new ApplicationUser())
                 .Verifiable();
             userManager
+                .Setup(o => o.ConfirmEmailAsync(It.IsAny<ApplicationUser>(), "hijklmn"))
+                .ReturnsAsync(IdentityResult.Success)
+                .Verifiable();
+            userManager
                 .Setup(o => o.RemovePasswordAsync(It.IsAny<ApplicationUser>()))
                 .ReturnsAsync(IdentityResult.Success)
                 .Verifiable();
             userManager
-                .Setup(o => o.AddPasswordAsync(It.IsAny<ApplicationUser>(),"abcdefg"))
+                .Setup(o => o.AddPasswordAsync(It.IsAny<ApplicationUser>(), "abcdefg"))
                 .ReturnsAsync(IdentityResult.Success)
                 .Verifiable();
             var signInManager = MockMaker.MakeMockSignInManager(userManager.Object);
@@ -54,7 +58,7 @@ namespace JuniorTennis.MvcTests.Features.Identity.Accounts
                 new Mock<IAuthorizationUseCase>().Object);
 
             // Act
-            await service.SetupPassword("C12345", "abcdefg");
+            await service.SetupPassword("C12345", "abcdefg", "hijklmn");
 
             // Assert
             userManager.Verify();

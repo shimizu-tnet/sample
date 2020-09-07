@@ -66,11 +66,10 @@ namespace JuniorTennis.Mvc.Features.Operators
             await this.userManager.CreateAsync(newUser);
 
             // 認証ユーザーにRoleを追加。
-            var user = await this.userManager.FindByNameAsync(loginId);
-            await this.userManager.AddToRoleAsync(user, roleName);
+            await this.userManager.AddToRoleAsync(newUser, roleName);
 
             // メールの送信。
-            var invitaionUrl = await this.CreateInvitationUrl(url, user);
+            var invitaionUrl = await this.CreateInvitationUrl(url, newUser);
             await this.operatorUseCase.SendOperatorInvitaionMail(emailAddress, invitaionUrl);
         }
 

@@ -1,0 +1,56 @@
+﻿@model JuniorTennis.Mvc.Features.TournamentEntries.EntrySinglesViewModel
+
+@{
+    ViewData["Title"] = "お知らせ - お知らせ一覧";
+}
+
+<div class="horizontal-container">
+    <h2>@Model.TournamentName @Model.TennisEvent</h2>
+    <div class="text-right">
+        <a class="button-link" asp-action="Index">戻る</a>
+    </div>
+</div>
+<h3>大会申込可能選手一覧</h3>
+<div class="horizontal-container">
+    該当大会、カテゴリに出場可能な選手が @Model.EntryPlayers.Count() 人登録されています。
+</div>
+<table class="table fullwidth">
+    <thead>
+        <tr>
+            <th>申込</th>
+            <th>登録番号</th>
+            <th>氏名</th>
+            <th>フリガナ</th>
+            <th>性別</th>
+            <th>登録年齢</th>
+            <th>生年月日</th>
+            <th>年齢</th>
+            <th>団体名</th>
+            <th>学年</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var entryPlayer in Model.EntryPlayers)
+        {
+            <tr>
+                <td>
+                    <input type="checkbox" />
+                </td>
+                <td>@entryPlayer.PlayerCode</td>
+                <td>@entryPlayer.PlayerName</td>
+                <td>@entryPlayer.PlayerNameKana</td>
+                <td>@entryPlayer.Gender</td>
+                <td>@entryPlayer.Category</td>
+                <td>@entryPlayer.BirthDate</td>
+                <td>@entryPlayer.Age</td>
+                <td>@entryPlayer.TeamName</td>
+                <td>@entryPlayer.SchoolYear</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="horizontal-container">
+    <div class="horizontal-items">
+        <a class="button-primary" asp-action="SelectAvailableDays">次へ</a>
+    </div>
+</div>

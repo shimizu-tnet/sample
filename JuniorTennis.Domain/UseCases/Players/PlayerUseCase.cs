@@ -6,6 +6,7 @@ using JuniorTennis.Domain.ReservationNumbers;
 using JuniorTennis.Domain.Seasons;
 using JuniorTennis.Domain.Teams;
 using JuniorTennis.Domain.Tournaments;
+using JuniorTennis.Domain.UseCases.Shared;
 using JuniorTennis.Domain.Utils;
 using JuniorTennis.SeedWork;
 using JuniorTennis.SeedWork.Exceptions;
@@ -24,6 +25,10 @@ namespace JuniorTennis.Domain.UseCases.Players
         /// 継続登録申請の検索対象となる年度の範囲。
         /// </summary>
         private const int RequestContinuedPlayersSearchPeriod = 3;
+        /// <summary>
+        /// 登録可能な上限年齢。
+        /// </summary>
+        private const int RegisterableUpperLimitAge = 17;
 
         private readonly IMailSender mailSender;
         private readonly IPlayerRepository playerRepository;
@@ -96,9 +101,10 @@ namespace JuniorTennis.Domain.UseCases.Players
                     reservationNumber,
                     branchNumber,
                     player.Category,
+                    RequestType.NewRegistration,
                     ApproveState.Unapproved,
                     DateTime.Now,
-                    season.GetPlayerRegistrationFee(team.TeamType),
+                    season.GetPlayerRegistrationFee(),
                     null);
                 await this.requestPlayerRepository.UpdateAsync(requestPlayer);
                 branchNumber++;
@@ -204,8 +210,8 @@ namespace JuniorTennis.Domain.UseCases.Players
                     continue;
                 }
                 var player = requestPlayer.Player;
-                var academicAge = player.GetAcademicAge();
-                if (academicAge > 17)
+                var seasonAge = player.GetSeasonAge();
+                if (seasonAge > RegisterableUpperLimitAge)
                 {
                     continue;
                 }
@@ -226,7 +232,7 @@ namespace JuniorTennis.Domain.UseCases.Players
                 else
                 {
                     // 別団体の所属歴がある場合は対象外とする
-                    if (await this.requestPlayerRepository.ExistsInOtherTeamAsync(teamId))
+                    if (await this.requestPlayerRepository.ExistsInOtherTeamAsync(teamId, playerId))
                     {
                         continue;
                     }
@@ -254,9 +260,10 @@ namespace JuniorTennis.Domain.UseCases.Players
                                     reservationNumber,
                                     branchNumber,
                                     Enumeration.FromValue<Category>(dto.CategoryId),
+                                    RequestType.ContinuedRegistration,
                                     ApproveState.Unapproved,
                                     DateTime.Now,
-                                    season.GetPlayerRegistrationFee(team.TeamType),
+                                    season.GetPlayerRegistrationFee(),
                                     null);
                 await this.requestPlayerRepository.AddAsync(requestPlayer);
                 branchNumber++;
@@ -280,6 +287,86 @@ namespace JuniorTennis.Domain.UseCases.Players
             {
                 Console.WriteLine(e.Message);
             }
+        }
+
+        public async Task<List<Player>> SearchOtherTeamPlayers(string playerName, int teamId)
+        {
+            var condition = new PlayerSearchCondition(playerName, teamId);
+            var players = await this.playerRepository.SearchAsync(condition);
+            return players;
+        }
+
+        public async Task<List<Player>> GetTransferPlayers(List<int> playerIds)
+        {
+            var players = new List<Player>();
+            if (playerIds == null)
+            {
+                return players;
+            }
+
+            players = await this.playerRepository.FindAllByIdsAsync(playerIds);
+            return players;
+        }
+
+        public async Task AddRequestTransferPlayers(List<int> transferPlayerIds, int teamId)
+        {
+            var team = await this.teamRepository.FindByIdAsync(teamId);
+            var season = await this.seasonRepository.FindByDate(DateTime.Today);
+            var reservationNumber = await ReservationNumberFactory.Create(this.reservationNumberRepository);
+            var branchNumber = 1;
+            var players = await this.playerRepository.FindAllByIdsAsync(transferPlayerIds);
+            var requestPlayers = await this.requestPlayerRepository.FindAllByPlayerIdsAndSeasonId(transferPlayerIds, season.Id);
+            foreach (var player in players)
+            {
+                var isRegisteredThisSeason = requestPlayers.Any(o => o.PlayerId == player.Id && o.SeasonId == season.Id);
+                var requestPlayer = new RequestPlayer(
+                                    player.Id,
+                                    teamId,
+                                    season.Id,
+                                    reservationNumber,
+                                    branchNumber,
+                                    player.Category,
+                                    RequestType.TransferRegistration,
+                                    ApproveState.Unapproved,
+                                    DateTime.Now,
+                                    season.GetPlayerTradeFee(isRegisteredThisSeason),
+                                    null);
+                await this.requestPlayerRepository.AddAsync(requestPlayer);
+                branchNumber++;
+            }
+            await this.SendRequestPlayersTransferMail(team.RepresentativeEmailAddress);
+        }
+
+        public async Task SendRequestPlayersTransferMail(string mailAddress)
+        {
+            try
+            {
+                using var sr = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data/mail/requestPlayersTransfer_mail.json"));
+                var json = sr.ReadToEnd();
+                json = json.Replace("\r\n", "");
+                var jsonElement = JsonSerializer.Deserialize<JsonElement>(json);
+                var subject = JsonConverter.ToString(jsonElement.GetProperty("subject"));
+                var htmlMessage = JsonConverter.ToMailBodyString(jsonElement.GetProperty("body"));
+                await this.mailSender.SendEmailAsync(mailAddress, subject, htmlMessage);
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        public async Task<List<Season>> GetSeasons() => await seasonRepository.FindAll();
+
+        public async Task<Pagable<Player>> SearchPlayerPagedList(int pageIndex, int displayCount, int seasonId, int[] categoryIds, int[] genderIds, string playerName, string teamName)
+        {
+            var condition = new PlayerSearchCondition(pageIndex, displayCount, categoryIds, genderIds, playerName, teamName);
+            return await this.playerRepository.SearchPagedListAsync(condition, seasonId);
+        }
+
+        public async Task<List<Player>> SearchPlayerList(int seasonId, int[] categoryIds, int[] genderIds, string playerName, string teamName)
+        {
+            var condition = new PlayerSearchCondition(categoryIds, genderIds, playerName, teamName);
+            return await this.playerRepository.SearchListAsync(condition, seasonId);
         }
     }
 }

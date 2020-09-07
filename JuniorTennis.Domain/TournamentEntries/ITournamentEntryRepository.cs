@@ -9,7 +9,7 @@ namespace JuniorTennis.Domain.TournamentEntries
         /// 大会申込の一覧を取得します。
         /// </summary>
         /// <returns>大会申込の一覧。</returns>
-        Task<List<TournamentEntry>> FindAsync();
+        Task<List<TournamentEntry>> FindAllAsync();
 
         /// <summary>
         /// 大会、種目を条件に抽出した大会申込の一覧を取得します。

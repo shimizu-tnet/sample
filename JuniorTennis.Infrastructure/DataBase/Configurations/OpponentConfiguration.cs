@@ -1,6 +1,7 @@
 ﻿using JuniorTennis.Domain.DrawTables;
 using JuniorTennis.Domain.Players;
 using JuniorTennis.Domain.Teams;
+using JuniorTennis.Domain.TournamentEntries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

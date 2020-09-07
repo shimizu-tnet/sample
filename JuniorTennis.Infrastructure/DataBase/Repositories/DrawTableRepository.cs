@@ -1,6 +1,5 @@
 ﻿using JuniorTennis.Domain.DrawTables;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -116,6 +115,8 @@ namespace JuniorTennis.Infrastructure.DataBase.Repositories
 
         public async Task DeleteAsync(DrawTable entity)
         {
+            var entryDetails = this.context.EntryDetails.Where(o => o.DrawTableId == entity.Id);
+            this.context.EntryDetails.RemoveRange(entryDetails);
             this.context.DrawTables.Remove(entity);
             await this.context.SaveChangesAsync();
         }

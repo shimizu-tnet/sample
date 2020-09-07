@@ -1,4 +1,5 @@
-﻿using JuniorTennis.Domain.Tournaments;
+﻿using JuniorTennis.Domain.TournamentEntries;
+using JuniorTennis.Domain.Tournaments;
 using JuniorTennis.SeedWork;
 using System.Collections.Generic;
 using System.Linq;
@@ -219,5 +220,17 @@ namespace JuniorTennis.Domain.DrawTables
             return this.EntryDetails
                 .Count(o => o.ParticipationClassification == participationClassification);
         }
+
+        #region foreign key
+        /// <summary>
+        /// 外部キー。
+        /// </summary>
+        public int MainDrawSettingsId { get; private set; }
+
+        /// <summary>
+        /// 外部キー。
+        /// </summary>
+        public int QualifyingDrawSettingsId { get; private set; }
+        #endregion foreign key
     }
 }

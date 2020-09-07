@@ -24,6 +24,9 @@ namespace JuniorTennis.Infrastructure.DataBase.Configurations
             builder.Property(o => o.Category)
                 .HasSnakeCaseColumnName()
                 .HasEnumerationConversion();
+            builder.Property(o => o.RequestType)
+                .HasSnakeCaseColumnName()
+                .HasEnumerationConversion();
             builder.Property(o => o.ApproveState)
                 .HasSnakeCaseColumnName()
                 .HasEnumerationConversion();

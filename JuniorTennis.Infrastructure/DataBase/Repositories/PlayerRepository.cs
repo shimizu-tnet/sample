@@ -1,6 +1,7 @@
 ﻿using JuniorTennis.Domain.Players;
 using JuniorTennis.Domain.RequestPlayers;
 using JuniorTennis.Domain.Teams;
+using JuniorTennis.Domain.UseCases.Shared;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,11 @@ namespace JuniorTennis.Infrastructure.DataBase.Repositories
         public async Task<Player> FindByIdAsync(int playerId) =>
             await this.context.Players.FirstOrDefaultAsync(o => o.Id == playerId);
 
+        public async Task<List<Player>> FindAllByIdsAsync(List<int> playerIds) =>
+            await this.context.Players
+                .Where(o => playerIds.Contains(o.Id))
+                .ToListAsync();
+
         public async Task<bool> ExistsByNameAndBirtDateAsync(PlayerFamilyName playerFamilyName, PlayerFirstName playerFirstName, BirthDate birthDate) =>
             await this.context.Players
                 .Where(o => o.PlayerFamilyName == playerFamilyName)
@@ -71,6 +77,72 @@ namespace JuniorTennis.Infrastructure.DataBase.Repositories
         {
             this.context.Remove(player);
             await this.context.SaveChangesAsync();
+        }
+
+        public async Task<List<Player>> SearchAsync(PlayerSearchCondition condition)
+        {
+            var query = this.context.Players.AsQueryable();
+            return await condition.Apply(query).ToListAsync();
+        }
+
+        public async Task<Pagable<Player>> SearchPagedListAsync(PlayerSearchCondition condition, int seasonId)
+        {
+            var query = this.context.Players.AsQueryable();
+            var totalCount = 0;
+            var players = new List<Player>();
+            if (seasonId == 0)
+            {
+                totalCount = await condition.ApplyWithoutPagination(query).CountAsync();
+                players = await condition.Apply(query.Include(o => o.Team)).ToListAsync();
+                return new Pagable<Player>(players, condition.PageIndex, totalCount, condition.DisplayCount);
+            }
+
+            query = query.GroupJoin(
+                this.context.Set<RequestPlayer>(),
+                player => player.Id,
+                request => request.PlayerId,
+                (player, request) => new
+                {
+                    Player = player,
+                    RequestPlayers = request
+                })
+            .SelectMany(
+                o => o.RequestPlayers.DefaultIfEmpty(),
+                (player, request) => new { player.Player, Request = request }
+            )
+            .Where(o => o.Request.SeasonId == seasonId)
+            .Select(o => o.Player);
+
+            totalCount = await condition.ApplyWithoutPagination(query).CountAsync();
+            players = await condition.Apply(query.Include(o => o.Team)).ToListAsync();
+            return new Pagable<Player>(players, condition.PageIndex, totalCount, condition.DisplayCount);
+
+        }
+
+        public async Task<List<Player>> SearchListAsync(PlayerSearchCondition condition, int seasonId)
+        {
+            var query = this.context.Players.AsQueryable();
+            if (seasonId == 0)
+            {
+                return await condition.Apply(query.Include(o => o.Team)).ToListAsync();
+            }
+            query = query.GroupJoin(
+                this.context.Set<RequestPlayer>(),
+                player => player.Id,
+                request => request.PlayerId,
+                (player, request) => new
+                {
+                    Player = player,
+                    RequestPlayers = request
+                })
+            .SelectMany(
+                o => o.RequestPlayers.DefaultIfEmpty(),
+                (player, request) => new { player.Player, Request = request }
+            )
+            .Where(o => o.Request.SeasonId == seasonId)
+            .Select(o => o.Player);
+
+            return await condition.Apply(query.Include(o => o.Team)).ToListAsync();
         }
     }
 }

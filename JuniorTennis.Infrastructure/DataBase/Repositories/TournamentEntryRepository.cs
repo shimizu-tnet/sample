@@ -1,4 +1,6 @@
-﻿using JuniorTennis.Domain.Players;
+﻿using JuniorTennis.Domain.DrawTables;
+using JuniorTennis.Domain.Players;
+using JuniorTennis.Domain.Ranking;
 using JuniorTennis.Domain.Teams;
 using JuniorTennis.Domain.TournamentEntries;
 using JuniorTennis.Domain.Tournaments;
@@ -16,124 +18,107 @@ namespace JuniorTennis.Infrastructure.DataBase.Repositories
         private readonly JuniorTennisDbContext context;
         public TournamentEntryRepository(JuniorTennisDbContext context) => this.context = context;
 
-        public Task<List<TournamentEntry>> FindAsync()
+        public Task<List<TournamentEntry>> FindAllAsync()
         {
-            throw new System.NotImplementedException();
+            return this.context.TournamentEntries
+                .Include(o => o.EntryDetail)
+                .ThenInclude(o => o.EntryPlayers)
+                .Where(o => o.EntryDetail.UsageFeatures == UsageFeatures.TournamentEntry)
+                .ToListAsync();
         }
 
         public async Task<List<TournamentEntry>> FindByIdAsync(int tournamentId, string tennisEventId)
         {
-            var tournaments = await this.context.Tournaments
-                    .Include(o => o.TennisEvents)
-                    .Include(o => o.HoldingDates)
-                    .ToListAsync();
-            var tournament = tournaments.FirstOrDefault(o => o.Id == tournamentId);
-            var random = new Random();
+            #region Variables
+            var tournament = await this.context.Tournaments
+                .Where(o => o.Id == tournamentId)
+                .Include(o => o.TennisEvents)
+                .Include(o => o.HoldingDates)
+                .FirstOrDefaultAsync();
+            var isSingled = TennisEvent.FromId(tennisEventId).IsSingles;
+            var r = new Random();
+            #endregion Variables
 
-            var TournamentEntries = new List<TournamentEntry>();
-            Enumerable.Range(1, 30).ToList()
-                .ForEach(o =>
+            #region Create EarnedPoints
+            var earnedPoints = new List<EarnedPoints>();
+            Enumerable.Range(1, 30).ToList().ForEach(o =>
+            {
+                var earnedPointsA = Enumerable
+                    .Range(1, 10)
+                    .Select(p => new EarnedPoints(
+                        tournamentId,
+                        tennisEventId,
+                        playerCode: new PlayerCode($"{o:00}{p:00}A"),
+                        point: new Point(r.Next(500, 9999))));
+                earnedPoints.AddRange(earnedPointsA);
+
+                var earnedPointsB = Enumerable
+                    .Range(1, 10)
+                    .Select(p => new EarnedPoints(
+                        tournamentId,
+                        tennisEventId,
+                        playerCode: new PlayerCode($"{o:00}{p:00}B"),
+                        point: new Point(r.Next(500, 9999))));
+                earnedPoints.AddRange(earnedPointsB);
+            });
+            #endregion Create EarnedPoints
+
+            #region Create TournamentEntry
+            var tournamentEntries = new List<TournamentEntry>();
+            for (var i = 1; i <= 30; i++)
+            {
+                for (var j = 1; j <= 10; j++)
                 {
-                    TournamentEntries.AddRange(Enumerable.Range(1, 10).Select(p =>
+                    #region Create EntryPlayer
+                    var entryPlayers = new List<EntryPlayer>();
+                    for (var k = 0; k < (isSingled ? 1 : 2); k++)
                     {
-                        return new TournamentEntry(
-                            reservationNumber: $"{DateTime.Now:yyyyMMdd}{o:0000}{p:00}",
-                            reservationDate: tournament.ApplicationPeriod.StartDate,
-                            teams:
-                            TennisEvent.FromId(tennisEventId).IsSingles
-                                ? new Team[] {
-                                    new Team(
-                                        teamCode: new TeamCode($"C{o:0000}"),
-                                        teamType: TeamType.Club,
-                                        teamName: new TeamName($"クラブ {o:0000}"),
-                                        teamAbbreviatedName: new TeamAbbreviatedName($"クラブ {o:0000}"),
-                                        representativeName:"",
-                                        representativeEmailAddress:"",
-                                        telephoneNumber: "",
-                                        address: "",
-                                        coachName:"",
-                                        coachEmailAddress: "",
-                                        teamJpin:"")
-                                }
-                                : new Team[] {
-                                    new Team(
-                                        teamCode: new TeamCode($"C{o:0000}"),
-                                        teamType: TeamType.Club,
-                                        teamName: new TeamName($"クラブ {o:0000}"),
-                                        teamAbbreviatedName: new TeamAbbreviatedName($"クラブ {o:0000}"),
-                                        representativeName:"",
-                                        representativeEmailAddress:"",
-                                        telephoneNumber: "",
-                                        address: "",
-                                        coachName:"",
-                                        coachEmailAddress: "",
-                                        teamJpin:"")
-                                    , new Team(
-                                        teamCode: new TeamCode($"C{o:0000}"),
-                                        teamType: TeamType.Club,
-                                        teamName: new TeamName($"クラブ {o:0000}"),
-                                        teamAbbreviatedName: new TeamAbbreviatedName($"クラブ {o:0000}"),
-                                        representativeName:"",
-                                        representativeEmailAddress:"",
-                                        telephoneNumber: "",
-                                        address: "",
-                                        coachName:"",
-                                        coachEmailAddress: "",
-                                        teamJpin:"")
-                                },
-                            tournamentName: tournament.TournamentName,
-                            tennisEvent: tournament.TennisEvents.First(o => o == TennisEvent.FromId(tennisEventId)),
-                            players:
-                            TennisEvent.FromId(tennisEventId).IsSingles
-                                ? new Player[] {
-                                    new Player(
-                                        teamId: 1,
-                                        playerCode: new PlayerCode($"{o:000}{p:000}A"),
-                                        playerFamilyName:  new PlayerFamilyName($"名前 {o:000}"),
-                                        playerFirstName:new PlayerFirstName($"{p:000}A"),
-                                        playerFamilyNameKana: new PlayerFamilyNameKana("テスト"),
-                                        playerFirstNameKana: new PlayerFirstNameKana("ナマエ"),
-                                        playerJpin: null,
-                                        category: null,
-                                        gender: null,
-                                        birthDate: new BirthDate(new DateTime()),
-                                        telephoneNumber: null)
-                                }
-                                : new Player[] {
-                                    new Player(
-                                        teamId: 1,
-                                        playerCode: new PlayerCode($"{o:000}{p:000}A"),
-                                        playerFamilyName:  new PlayerFamilyName($"名前 {o:000}"),
-                                        playerFirstName:new PlayerFirstName($"{p:000}A"),
-                                        playerFamilyNameKana: new PlayerFamilyNameKana("テスト"),
-                                        playerFirstNameKana: new PlayerFirstNameKana("ナマエ"),
-                                        playerJpin: null,
-                                        category: null,
-                                        gender: null,
-                                        birthDate: new BirthDate(new DateTime()),
-                                        telephoneNumber: null)
-                                    , new Player(
-                                        teamId: 1,
-                                        playerCode: new PlayerCode($"{o:000}{p:000}B"),
-                                        playerFamilyName:  new PlayerFamilyName($"名前 {o:000}"),
-                                        playerFirstName:new PlayerFirstName($"{p:000}B"),
-                                        playerFamilyNameKana: new PlayerFamilyNameKana("テスト"),
-                                        playerFirstNameKana: new PlayerFirstNameKana("ナマエ"),
-                                        playerJpin: null,
-                                        category: null,
-                                        gender: null,
-                                        birthDate: new BirthDate(new DateTime()),
-                                        telephoneNumber: null)
-                                },
-                            entryFee: tournament.EntryFee,
-                            receiptStatus: Enumeration.FromValue<ReceiptStatus>(random.Next(1, 3)),
-                            receivedDate: null,
-                            applicant: Applicant.Team
-                            ); ;
-                    }));
-                });
+                        var point = earnedPoints
+                            .Where(p => p.TennisEventId == tennisEventId)
+                            .Where(p => p.PlayerCode.Value == $"{i:00}{j:00}{(k == 0 ? "A" : "B")}")
+                            .Sum(o => o.Point.Value);
 
-            return TournamentEntries;
+                        var entryPlayer = new EntryPlayer(
+                            teamCode: new TeamCode($"TEAM{i:00}{j:00}"),
+                            teamName: new TeamName($"チーム{i:00}{j:00}"),
+                            teamAbbreviatedName: new TeamAbbreviatedName($"略称{i:00}{j:00}"),
+                            playerCode: new PlayerCode($"{i:00}{j:00}{(k == 0 ? "A" : "B")}"),
+                            playerFamilyName: new PlayerFamilyName($"姓{i:00}{j:00}"),
+                            playerFirstName: new PlayerFirstName($"名{i:00}{j:00}"),
+                            point: new Point(point));
+                        entryPlayers.Add(entryPlayer);
+                    }
+                    #endregion Create EntryPlayer
+
+                    #region Create EntryDetail
+                    var entryDetail = new EntryDetail(
+                        entryNumber: new EntryNumber(j),
+                        participationClassification: ParticipationClassification.Main,
+                        seedNumber: new SeedNumber(0),
+                        entryPlayers: entryPlayers,
+                        canParticipationDates: tournament.HoldingDates
+                            .Where(o => r.Next(0, 4) != 1)
+                            .Select(o => new CanParticipationDate(o.Value)),
+                        receiptStatus: Enumeration.FromValue<ReceiptStatus>(r.Next(1, 4)),
+                        usageFeatures: UsageFeatures.TournamentEntry,
+                        fromQualifying: false,
+                        blockNumber: null);
+                    #endregion Create EntryDetail
+
+                    var tournamentEntry = new TournamentEntry(
+                        reservationNumber: $"{DateTime.Now:yyyyMMdd}{i:0000}{j:00}",
+                        reservationDate: tournament.ApplicationPeriod.StartDate,
+                        entryDetail: entryDetail,
+                        entryFee: tournament.EntryFee,
+                        receiptStatus: ReceiptStatus.Received,
+                        receivedDate: DateTime.Today,
+                        applicant: Enumeration.FromValue<Applicant>(r.Next(1, 3)));
+                    tournamentEntries.Add(tournamentEntry);
+                }
+            }
+            #endregion Create TournamentEntry
+
+            return tournamentEntries;
         }
     }
 }

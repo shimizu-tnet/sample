@@ -1,4 +1,5 @@
 ﻿using JuniorTennis.Domain.Repositoies;
+using JuniorTennis.Domain.TournamentEntries;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -108,7 +109,6 @@ namespace JuniorTennis.Domain.DrawTables
                     new BlockNumber(blockNumber),
                     ParticipationClassification.Qualifying,
                     gameDate: null,
-                    new Games(),
                     drawSettings
                 );
                 block.Games.InitializeQualifyingGames(block);
@@ -137,6 +137,23 @@ namespace JuniorTennis.Domain.DrawTables
         public IEnumerable<Block> GetBlocks(ParticipationClassification participationClassification)
         {
             return this.Where(o => o.ParticipationClassification == participationClassification);
+        }
+
+        /// <summary>
+        /// 指定した出場区分の初期化済みのブロックの一覧を取得します。
+        /// </summary>
+        /// <param name="participationClassification">出場区分。</param>
+        /// <returns>ブロック一覧。</returns>
+        public IEnumerable<Block> GetIniitalizedBlocks(ParticipationClassification participationClassification = null)
+        {
+            var blocks = this.AsEnumerable();
+
+            if (participationClassification != null)
+            {
+                blocks = blocks.Where(o => o.ParticipationClassification == participationClassification);
+            }
+
+            return blocks.Where(o => o.Initialized);
         }
 
         /// <summary>
@@ -245,44 +262,6 @@ namespace JuniorTennis.Domain.DrawTables
             block.Games.InitializeMainGames(block, drawNumberSettings);
         }
 
-        private IEnumerable<(int drawNumber, int playerClassificationId, int seedLevel, int assignOrder)> GetDrawNumbers(NumberOfDraws numberOfDraws)
-        {
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @$"Data\{this.GetDrawNumbersFileName(numberOfDraws)}");
-            var csv = File.ReadAllLines(path, Encoding.UTF8);
-            var list = csv
-                .Select(o => o.Split(','))
-                .Select(o => (drawNumber: int.Parse(o[0]), playerClassificationId: int.Parse(o[1]), seedLevel: int.Parse(o[2]), seedNumber: int.Parse(o[3])));
-
-            return list;
-        }
-
-        private string GetDrawNumbersFileName(NumberOfDraws numberOfDraws)
-        {
-            switch (numberOfDraws.Value)
-            {
-                case 4:
-                    return "drawNumbers_0004.csv";
-                case 8:
-                    return "drawNumbers_0008.csv";
-                case 16:
-                    return "drawNumbers_0016.csv";
-                case 32:
-                    return "drawNumbers_0032.csv";
-                case 64:
-                    return "drawNumbers_0064.csv";
-                case 128:
-                    return "drawNumbers_0128.csv";
-                case 256:
-                    return "drawNumbers_0256.csv";
-                case 512:
-                    return "drawNumbers_0512.csv";
-                case 1024:
-                    return "drawNumbers_1024.csv";
-                default:
-                    throw new ArgumentException("不正なドロー数です。");
-            }
-        }
-
         /// <summary>
         /// ブロックを JSON 文字列に変換します。
         /// </summary>
@@ -291,13 +270,16 @@ namespace JuniorTennis.Domain.DrawTables
         /// <returns>JSON 文字列。</returns>
         public string ToJson(ParticipationClassification participationClassification, BlockNumber blockNumber)
         {
-            var blocks = participationClassification == ParticipationClassification.Qualifying
-                ? this.GetQualifyingBlocks().AsEnumerable()
-                : new List<Block>() { this.GetMainBlock() }.AsEnumerable();
+            var blocks = this.GetIniitalizedBlocks(participationClassification);
 
             if (blockNumber != null)
             {
                 blocks = blocks.Where(o => o.BlockNumber == blockNumber);
+            }
+
+            if (!blocks.Any())
+            {
+                return "[]";
             }
 
             var json = blocks.SelectMany(o => o.Games.SelectMany(p => p.Opponents.Select(q => new
@@ -305,6 +287,7 @@ namespace JuniorTennis.Domain.DrawTables
                 blockNumber = o.BlockNumber?.Value,
                 gameNumber = p.GameNumber?.Value,
                 drawNumber = q.DrawNumber?.Value,
+                framePlayerClassification = q.FramePlayerClassification?.Id,
                 playerClassification = q.PlayerClassification?.Id,
                 seedLevel = q.SeedLevel?.Value,
                 assignOrder = q.AssignOrder?.Value,
@@ -353,6 +336,51 @@ namespace JuniorTennis.Domain.DrawTables
                 .Where(o => o.CanAssign)
                 .Where(o => !o.HasBye)
                 .Any();
+        }
+
+        /// <summary>
+        /// 同一団体戦一覧を取得します。
+        /// </summary>
+        /// <returns>同一団体戦一覧。</returns>
+        public List<SameTeamsGameDto> SameTeamsGames()
+        {
+            var sameTeamsGames = new List<SameTeamsGameDto>();
+            foreach (var block in this)
+            {
+                var opponents = block.Games
+                    .SelectMany(o => o.Opponents)
+                    .Where(o => o.IsAssigned);
+
+                foreach (var opponent in opponents)
+                {
+                    var sameTeamOpponents = opponents
+                        .Where(o => o.Id != opponent.Id)
+                        .Where(o => o.TeamCodes.Any(o => opponent.TeamCodes.Contains(o)));
+
+                    foreach (var sameTeamOpponent in sameTeamOpponents)
+                    {
+                        var blockName = this.FirstOrDefault(o => o.BlockNumber == sameTeamOpponent.BlockNumber).DisplayValue;
+                        var drawNumber = sameTeamOpponent.DrawNumber.Value;
+                        if (sameTeamsGames.Any(o => o.BlockName == blockName && o.DrawNumber == drawNumber))
+                        {
+                            continue;
+                        }
+
+                        sameTeamsGames.Add(new SameTeamsGameDto()
+                        {
+                            BlockName = blockName,
+                            DrawNumber = drawNumber,
+                            TeamAbbreviatedNames = sameTeamOpponent.TeamAbbreviatedNames.Select(o => o.Value).ToArray(),
+                            PlayerNames = sameTeamOpponent.PlayerNames.Select(o => o.Value).ToArray(),
+                        });
+                    }
+                }
+            }
+
+            return sameTeamsGames
+                .OrderBy(o => o.BlockNumber)
+                .ThenBy(o => o.DrawNumber)
+                .ToList();
         }
         #endregion methods
 

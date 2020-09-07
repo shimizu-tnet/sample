@@ -1,0 +1,41 @@
+﻿@model List<JuniorTennis.Domain.Players.Player>
+@{
+    Layout = "";
+}
+
+@if (Model.Any())
+{
+    <div>
+        <form asp-action="Transfer">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>選択</th>
+                        <th>氏名</th>
+                        <th>フリガナ</th>
+                        <th>カテゴリー</th>
+                        <th>性別</th>
+                        <th>生年月日</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var player in Model)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="SelectedPlayerIds" value="@player.Id" />
+                            </td>
+                            <td>@player.PlayerFamilyName.Value @player.PlayerFirstName.Value</td>
+                            <td>@player.PlayerFamilyNameKana.Value @player.PlayerFirstNameKana.Value</td>
+                            <td>@player.Category.Name</td>
+                            <td>@player.Gender.Name</td>
+                            <td>@player.BirthDate.DisplayValue</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button class="button-primary" id="decide-button" type="submit">選択</button>
+            <button class="button" onclick="closePlayersDialog()">キャンセル</button>
+        </form>
+    </div>
+}
