@@ -6,4 +6,4 @@ phases:
       - dotnet build
 artifacts:
   files:
-    - /codebuild/output/src867779053/src/JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/*
+    - ./bin/Debug/netcoreapp3.1/*
