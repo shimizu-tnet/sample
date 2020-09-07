@@ -4,13 +4,24 @@
     ViewData["Title"] = "選手登録申込状況";
 }
 
-    <h2>選手登録申込状況一覧</h2>
+<h2>選手登録申込状況一覧</h2>
 
+@foreach (var reservationNumber in Model.ReservationNumbers)
+{
+
+    <dl class="horizontal">
+        <dt>種類</dt>
+        <dd>@Model.RequestPlayersMap[reservationNumber][0].RequestTypeName</dd>
+        <dt>申込日時</dt>
+        <dd>@Model.RequestPlayersMap[reservationNumber][0].RequestedDateTime</dd>
+        <dt>予約番号</dt>
+        <dd>@reservationNumber</dd>
+    </dl>
 
     <table class="table">
         <thead>
             <tr>
-                <th>予約番号</th>
+                <th>登録状態</th>
                 <th>氏名</th>
                 <th>フリガナ</th>
                 <th>カテゴリー</th>
@@ -19,16 +30,17 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var requestPlayer in Model.RequestPlayers)
+            @foreach (var requestPlayer in Model.RequestPlayersMap[reservationNumber])
             {
-            <tr>
-                <td>@requestPlayer.ReservationNumber.Value</td>
-                <td>@requestPlayer.Player.PlayerFamilyName.Value @requestPlayer.Player.PlayerFirstName.Value</td>
-                <td>@requestPlayer.Player.PlayerFamilyNameKana.Value @requestPlayer.Player.PlayerFirstNameKana.Value</td>
-                <td>@requestPlayer.Player.Category.Name</td>
-                <td>@requestPlayer.Player.Gender.Name</td>
-                <td>@requestPlayer.Player.BirthDate</td>
-            </tr>
+                <tr>
+                    <td>@requestPlayer.ApproveStateName</td>
+                    <td>@requestPlayer.PlayerName</td>
+                    <td>@requestPlayer.PlayerNameKana</td>
+                    <td>@requestPlayer.CategoryName</td>
+                    <td>@requestPlayer.GenderName</td>
+                    <td>@requestPlayer.BirthDate</td>
+                </tr>
             }
         </tbody>
     </table>
+}

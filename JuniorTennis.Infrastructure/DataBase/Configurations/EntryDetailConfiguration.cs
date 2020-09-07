@@ -10,12 +10,7 @@ namespace JuniorTennis.Infrastructure.DataBase.Configurations
         public void Configure(EntityTypeBuilder<EntryDetail> builder)
         {
             builder.ToTable("entry_details");
-            builder.HasOne(o => o.DrawTable)
-                .WithMany(o => o.EntryDetails)
-                .HasForeignKey(o => o.DrawTableId)
-                .HasPrincipalKey(o => o.Id);
             builder.Property(o => o.Id).HasSnakeCaseColumnName();
-            builder.Property(o => o.DrawTableId).HasSnakeCaseColumnName();
             builder.Property(o => o.EntryNumber)
                 .HasConversion(o => o.Value, o => new EntryNumber(o))
                 .HasSnakeCaseColumnName();
@@ -33,11 +28,16 @@ namespace JuniorTennis.Infrastructure.DataBase.Configurations
             builder.Property(o => o.ReceiptStatus)
                 .HasEnumerationConversion()
                 .HasSnakeCaseColumnName();
+            builder.Property(o => o.UsageFeatures)
+                .HasEnumerationConversion()
+                .HasSnakeCaseColumnName();
             builder.Property(o => o.FromQualifying)
                 .HasSnakeCaseColumnName();
             builder.Property(o => o.BlockNumber)
                 .HasConversion(o => o.Value, o => new BlockNumber(o))
                 .HasSnakeCaseColumnName();
+            builder.Property(o => o.TournamentEntryId).HasSnakeCaseColumnName();
+            builder.Property(o => o.DrawTableId).HasSnakeCaseColumnName();
         }
     }
 }

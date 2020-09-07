@@ -1,6 +1,7 @@
 ﻿using JuniorTennis.Domain.DrawTables;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,7 +24,7 @@ namespace JuniorTennis.Domain.Repositoies
         {
             var drawNumberSettings = drawNumbers.SelectMany(o =>
             {
-                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @$"Data\drawNumbers_{o:0000}.csv");
+                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @$"Data\drawtable\drawNumbers_{o:0000}.csv");
                 var csv = File.ReadAllLines(path, Encoding.UTF8);
                 var list = csv
                     .Select(p => p.Split(','))
@@ -37,9 +38,9 @@ namespace JuniorTennis.Domain.Repositoies
                     });
 
                 return list;
-            });
+            }).ToList();
 
-            DrawNumberSettingsRepository.drawNumberSettings = drawNumberSettings.ToList();
+            DrawNumberSettingsRepository.drawNumberSettings = new Collection<DrawNumberSettingsDto>(drawNumberSettings);
         }
 
         /// <summary>

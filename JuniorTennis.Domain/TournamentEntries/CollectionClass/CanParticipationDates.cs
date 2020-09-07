@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 
-namespace JuniorTennis.Domain.DrawTables
+namespace JuniorTennis.Domain.TournamentEntries
 {
     /// <summary>
     /// 出場可能日一覧。

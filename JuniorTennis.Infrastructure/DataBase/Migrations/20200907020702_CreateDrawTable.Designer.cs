@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace JuniorTennis.Infrastructure.DataBase.Migrations
 {
     [DbContext(typeof(JuniorTennisDbContext))]
-    [Migration("20200902072147_CreateDrawTable")]
+    [Migration("20200907020702_CreateDrawTable")]
     partial class CreateDrawTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -172,10 +172,12 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
                         .HasColumnName("eligible_players_type")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("MainDrawSettingsId")
+                    b.Property<int>("MainDrawSettingsId")
+                        .HasColumnName("main_draw_settings_id")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("QualifyingDrawSettingsId")
+                    b.Property<int>("QualifyingDrawSettingsId")
+                        .HasColumnName("qualifying_draw_settings_id")
                         .HasColumnType("integer");
 
                     b.Property<string>("TennisEventId")
@@ -197,100 +199,6 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
                     b.HasIndex("QualifyingDrawSettingsId");
 
                     b.ToTable("draw_tables");
-                });
-
-            modelBuilder.Entity("JuniorTennis.Domain.DrawTables.EntryDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<int?>("BlockNumber")
-                        .HasColumnName("block_number")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("CanParticipationDates")
-                        .HasColumnName("can_participation_dates")
-                        .HasColumnType("text");
-
-                    b.Property<int>("DrawTableId")
-                        .HasColumnName("draw_table_id")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("EntryNumber")
-                        .HasColumnName("entry_number")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("FromQualifying")
-                        .HasColumnName("from_qualifying")
-                        .HasColumnType("boolean");
-
-                    b.Property<int?>("ParticipationClassification")
-                        .HasColumnName("participation_classification")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("ReceiptStatus")
-                        .HasColumnName("receipt_status")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("SeedNumber")
-                        .HasColumnName("seed_number")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DrawTableId");
-
-                    b.ToTable("entry_details");
-                });
-
-            modelBuilder.Entity("JuniorTennis.Domain.DrawTables.EntryPlayer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<int>("EntryDetailId")
-                        .HasColumnName("entry_detail_id")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("PlayerCode")
-                        .HasColumnName("player_code")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PlayerFamilyName")
-                        .HasColumnName("player_family_name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PlayerFirstName")
-                        .HasColumnName("player_first_name")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("Point")
-                        .HasColumnName("point")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("TeamAbbreviatedName")
-                        .HasColumnName("team_abbreviated_name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TeamCode")
-                        .HasColumnName("team_code")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TeamName")
-                        .HasColumnName("team_name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EntryDetailId");
-
-                    b.ToTable("entry_players");
                 });
 
             modelBuilder.Entity("JuniorTennis.Domain.DrawTables.Game", b =>
@@ -523,6 +431,8 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TeamId");
+
                     b.ToTable("players");
                 });
 
@@ -552,6 +462,10 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
 
                     b.Property<int?>("PlayerRegistrationFee")
                         .HasColumnName("player_registration_fee")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("RequestType")
+                        .HasColumnName("request_type")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("RequestedDateTime")
@@ -747,6 +661,148 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
                     b.ToTable("teams");
                 });
 
+            modelBuilder.Entity("JuniorTennis.Domain.TournamentEntries.EntryDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int?>("BlockNumber")
+                        .HasColumnName("block_number")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CanParticipationDates")
+                        .HasColumnName("can_participation_dates")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("DrawTableId")
+                        .HasColumnName("draw_table_id")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("EntryNumber")
+                        .HasColumnName("entry_number")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("FromQualifying")
+                        .HasColumnName("from_qualifying")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("ParticipationClassification")
+                        .HasColumnName("participation_classification")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ReceiptStatus")
+                        .HasColumnName("receipt_status")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("SeedNumber")
+                        .HasColumnName("seed_number")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TournamentEntryId")
+                        .HasColumnName("tournament_entry_id")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("UsageFeatures")
+                        .HasColumnName("usage_features")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DrawTableId");
+
+                    b.HasIndex("TournamentEntryId")
+                        .IsUnique();
+
+                    b.ToTable("entry_details");
+                });
+
+            modelBuilder.Entity("JuniorTennis.Domain.TournamentEntries.EntryPlayer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("EntryDetailId")
+                        .HasColumnName("entry_detail_id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PlayerCode")
+                        .HasColumnName("player_code")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PlayerFamilyName")
+                        .HasColumnName("player_family_name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PlayerFirstName")
+                        .HasColumnName("player_first_name")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Point")
+                        .HasColumnName("point")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TeamAbbreviatedName")
+                        .HasColumnName("team_abbreviated_name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TeamCode")
+                        .HasColumnName("team_code")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TeamName")
+                        .HasColumnName("team_name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EntryDetailId");
+
+                    b.ToTable("entry_players");
+                });
+
+            modelBuilder.Entity("JuniorTennis.Domain.TournamentEntries.TournamentEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int?>("Applicant")
+                        .HasColumnName("applicant")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("EntryFee")
+                        .HasColumnName("entry_fee")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ReceiptStatus")
+                        .HasColumnName("receipt_status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ReceivedDate")
+                        .HasColumnName("received_date")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("ReservationDate")
+                        .HasColumnName("reservation_date")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ReservationNumber")
+                        .HasColumnName("reservation_number")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tournament_entry");
+                });
+
             modelBuilder.Entity("JuniorTennis.Domain.Tournaments.HoldingDate", b =>
                 {
                     b.Property<int>("TournamentId")
@@ -874,6 +930,43 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
                         .HasName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "417f24ea-9092-41e4-bd9e-2945167af006",
+                            ConcurrencyStamp = "2709c3bf-1f11-41bb-a665-490aa729b1f4",
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
+                        },
+                        new
+                        {
+                            Id = "64813896-1fe3-4c83-9833-9f7ceef245fb",
+                            ConcurrencyStamp = "a8449c40-37fc-4e68-8d67-362c46f20d8d",
+                            Name = "TournamentCreator",
+                            NormalizedName = "TOURNAMENTCREATOR"
+                        },
+                        new
+                        {
+                            Id = "c47b40c0-0356-492f-9b36-e7ac7ad8fb38",
+                            ConcurrencyStamp = "e8b7b25e-4205-4b60-a63b-a3f2fc19e6a1",
+                            Name = "Recorder",
+                            NormalizedName = "RECORDER"
+                        },
+                        new
+                        {
+                            Id = "6babcfe4-9d72-483d-bd55-41a8d30ec7da",
+                            ConcurrencyStamp = "9f84eff4-8ac1-44a7-973a-d9891b1bf644",
+                            Name = "Team",
+                            NormalizedName = "TEAM"
+                        },
+                        new
+                        {
+                            Id = "8afc07f0-0e0f-41b0-93f8-b1328ed7bf5c",
+                            ConcurrencyStamp = "166916d9-7e5b-4e65-b643-91c308fd8ef6",
+                            Name = "Developer",
+                            NormalizedName = "DEVELOPER"
+                        });
                 });
 
             modelBuilder.Entity("JuniorTennis.Infrastructure.Identity.ApplicationUser", b =>
@@ -1063,27 +1156,13 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
                 {
                     b.HasOne("JuniorTennis.Domain.DrawTables.DrawSettings", "MainDrawSettings")
                         .WithMany()
-                        .HasForeignKey("MainDrawSettingsId");
+                        .HasForeignKey("MainDrawSettingsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("JuniorTennis.Domain.DrawTables.DrawSettings", "QualifyingDrawSettings")
                         .WithMany()
-                        .HasForeignKey("QualifyingDrawSettingsId");
-                });
-
-            modelBuilder.Entity("JuniorTennis.Domain.DrawTables.EntryDetail", b =>
-                {
-                    b.HasOne("JuniorTennis.Domain.DrawTables.DrawTable", "DrawTable")
-                        .WithMany("EntryDetails")
-                        .HasForeignKey("DrawTableId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("JuniorTennis.Domain.DrawTables.EntryPlayer", b =>
-                {
-                    b.HasOne("JuniorTennis.Domain.DrawTables.EntryDetail", "EntryDetail")
-                        .WithMany("EntryPlayers")
-                        .HasForeignKey("EntryDetailId")
+                        .HasForeignKey("QualifyingDrawSettingsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1121,6 +1200,15 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("JuniorTennis.Domain.Players.Player", b =>
+                {
+                    b.HasOne("JuniorTennis.Domain.Teams.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("JuniorTennis.Domain.RequestPlayers.RequestPlayer", b =>
                 {
                     b.HasOne("JuniorTennis.Domain.Players.Player", "Player")
@@ -1153,6 +1241,26 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
                     b.HasOne("JuniorTennis.Domain.Teams.Team", "Team")
                         .WithMany()
                         .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("JuniorTennis.Domain.TournamentEntries.EntryDetail", b =>
+                {
+                    b.HasOne("JuniorTennis.Domain.DrawTables.DrawTable", "DrawTable")
+                        .WithMany("EntryDetails")
+                        .HasForeignKey("DrawTableId");
+
+                    b.HasOne("JuniorTennis.Domain.TournamentEntries.TournamentEntry", "TournamentEntry")
+                        .WithOne("EntryDetail")
+                        .HasForeignKey("JuniorTennis.Domain.TournamentEntries.EntryDetail", "TournamentEntryId");
+                });
+
+            modelBuilder.Entity("JuniorTennis.Domain.TournamentEntries.EntryPlayer", b =>
+                {
+                    b.HasOne("JuniorTennis.Domain.TournamentEntries.EntryDetail", "EntryDetail")
+                        .WithMany("EntryPlayers")
+                        .HasForeignKey("EntryDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

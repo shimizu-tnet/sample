@@ -31,7 +31,7 @@ namespace JuniorTennis.MvcTests.Features.Identity.Accounts
                 optionsAccessor: new Mock<IOptions<UrlSettings>>().Object);
 
             // Act
-            var result = await controller.SetupPassword(string.Empty);
+            var result = await controller.SetupPassword(string.Empty, null);
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
@@ -58,7 +58,7 @@ namespace JuniorTennis.MvcTests.Features.Identity.Accounts
                 optionsAccessor: new Mock<IOptions<UrlSettings>>().Object);
 
             // Act
-            var result = await controller.SetupPassword("abcdef123456");
+            var result = await controller.SetupPassword("abcdef123456", null);
 
             // Assert
             accountsUseCase.Verify();
@@ -87,12 +87,44 @@ namespace JuniorTennis.MvcTests.Features.Identity.Accounts
                 optionsAccessor: new Mock<IOptions<UrlSettings>>().Object);
 
             // Act
-            var result = await controller.SetupPassword("abcdef123456");
+            var result = await controller.SetupPassword("abcdef123456", null);
 
             // Assert
             accountsUseCase.Verify();
             accountsUseCase.VerifyNoOtherCalls();
             Assert.IsType<ViewResult>(result);
+        }
+
+        [Fact]
+        public async Task 認証コードとメール確認トークンをアクションパラメーターに持つ()
+        {
+            // Arrange
+            var accountsUseCase = new Mock<IAccountsUseCase>();
+            var authorizationUseCase = new Mock<IAuthorizationUseCase>();
+            accountsUseCase
+                .Setup(o => o.GetAuthorizationLinkByCode("abcdef123456"))
+                .ReturnsAsync(new AuthorizationLink("C12345", DateTime.Now))
+                .Verifiable();
+            var userManager = MockMaker.MakeMoqUserManager();
+            var signInManager = MockMaker.MakeMockSignInManager();
+            var controller = new AccountsController(
+                accountsUseCase: accountsUseCase.Object,
+                authorizationUseCase: authorizationUseCase.Object,
+                userManager: userManager.Object,
+                signInManager: signInManager.Object,
+                loggerFactory: new Mock<ILoggerFactory>().Object,
+                optionsAccessor: new Mock<IOptions<UrlSettings>>().Object);
+
+            // Act
+            var result = await controller.SetupPassword("abcdef123456", "abcdefghijklmn");
+
+            // Assert
+            accountsUseCase.Verify();
+            accountsUseCase.VerifyNoOtherCalls();
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsAssignableFrom<SetupPasswordViewModel>(viewResult.ViewData.Model);
+            Assert.Equal("abcdef123456", model.ActionParameters["authorizationCode"]);
+            Assert.Equal("abcdefghijklmn", model.ActionParameters["token"]);
         }
     }
 }

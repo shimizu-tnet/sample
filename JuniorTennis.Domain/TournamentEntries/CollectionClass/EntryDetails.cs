@@ -2,9 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 
-namespace JuniorTennis.Domain.DrawTables
+namespace JuniorTennis.Domain.TournamentEntries
 {
     /// <summary>
     /// エントリー詳細一覧。

@@ -1,0 +1,114 @@
+﻿@model JuniorTennis.Mvc.Features.Association.Players.IndexViewModel
+
+@{
+    ViewData["Title"] = "選手一覧";
+}
+
+<h2>選手一覧</h2>
+<form id="search">
+    <input id="page" type="hidden" name="page" />
+    <div class="search-form">
+        <fieldset class="form-item">
+            <div class="horizontal-items">
+                <div class="search-item">
+                    <label>年度：</label>
+                    <select name="season">
+                        <option value="0">年度指定なし</option>
+                        @foreach (var season in Model.Seasons)
+                        {
+                            <option value="@season.Id">@season.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="search-item">
+                    <label>カテゴリー：</label>
+                    @for (var i = 0; i < Model.CategoryButton.Count; i++)
+                    {
+                        <label>
+                            <input type="checkbox" name="category" value="@Model.CategoryButton[i].Value" checked="@Model.CategoryButton[i].Selected">
+                            <span>@Model.CategoryButton[i].Text</span>
+                        </label>
+                    }
+                </div>
+                <div class="search-item">
+                    <label>性別：</label>
+                    @for (var i = 0; i < Model.GenderButton.Count; i++)
+                    {
+                        <label>
+                            <input type="checkbox" name="gender" value="@Model.GenderButton[i].Value" checked="@Model.GenderButton[i].Selected">
+                            <span>@Model.GenderButton[i].Text</span>
+                        </label>
+                    }
+                </div>
+            </div>
+            <div class="horizontal-items">
+                <div class="search-item">
+                    <label>氏名：</label>
+                    <input name="playerName" />
+                </div>
+                <div class="search-item">
+                    <label>団体名：</label>
+                    <input name="teamName" />
+                </div>
+                <button id="search-button" type="button" class="button">検索</button>
+            </div>
+        </fieldset>
+    </div>
+    <div class="horizontal-container">
+        <div class="horizontal-items">
+            <button class="button" type="button" onclick="downloadClicked()">ダウンロード</button>
+            <button class="button" type="button">JPIN登録</button>
+        </div>
+    </div>
+
+    <div id="search-result">
+        @await Html.PartialAsync("_PlayersTable", Model.Players)
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        /*** API ***/
+        const fetchPlayersAsync = async () => {
+            const queryString = createQueryString(document.forms.search);
+            const res = await fetch(`@Url.Action("list")?${queryString}`);
+            const htmlText = await res.text();
+            return htmlText;
+        }
+
+        /*** FUNCTIONS ***/
+        const renderPlayersAsync = async () => {
+            const html = await fetchPlayersAsync();
+            const dom = convertToDom(html);
+            const searchResult = document.getElementById("search-result");
+            // awaitで待機すると一瞬ちらつくので変換後に実行
+            removeChildren(searchResult);
+            if (dom === "") {
+                return;
+            }
+
+            Array.from(dom.children).forEach(element => searchResult.append(element));
+        }
+
+        const changePage = async pageNumber => {
+            const pageInput = document.getElementById("page");
+            pageInput.value = pageNumber;
+            await renderPlayersAsync();
+        }
+
+        /*** EVENTS HANDLER ***/
+        const handleSearchAsync = async (ev) => {
+            await renderPlayersAsync();
+        }
+
+        /*** EVENTS LISTENER ***/
+        document.getElementById("search-button").addEventListener("click", handleSearchAsync, false);
+
+        const downloadClicked = async () => {
+            const queryString = createQueryString(document.forms.search);
+            const res = await fetch(`@Url.Action("downloadIndex")?${queryString}`);
+            const csv = await res.text();
+            handleExport(csv, '選手一覧.csv');
+        }
+    </script>
+}

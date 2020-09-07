@@ -111,7 +111,7 @@ namespace JuniorTennis.Mvc.Features.Players
         {
             this.CategoryButton = MvcViewHelper.CreateSelectListItem<Category>(Category.Under17Or18.Id);
             this.GenderButton = MvcViewHelper.CreateSelectListItem<Gender>(Gender.Boys.Id);
-            this.CurrentYear = DateTime.Today.Month < 4 ? DateTime.Today.Year - 1 : DateTime.Today.Year;
+            this.CurrentYear = DateTime.Today.Year;
         }
 
         /// <summary>

@@ -3,6 +3,8 @@ using JuniorTennis.Domain.Players;
 using System.Threading.Tasks;
 using JuniorTennis.Domain.RequestPlayers;
 using System;
+using JuniorTennis.Domain.Seasons;
+using JuniorTennis.Domain.UseCases.Shared;
 
 namespace JuniorTennis.Domain.UseCases.Players
 {
@@ -88,7 +90,7 @@ namespace JuniorTennis.Domain.UseCases.Players
         Task<List<RequestPlayer>> GetRequestState(int teamId);
 
         /// <summary>
-        /// 選手の申込状況を取得します。
+        /// 選手を検索します。
         /// </summary>
         /// <param name="playerName">氏名</param>
         /// <param name="categoryIds">カテゴリーid一覧</param>
@@ -117,5 +119,65 @@ namespace JuniorTennis.Domain.UseCases.Players
         /// <param name="mailAddress">メールアドレス</param>
         /// <returns>Task。</returns>
         Task SendRequestPlayersContinuedRegistrationMail(string mailAddress);
+
+        /// <summary>
+        /// 他団体の選手を検索します。
+        /// </summary>
+        /// <param name="playerName">氏名</param>
+        /// /// <param name="teamId">団体id</param>
+        /// <returns>選手一覧。</returns>
+        Task<List<Player>> SearchOtherTeamPlayers(string playerName, int teamId);
+
+        /// <summary>
+        /// 所属変更対象の選手を取得します。
+        /// </summary>
+        /// <param name="playerIds">選手idリスト</param>
+        /// <returns>選手一覧。</returns>
+        Task<List<Player>> GetTransferPlayers(List<int> playerIds);
+
+        /// <summary>
+        /// 選手所属変更を申請します。
+        /// </summary>
+        /// <param name="transferPlayerIds">選手idリスト</param>
+        /// <param name="teamId">団体id</param>
+        /// <returns>Task。</returns>
+        Task AddRequestTransferPlayers(List<int> transferPlayerIds, int teamId);
+
+        /// <summary>
+        /// 選手所属変更申請完了後の通知メールを送信します。
+        /// </summary>
+        /// <param name="mailAddress">メールアドレス</param>
+        /// <returns>Task。</returns>
+        Task SendRequestPlayersTransferMail(string mailAddress);
+
+        /// <summary>
+        /// 年度一覧を取得します
+        /// </summary>
+        /// <returns>年度一覧。</returns>
+        Task<List<Season>> GetSeasons();
+
+        /// <summary>
+        /// 選手を検索します。
+        /// </summary>
+        /// <param name="pageIndex">現在のページ番号。</param>
+        /// <param name="displayCount">ページ当たりの表示件数。</param>
+        /// <param name="seasonId">年度id</param>
+        /// <param name="categoryIds">カテゴリーid一覧</param>
+        /// <param name="genderIds">性別id一覧</param>
+        /// <param name="playerName">氏名</param>
+        /// <param name="teamName">団体名</param>
+        /// <returns>選手一覧。</returns>
+        Task<Pagable<Player>> SearchPlayerPagedList(int pageIndex, int displayCount, int seasonId, int[] categoryIds, int[] genderIds, string playerName, string teamName);
+
+        /// <summary>
+        /// CSVの出力対象となる選手一覧を検索します。
+        /// </summary>
+        /// <param name="seasonId">年度id</param>
+        /// <param name="categoryIds">カテゴリーid一覧</param>
+        /// <param name="genderIds">性別id一覧</param>
+        /// <param name="playerName">氏名</param>
+        /// <param name="teamName">団体名</param>
+        /// <returns>選手一覧。</returns>
+        Task<List<Player>> SearchPlayerList(int seasonId, int[] category, int[] gender, string playerName, string teamName);
     }
 }

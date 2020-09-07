@@ -1,4 +1,5 @@
-﻿using JuniorTennis.Domain.Tournaments;
+﻿using JuniorTennis.Domain.QueryConditions;
+using JuniorTennis.Domain.Tournaments;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -83,5 +84,13 @@ namespace JuniorTennis.Infrastructure.DataBase.Repositories
         }
 
         public Task<Tournament> FindByRegistrationYear(DateTime registrationYear) => throw new NotImplementedException();
+
+        public async Task<List<Tournament>> SearchAsync(SearchCondition<Tournament> condition)
+        {
+            var query = this.context.Tournaments
+                    .Include(o => o.TennisEvents)
+                    .Include(o => o.HoldingDates);
+            return await condition.Apply(query).ToListAsync();
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using JuniorTennis.Domain.DrawTables;
 using JuniorTennis.Domain.Ranking;
+using JuniorTennis.Domain.Repositoies;
 using JuniorTennis.Domain.TournamentEntries;
 using JuniorTennis.Domain.Tournaments;
 using JuniorTennis.SeedWork;
@@ -69,43 +70,20 @@ namespace JuniorTennis.Domain.UseCases.DrawTables
 
         public async Task<List<EntryDetail>> RetrievePlayers(int tournamentId, string tennisEventId)
         {
-            var tournament = await this.tournamentRepository.FindById(tournamentId);
-            var tennisEvent = TennisEvent.FromId(tennisEventId);
             var tournamentEntries = await this.tournamentEntryRepository.FindByIdAsync(tournamentId, tennisEventId);
-            var earnedPoints = await this.rankingRepository.FindByTournamentEvent(tournamentId, tennisEventId);
-            var r1 = new Random();
-            var entryDetails = tournamentEntries.Select((entry, index) =>
-            {
-                var entryPlayers = Enumerable.Zip(entry.EntryTeams.Teams, entry.EntryPlayers.Players);
+            var entryDetails = tournamentEntries
+                .Select(o => o.EntryDetail)
+                .Select(o => new EntryDetail(
+                    o.EntryNumber,
+                    o.ParticipationClassification,
+                    o.SeedNumber,
+                    o.EntryPlayers,
+                    o.CanParticipationDates,
+                    o.ReceiptStatus,
+                    UsageFeatures.DrawTable))
+                .ToList();
 
-                return new EntryDetail(
-                    entryNumber: new EntryNumber(index),
-                    participationClassification: ParticipationClassification.Main,
-                    seedNumber: new SeedNumber(0),
-                    entryPlayers: entryPlayers.Select(o =>
-                    {
-                        var point = earnedPoints
-                            .Where(p => p.TennisEventId == tennisEvent.TennisEventId)
-                            .Where(p => p.PlayerCode == o.Second.PlayerCode)
-                            .Sum(o => o.Point.Value);
-
-                        return new EntryPlayer(
-                            o.First.TeamCode,
-                            o.First.TeamName,
-                            o.First.TeamAbbreviatedName,
-                            o.Second.PlayerCode,
-                            o.Second.PlayerFamilyName,
-                            o.Second.PlayerFirstName,
-                            new Point(point));
-                    }),
-                    canParticipationDates: tournament.HoldingDates
-                        .Where(o => r1.Next(0, 4) != 1)
-                        .Select(o => new CanParticipationDate(o.Value)),
-                    receiptStatus: entry.ReceiptStatus
-                );
-            });
-
-            return entryDetails.ToList();
+            return entryDetails;
         }
 
         public async Task StartEditingTheDrawTable(int tournamentId, string tennisEventId, int tournamentFromatId)
@@ -164,7 +142,6 @@ namespace JuniorTennis.Domain.UseCases.DrawTables
                 blockNumber: new BlockNumber(0),
                 participationClassification: ParticipationClassification.Main,
                 gameDate: null,
-                games: new Games(),
                 mainDrawSettings
                 ));
             if (tournamentFormat == TournamentFormat.WithQualifying)
@@ -173,7 +150,6 @@ namespace JuniorTennis.Domain.UseCases.DrawTables
                     blockNumber: new BlockNumber(1),
                     participationClassification: ParticipationClassification.Qualifying,
                     gameDate: null,
-                    games: new Games(),
                     qualifyingDrawSettings
                     ));
             }
@@ -313,6 +289,26 @@ namespace JuniorTennis.Domain.UseCases.DrawTables
                     blockName = o.DisplayValue,
                     drawNumber = q.DrawNumber.Value,
                 })));
+
+            return JsonSerializer.Serialize(json);
+        }
+
+        public async Task<string> GetGameOfSameTeamsJson(int tournamentId, string tennisEventId)
+        {
+            var dto = new DrawTableRepositoryDto(tournamentId, tennisEventId)
+            {
+                IncludeOpponents = true,
+            };
+            var drawTable = await this.drawTableRepository.FindByDtoAsync(dto);
+            var json = drawTable.Blocks
+                .SameTeamsGames()
+                .Select(o => new
+                {
+                    blockName = o.BlockName,
+                    drawNumber = o.DrawNumber,
+                    teamAbbreviatedNames = o.TeamAbbreviatedNames,
+                    playerNames = o.PlayerNames,
+                });
 
             return JsonSerializer.Serialize(json);
         }
@@ -699,8 +695,168 @@ namespace JuniorTennis.Domain.UseCases.DrawTables
             return drawTable.Blocks.ToJson(participationClassification, blockNumber);
         }
 
+        public async Task InitializeDrawTable(int tournamentId, string tennisEventId, int participationClassificationId)
+        {
+            var dto = new DrawTableRepositoryDto(tournamentId, tennisEventId)
+            {
+                IncludeEntryDetails = true,
+                IncludeEntryPlayers = true,
+                IncludeQualifyingDrawSettings = true,
+                IncludeMainDrawSettings = true,
+                IncludeBlocks = true,
+                IncludeGames = true,
+                IncludeGameResult = true,
+                IncludeOpponents = true,
+            };
+            var drawTable = await this.GetDrawTable(dto);
+            var participationClassification = Enumeration.FromValue<ParticipationClassification>(participationClassificationId);
+            var drawSettings = drawTable.GetDrawSettings(participationClassification);
+            var blocks = drawTable.Blocks.GetBlocks(participationClassification);
+            var drawNumberSettings = DrawNumberSettingsRepository.FindByNumberOfDraws(drawSettings.NumberOfDraws.Value);
+            foreach (var block in blocks)
+            {
+                block.InitializeGames();
+                var opponents = new Queue<Opponent>();
+                foreach (var drawNumberSetting in drawNumberSettings)
+                {
+                    opponents.Enqueue(new Opponent(
+                        new DrawNumber(drawNumberSetting.DrawNumber),
+                        new SeedLevel(0),
+                        new AssignOrder(drawNumberSetting.AssignOrder)));
+                }
+
+                foreach (var gameNumber in Enumerable.Range(1, block.Games.CalculateNumberOfGames(drawSettings.NumberOfDraws)))
+                {
+                    var game = new Game(
+                        new GameNumber(gameNumber),
+                        new RoundNumber(1),
+                        drawSettings);
+
+                    var opponent = opponents.Dequeue();
+                    opponent.UpdateBlockNumber(block.BlockNumber);
+                    opponent.UpdateGameNumber(game.GameNumber);
+                    game.AssignOpponent(opponent);
+
+                    opponent = opponents.Dequeue();
+                    opponent.UpdateBlockNumber(block.BlockNumber);
+                    opponent.UpdateGameNumber(game.GameNumber);
+                    game.AssignOpponent(opponent);
+
+                    block.Games.Add(game);
+                }
+            }
+
+            await this.UpdateDrawTable(drawTable);
+        }
+
         public async Task ExecuteSeedFrameSetting(int tournamentId, string tennisEventId, int participationClassificationId)
         {
+            var dto = new DrawTableRepositoryDto(tournamentId, tennisEventId)
+            {
+                IncludeMainDrawSettings = true,
+                IncludeQualifyingDrawSettings = true,
+                IncludeOpponents = true,
+            };
+            var drawTable = await this.GetDrawTable(dto);
+            var participationClassification = Enumeration.FromValue<ParticipationClassification>(participationClassificationId);
+            var drawSettings = drawTable.GetDrawSettings(participationClassification);
+            var blocks = drawTable.Blocks.GetBlocks(participationClassification);
+            var drawNumberSettings = DrawNumberSettingsRepository.FindByNumberOfDraws(drawSettings.NumberOfDraws.Value);
+            foreach (var block in blocks)
+            {
+                var opponents = block.Games.SelectMany(o => o.Opponents);
+                foreach (var drawNumberSetting in drawNumberSettings)
+                {
+                    if (drawNumberSetting.PlayerClassificationId != PlayerClassification.Seed.Id)
+                    {
+                        continue;
+                    }
+
+                    opponents
+                        .First(o => o.DrawNumber.Value == drawNumberSetting.DrawNumber)
+                        .AsSeedFrame(new SeedLevel(drawNumberSetting.SeedLevel));
+                }
+            }
+
+            await this.UpdateDrawTable(drawTable);
+        }
+
+        public async Task ExecuteSeedFrameRemove(int tournamentId, string tennisEventId, int participationClassificationId)
+        {
+            var dto = new DrawTableRepositoryDto(tournamentId, tennisEventId)
+            {
+                IncludeMainDrawSettings = true,
+                IncludeQualifyingDrawSettings = true,
+                IncludeOpponents = true,
+            };
+            var drawTable = await this.GetDrawTable(dto);
+            var participationClassification = Enumeration.FromValue<ParticipationClassification>(participationClassificationId);
+            var opponents = drawTable.Blocks.GetBlocks(participationClassification)
+                .SelectMany(o => o.Games)
+                .SelectMany(o => o.Opponents)
+                .Where(o => o.FramePlayerClassification == PlayerClassification.Seed);
+
+            foreach (var opponent in opponents)
+            {
+                opponent.AsGeneralFrame();
+            }
+
+            await this.UpdateDrawTable(drawTable);
+        }
+
+        public async Task ExecuteByeFrameSetting(int tournamentId, string tennisEventId, int participationClassificationId)
+        {
+            var dto = new DrawTableRepositoryDto(tournamentId, tennisEventId)
+            {
+                IncludeMainDrawSettings = true,
+                IncludeQualifyingDrawSettings = true,
+                IncludeOpponents = true,
+            };
+            var drawTable = await this.GetDrawTable(dto);
+            var participationClassification = Enumeration.FromValue<ParticipationClassification>(participationClassificationId);
+            var drawSettings = drawTable.GetDrawSettings(participationClassification);
+            var blocks = drawTable.Blocks.GetBlocks(participationClassification);
+            var drawNumberSettings = DrawNumberSettingsRepository.FindByNumberOfDraws(drawSettings.NumberOfDraws.Value);
+            foreach (var block in blocks)
+            {
+                var opponents = block.Games.SelectMany(o => o.Opponents);
+                foreach (var drawNumberSetting in drawNumberSettings)
+                {
+                    if (drawNumberSetting.PlayerClassificationId != PlayerClassification.Bye.Id)
+                    {
+                        continue;
+                    }
+
+                    opponents
+                        .First(o => o.DrawNumber.Value == drawNumberSetting.DrawNumber)
+                        .AsByeFrame();
+                }
+            }
+
+            await this.UpdateDrawTable(drawTable);
+        }
+
+        public async Task ExecuteByeFrameRemove(int tournamentId, string tennisEventId, int participationClassificationId)
+        {
+            var dto = new DrawTableRepositoryDto(tournamentId, tennisEventId)
+            {
+                IncludeMainDrawSettings = true,
+                IncludeQualifyingDrawSettings = true,
+                IncludeOpponents = true,
+            };
+            var drawTable = await this.GetDrawTable(dto);
+            var participationClassification = Enumeration.FromValue<ParticipationClassification>(participationClassificationId);
+            var opponents = drawTable.Blocks.GetBlocks(participationClassification)
+                .SelectMany(o => o.Games)
+                .SelectMany(o => o.Opponents)
+                .Where(o => o.FramePlayerClassification == PlayerClassification.Bye);
+
+            foreach (var opponent in opponents)
+            {
+                opponent.AsGeneralFrame();
+            }
+
+            await this.UpdateDrawTable(drawTable);
         }
 
         public async Task IntakeQualifyingWinners(int tournamentId, string tennisEventId)
@@ -780,6 +936,7 @@ namespace JuniorTennis.Domain.UseCases.DrawTables
                     entry.EntryPlayers,
                     entry.CanParticipationDates,
                     entry.ReceiptStatus,
+                    usageFeatures: UsageFeatures.DrawTable,
                     fromQualifying: true,
                     opponent.BlockNumber
                 );
@@ -813,56 +970,6 @@ namespace JuniorTennis.Domain.UseCases.DrawTables
                 drawTable.Blocks.InitializeQualifyingGames();
                 drawTable.EntryDetails.RemoveQualifyingWinners();
             }
-        }
-
-        public async Task AssignPlayersToDraw(
-            int tournamentId,
-            string tennisEventId,
-            int participationClassificationId,
-            int playerClassificationId,
-            int entryNumber,
-            int blockNumber,
-            int drawNumber)
-        {
-            var dto = new DrawTableRepositoryDto(tournamentId, tennisEventId)
-            {
-                IncludeEntryDetails = true,
-                IncludeEntryPlayers = true,
-                IncludeOpponents = true,
-            };
-            var drawTable = await this.GetDrawTable(dto);
-            var participationClassification = Enumeration.FromValue<ParticipationClassification>(participationClassificationId);
-            var playerClassification = Enumeration.FromValue<PlayerClassification>(playerClassificationId);
-            var targetBlock = drawTable.Blocks.First(o => o.BlockNumber == new BlockNumber(blockNumber));
-
-            var targetOpponent = targetBlock.Games
-                .SelectMany(o => o.Opponents)
-                .First(o => o.DrawNumber == new DrawNumber(drawNumber));
-
-            if (playerClassification == PlayerClassification.Bye)
-            {
-                targetOpponent.UpdateOpponent(
-                    PlayerClassification.Bye,
-                    new EntryNumber(0),
-                    new SeedNumber(0),
-                    teamCodes: null,
-                    teamAbbreviatedNames: null,
-                    playerCodes: null,
-                    playerNames: null);
-                return;
-            }
-
-            var entryDetails = drawTable.EntryDetails.ExtractEntryDetails(participationClassification);
-            var targetPlayer = entryDetails.First(o => o.EntryNumber == new EntryNumber(entryNumber));
-            drawTable.Blocks.UnassignOpponent(participationClassification, targetPlayer.EntryNumber);
-            targetOpponent.UpdateOpponent(
-                playerClassification,
-                targetPlayer.EntryNumber,
-                targetPlayer.SeedNumber,
-                new TeamCodes(targetPlayer.EntryPlayers.Select(o => o.TeamCode)),
-                new TeamAbbreviatedNames(targetPlayer.EntryPlayers.Select(o => o.TeamAbbreviatedName)),
-                new PlayerCodes(targetPlayer.EntryPlayers.Select(o => o.PlayerCode)),
-                new PlayerNames(targetPlayer.EntryPlayers.Select(o => o.PlayerName)));
         }
 
         public async Task<string> GetGemeResultsJson(int tournamentId, string tennisEventId, int participationClassificationId, int blockNumber)
@@ -926,6 +1033,66 @@ namespace JuniorTennis.Domain.UseCases.DrawTables
             var drawSettings = drawTable.GetDrawSettings(block.ParticipationClassification);
             block.Update(game, isWinnerChanged);
             block.Update();
+
+            await this.UpdateDrawTable(drawTable);
+        }
+
+        public async Task DrawFramePlayerClassificationChange(
+            int tournamentId,
+            string tennisEventId,
+            int blockNumber,
+            int drawNumber,
+            int playerClassificationId)
+        {
+            var dto = new DrawTableRepositoryDto(tournamentId, tennisEventId)
+            {
+                IncludeOpponents = true,
+            };
+            var drawTable = await this.GetDrawTable(dto);
+
+            var targetOpponent = drawTable.Blocks
+                .First(o => o.BlockNumber == new BlockNumber(blockNumber))
+                .Games.SelectMany(o => o.Opponents)
+                .First(o => o.DrawNumber == new DrawNumber(drawNumber));
+
+            if (playerClassificationId == PlayerClassification.Seed.Id)
+            {
+                targetOpponent.AsSeedFrame(isManual: true);
+            }
+            else if (playerClassificationId == PlayerClassification.General.Id)
+            {
+                targetOpponent.AsGeneralFrame(isManual: true);
+            }
+            else
+            {
+                targetOpponent.AsByeFrame(isManual: true);
+            }
+
+            await this.UpdateDrawTable(drawTable);
+        }
+
+        public async Task UnassignPlayer(int tournamentId, string tennisEventId, int blockNumber, int drawNumber)
+        {
+            var dto = new DrawTableRepositoryDto(tournamentId, tennisEventId)
+            {
+                IncludeOpponents = true,
+            };
+            var drawTable = await this.GetDrawTable(dto);
+
+            var targetOpponent = drawTable.Blocks
+                .First(o => o.BlockNumber == new BlockNumber(blockNumber))
+                .Games.SelectMany(o => o.Opponents)
+                .First(o => o.DrawNumber == new DrawNumber(drawNumber));
+
+            targetOpponent.UpdateOpponent(
+                playerClassification: null,
+                entryNumber: null,
+                seedNumber: null,
+                teamCodes: null,
+                teamAbbreviatedNames: null,
+                playerCodes: null,
+                playerNames: null,
+                fromGameNumber: null);
 
             await this.UpdateDrawTable(drawTable);
         }

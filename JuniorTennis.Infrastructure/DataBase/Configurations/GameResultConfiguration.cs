@@ -1,4 +1,5 @@
 ﻿using JuniorTennis.Domain.DrawTables;
+using JuniorTennis.Domain.TournamentEntries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

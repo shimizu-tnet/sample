@@ -19,6 +19,8 @@ namespace JuniorTennis.Domain.RequestPlayers
         /// <param name="seasonId">年度id。</param>
         public RequestPlayerSearchCondition(string playerName, int[] categoryIds, int[] genderIds, int seasonId)
         {
+            this.AddFilter(o => seasonId == o.SeasonId);
+
             if (!string.IsNullOrEmpty(playerName))
             {
                 this.AddFilter(o => ((string)(object)o.Player.PlayerFamilyName + (string)(object)o.Player.PlayerFirstName).Contains(playerName)
@@ -38,8 +40,6 @@ namespace JuniorTennis.Domain.RequestPlayers
                     .Where(o => genderIds.Contains(o.Id));
                 this.AddFilter(o => genders.Contains(o.Player.Gender));
             }
-
-            this.AddFilter(o => seasonId == o.SeasonId);
 
             this.AddSort(SortDirection.Descending, player => player.Id);
         }

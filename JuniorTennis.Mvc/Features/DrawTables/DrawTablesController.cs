@@ -430,7 +430,8 @@ namespace JuniorTennis.Mvc.Features.DrawTables
                         seedNumber,
                         entryPlayers,
                         canParticipationDates,
-                        receiptStatus);
+                        receiptStatus,
+                        UsageFeatures.DrawTable);
                 });
 
                 var dto = new DrawTableRepositoryDto(tournamentId, tennisEventId)
@@ -477,18 +478,6 @@ namespace JuniorTennis.Mvc.Features.DrawTables
         public async Task<HttpResponseMessage> RegisterDrawSettings(int tournamentId, string tennisEventId, [FromBody] JsonElement json)
         {
             var participationClassification = JsonConverter.ToEnumeration<ParticipationClassification>(json.GetProperty("participationClassification"));
-            var numberOfBlocks = new NumberOfBlocks(JsonConverter.ToInt32(json.GetProperty("numberOfBlocks")));
-            var numberOfDraws = new NumberOfDraws(JsonConverter.ToInt32(json.GetProperty("numberOfDraws")));
-            var numberOfEntries = new NumberOfEntries(JsonConverter.ToInt32(json.GetProperty("numberOfEntries")));
-            var numberOfWinners = new NumberOfWinners(JsonConverter.ToInt32(json.GetProperty("numberOfWinners")));
-            var tournamentGrade = JsonConverter.ToEnumeration<TournamentGrade>(json.GetProperty("tournamentGrade"));
-            var drawSettings = new DrawSettings(
-                    numberOfBlocks,
-                    numberOfDraws,
-                    numberOfEntries,
-                    numberOfWinners,
-                    tournamentGrade);
-
             var dto = new DrawTableRepositoryDto(tournamentId, tennisEventId)
             {
                 IncludeQualifyingDrawSettings = true,
@@ -496,12 +485,35 @@ namespace JuniorTennis.Mvc.Features.DrawTables
                 IncludeGames = true,
             };
             var drawTable = await this.drawTableUseCase.GetDrawTable(dto);
+            var drawSettings = drawTable.GetDrawSettings(participationClassification);
+            drawSettings.UpdateNumberOfBlocks(JsonConverter.ToInt32(json.GetProperty("numberOfBlocks")));
+            drawSettings.UpdateNumberOfDraws(JsonConverter.ToInt32(json.GetProperty("numberOfDraws")));
+            drawSettings.UpdateNumberOfEntries(JsonConverter.ToInt32(json.GetProperty("numberOfEntries")));
+            drawSettings.UpdateNumberOfWinners(JsonConverter.ToInt32(json.GetProperty("numberOfWinners")));
+            drawSettings.UpdateTournamentGrade(JsonConverter.ToInt32(json.GetProperty("tournamentGrade")));
             drawTable.UpdateDrawSettings(participationClassification, drawSettings);
             drawTable.Blocks.ChangeNumberOfBlocks(participationClassification, drawTable.QualifyingDrawSettings);
-            drawTable.Blocks.ChangeNumberOfDraws(participationClassification);
             await this.drawTableUseCase.UpdateDrawTable(drawTable);
 
             return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+
+        /// <summary>
+        /// ドロー表を初期化しましす。
+        /// </summary>
+        /// <param name="tournamentId">大会 ID。</param>
+        /// <param name="tennisEventId">種目 ID。</param>
+        /// <param name="participationClassificationId">出場区分 ID。</param>
+        /// <returns>ドロー表 JSON。</returns>
+        [HttpPost]
+        [Route("DrawTables/{tournamentId}/{tennisEventId}/initialize_draw_table")]
+        public async Task<string> InitializeDrawTable(
+            int tournamentId,
+            string tennisEventId,
+            [FromQuery(Name = "participationClassification")] int participationClassificationId)
+        {
+            await this.drawTableUseCase.InitializeDrawTable(tournamentId, tennisEventId, participationClassificationId);
+            return await this.drawTableUseCase.GetBlocksJson(tournamentId, tennisEventId, participationClassificationId);
         }
 
         /// <summary>
@@ -510,16 +522,16 @@ namespace JuniorTennis.Mvc.Features.DrawTables
         /// <param name="tournamentId">大会 ID。</param>
         /// <param name="tennisEventId">種目 ID。</param>
         /// <param name="participationClassificationId">出場区分 ID。</param>
-        /// <returns>処理が正常に終了した場合ステータスコード 200。</returns>
+        /// <returns>ドロー表 JSON。</returns>
         [HttpPost]
         [Route("DrawTables/{tournamentId}/{tennisEventId}/execute_seed_frame_setting")]
-        public async Task<HttpResponseMessage> ExecuteSeedFrameSetting(
+        public async Task<string> ExecuteSeedFrameSetting(
             int tournamentId,
             string tennisEventId,
             [FromQuery(Name = "participationClassification")] int participationClassificationId)
         {
             await this.drawTableUseCase.ExecuteSeedFrameSetting(tournamentId, tennisEventId, participationClassificationId);
-            return new HttpResponseMessage(HttpStatusCode.OK);
+            return await this.drawTableUseCase.GetBlocksJson(tournamentId, tennisEventId, participationClassificationId);
         }
 
         /// <summary>
@@ -528,18 +540,16 @@ namespace JuniorTennis.Mvc.Features.DrawTables
         /// <param name="tournamentId">大会 ID。</param>
         /// <param name="tennisEventId">種目 ID。</param>
         /// <param name="participationClassificationId">出場区分 ID。</param>
-        /// <returns>処理が正常に終了した場合ステータスコード 200。</returns>
+        /// <returns>ドロー表 JSON。</returns>
         [HttpPost]
         [Route("DrawTables/{tournamentId}/{tennisEventId}/execute_seed_frame_remove")]
-        public async Task<HttpResponseMessage> ExecuteSeedFrameRemoveg(
+        public async Task<string> ExecuteSeedFrameRemove(
             int tournamentId,
             string tennisEventId,
             [FromQuery(Name = "participationClassification")] int participationClassificationId)
         {
-            var dto = new DrawTableRepositoryDto(tournamentId, tennisEventId);
-            await this.drawTableUseCase.GetDrawTable(dto);
-
-            return new HttpResponseMessage(HttpStatusCode.OK);
+            await this.drawTableUseCase.ExecuteSeedFrameRemove(tournamentId, tennisEventId, participationClassificationId);
+            return await this.drawTableUseCase.GetBlocksJson(tournamentId, tennisEventId, participationClassificationId);
         }
 
         /// <summary>
@@ -548,18 +558,16 @@ namespace JuniorTennis.Mvc.Features.DrawTables
         /// <param name="tournamentId">大会 ID。</param>
         /// <param name="tennisEventId">種目 ID。</param>
         /// <param name="participationClassificationId">出場区分 ID。</param>
-        /// <returns>処理が正常に終了した場合ステータスコード 200。</returns>
+        /// <returns>ドロー表 JSON。</returns>
         [HttpPost]
         [Route("DrawTables/{tournamentId}/{tennisEventId}/execute_bye_frame_setting")]
-        public async Task<HttpResponseMessage> ExecuteByeFrameSetting(
+        public async Task<string> ExecuteByeFrameSetting(
             int tournamentId,
             string tennisEventId,
             [FromQuery(Name = "participationClassification")] int participationClassificationId)
         {
-            var dto = new DrawTableRepositoryDto(tournamentId, tennisEventId);
-            await this.drawTableUseCase.GetDrawTable(dto);
-
-            return new HttpResponseMessage(HttpStatusCode.OK);
+            await this.drawTableUseCase.ExecuteByeFrameSetting(tournamentId, tennisEventId, participationClassificationId);
+            return await this.drawTableUseCase.GetBlocksJson(tournamentId, tennisEventId, participationClassificationId);
         }
 
         /// <summary>
@@ -568,18 +576,16 @@ namespace JuniorTennis.Mvc.Features.DrawTables
         /// <param name="tournamentId">大会 ID。</param>
         /// <param name="tennisEventId">種目 ID。</param>
         /// <param name="participationClassificationId">出場区分 ID。</param>
-        /// <returns>処理が正常に終了した場合ステータスコード 200。</returns>
+        /// <returns>ドロー表 JSON。</returns>
         [HttpPost]
         [Route("DrawTables/{tournamentId}/{tennisEventId}/execute_bye_frame_remove")]
-        public async Task<HttpResponseMessage> ExecuteByeFrameRemove(
+        public async Task<string> ExecuteByeFrameRemove(
             int tournamentId,
             string tennisEventId,
             [FromQuery(Name = "participationClassification")] int participationClassificationId)
         {
-            var dto = new DrawTableRepositoryDto(tournamentId, tennisEventId);
-            await this.drawTableUseCase.GetDrawTable(dto);
-
-            return new HttpResponseMessage(HttpStatusCode.OK);
+            await this.drawTableUseCase.ExecuteByeFrameRemove(tournamentId, tennisEventId, participationClassificationId);
+            return await this.drawTableUseCase.GetBlocksJson(tournamentId, tennisEventId, participationClassificationId);
         }
 
         /// <summary>
@@ -643,7 +649,7 @@ namespace JuniorTennis.Mvc.Features.DrawTables
         /// </summary>
         /// <param name="tournamentId">大会 ID。</param>
         /// <param name="tennisEventId">種目 ID。</param>
-        /// <returns>空きドロー一覧。</returns>
+        /// <returns>空きドロー一覧 JSON。</returns>
         [HttpGet]
         [Route("DrawTables/{tournamentId}/{tennisEventId}/blank_draws")]
         public async Task<string> GetBlankDraws(int tournamentId, string tennisEventId)
@@ -652,7 +658,19 @@ namespace JuniorTennis.Mvc.Features.DrawTables
             return json;
         }
 
-        // 同団体戦一覧
+        /// <summary>
+        /// 同団体戦一覧を取得します。
+        /// </summary>
+        /// <param name="tournamentId">大会 ID。</param>
+        /// <param name="tennisEventId">種目 ID。</param>
+        /// <returns>同団体戦一覧 JSON。</returns>
+        [HttpGet]
+        [Route("DrawTables/{tournamentId}/{tennisEventId}/game_of_same_teams")]
+        public async Task<string> GetGameOfSameTeams(int tournamentId, string tennisEventId)
+        {
+            var json = await this.drawTableUseCase.GetGameOfSameTeamsJson(tournamentId, tennisEventId);
+            return json;
+        }
 
         /// <summary>
         /// ドロー表の抽選を実行します。
@@ -733,9 +751,57 @@ namespace JuniorTennis.Mvc.Features.DrawTables
         }
 
         /// <summary>
+        /// ドロー枠の選手区分を変更します。
+        /// </summary>
+        /// <param name="json">ドロー枠の変更情報。</param>
+        /// <returns>ドロー表 JSON。</returns>
+        [HttpPost]
+        [Route("DrawTables/draw_frame_player_classification_change")]
+        public async Task<string> DrawFramePlayerClassificationChange([FromBody] JsonElement json)
+        {
+            var tournamentId = JsonConverter.ToInt32(json.GetProperty("tournamentId"));
+            var tennisEventId = JsonConverter.ToString(json.GetProperty("tennisEventId"));
+            var participationClassificationId = JsonConverter.ToInt32(json.GetProperty("participationClassificationId"));
+            var blockNumber = JsonConverter.ToInt32(json.GetProperty("blockNumber"));
+            var drawNumber = JsonConverter.ToInt32(json.GetProperty("drawNumber"));
+            var playerClassificationId = JsonConverter.ToInt32(json.GetProperty("playerClassificationId"));
+
+            await this.drawTableUseCase.DrawFramePlayerClassificationChange(
+                tournamentId,
+                tennisEventId,
+                blockNumber,
+                drawNumber,
+                playerClassificationId);
+            return await this.drawTableUseCase.GetBlocksJson(tournamentId, tennisEventId, participationClassificationId);
+        }
+
+        /// <summary>
+        /// ドロー枠の選手割り当てを解除します。
+        /// </summary>
+        /// <param name="json">ドロー枠の変更情報。</param>
+        /// <returns>ドロー表 JSON。</returns>
+        [HttpPost]
+        [Route("DrawTables/unassign_player")]
+        public async Task<string> UnassignPlayer([FromBody] JsonElement json)
+        {
+            var tournamentId = JsonConverter.ToInt32(json.GetProperty("tournamentId"));
+            var tennisEventId = JsonConverter.ToString(json.GetProperty("tennisEventId"));
+            var participationClassificationId = JsonConverter.ToInt32(json.GetProperty("participationClassificationId"));
+            var blockNumber = JsonConverter.ToInt32(json.GetProperty("blockNumber"));
+            var drawNumber = JsonConverter.ToInt32(json.GetProperty("drawNumber"));
+
+            await this.drawTableUseCase.UnassignPlayer(
+                tournamentId,
+                tennisEventId,
+                blockNumber,
+                drawNumber);
+            return await this.drawTableUseCase.GetBlocksJson(tournamentId, tennisEventId, participationClassificationId);
+        }
+
+        /// <summary>
         /// 選手をドローにを割り当てます。
         /// </summary>
-        /// <param name="json"></param>
+        /// <param name="json">ドロー枠の選手割り当て情報。</param>
         /// <returns>ドロー表 JSON。</returns>
         [HttpPost]
         [Route("DrawTables/assign_players_to_draw")]
@@ -769,11 +835,18 @@ namespace JuniorTennis.Mvc.Features.DrawTables
             var dto = new DrawTableRepositoryDto(tournamentId, tennisEventId)
             {
                 IncludeBlocks = true,
+                IncludeGames = true,
             };
             var drawTable = await this.drawTableUseCase.GetDrawTable(dto);
-            var blocks = participationClassificationId.HasValue
-                ? drawTable.Blocks.GetBlocks(Enumeration.FromValue<ParticipationClassification>(participationClassificationId.Value)).ToList()
-                : drawTable.Blocks.AsEnumerable();
+            var participationClassification = participationClassificationId.HasValue
+                ? Enumeration.FromValue<ParticipationClassification>(participationClassificationId.Value)
+                : null;
+            var blocks = drawTable.Blocks.GetIniitalizedBlocks(participationClassification);
+            if (!blocks.Any())
+            {
+                return "[]";
+            }
+
             var json = blocks.Select(o => new
             {
                 blockNumber = o.BlockNumber?.Value,

@@ -1,4 +1,5 @@
-﻿using JuniorTennis.SeedWork;
+﻿using JuniorTennis.Domain.TournamentEntries;
+using JuniorTennis.SeedWork;
 
 namespace JuniorTennis.Domain.DrawTables
 {

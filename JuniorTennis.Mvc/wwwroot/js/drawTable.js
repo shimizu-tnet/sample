@@ -30,9 +30,10 @@ const createTournament = (numberOfDraws, assignedPlayers, isSingles) => {
             const td = document.createElement("td");
             td.setAttribute("rowspan", "2");
 
+            const assignedPlayer = assignedPlayers.find(o => o.drawNumber === drawNumber);
             if (rowIndex % 4 === 0) {
                 const playerNames = (() => {
-                    const assignedPlayer = assignedPlayers.find(o => o.drawNumber === drawNumber);
+
                     if (typeof assignedPlayer === "undefined") {
                         return "";
                     }
@@ -49,6 +50,12 @@ const createTournament = (numberOfDraws, assignedPlayers, isSingles) => {
                 playerbox.classList.add("player-box");
                 if (isSingles) {
                     playerbox.classList.add("singles");
+                }
+                if (assignedPlayer && assignedPlayer.framePlayerClassification === playerClassification.seed.id) {
+                    playerbox.classList.add("seed-frame");
+                }
+                if (assignedPlayer && assignedPlayer.framePlayerClassification === playerClassification.bye.id) {
+                    playerbox.classList.add("bye-frame");
                 }
                 playerbox.dataset.drawNumber = drawNumber;
                 td.appendChild(playerbox);

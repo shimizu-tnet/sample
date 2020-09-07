@@ -3,7 +3,7 @@ using JuniorTennis.Domain.Ranking;
 using JuniorTennis.Domain.Teams;
 using JuniorTennis.SeedWork;
 
-namespace JuniorTennis.Domain.DrawTables
+namespace JuniorTennis.Domain.TournamentEntries
 {
     /// <summary>
     /// 選手情報。

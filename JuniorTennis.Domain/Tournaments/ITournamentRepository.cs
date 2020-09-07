@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JuniorTennis.Domain.QueryConditions;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,5 +14,12 @@ namespace JuniorTennis.Domain.Tournaments
         Task Delete(Tournament entity);
 
         Task<Tournament> FindByRegistrationYear(DateTime registrationYear);
+
+        /// <summary>
+        /// 検索条件に応じた大会の一覧を取得します。
+        /// </summary>
+        /// <param name="condition">検索条件。</param>
+        /// <returns>大会一覧。</returns>
+        Task<List<Tournament>> SearchAsync(SearchCondition<Tournament> condition);
     }
 }

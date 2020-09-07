@@ -71,7 +71,7 @@ namespace JuniorTennis.Mvc.Features.Association.Teams
                 requestTeams.PageIndex,
                 requestTeams.TotalCount,
                 requestTeams.DisplayCount);
-            this.Seasons = seasons;
+            this.Seasons = seasons.OrderByDescending(o => o.Id).ToList();
             this.ApproveStateButtons = MvcViewHelper.CreateSelectListItem<ApproveState>();
             this.Page = requestTeams.PageIndex;
         }
@@ -79,7 +79,7 @@ namespace JuniorTennis.Mvc.Features.Association.Teams
         public ReceiptViewModel(int displayCount, List<Season> seasons)
         {
             this.RequestTeams = new PagedList<RequestTeam>(new List<RequestTeam>(), 0, 0, displayCount);
-            this.Seasons = seasons;
+            this.Seasons = seasons.OrderByDescending(o => o.Id).ToList();
             this.ApproveStateButtons = MvcViewHelper.CreateSelectListItem<ApproveState>(ApproveState.All.Id);
         }
 

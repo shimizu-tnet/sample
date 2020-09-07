@@ -25,9 +25,9 @@ namespace JuniorTennis.Domain.DrawTables
         /// <param name="value">シードレベル。</param>
         public SeedLevel(int value)
         {
-            if (value > 5)
+            if (value > 6)
             {
-                throw new ArgumentException("シードレベルは 0 ～ 5 の範囲で指定してください。");
+                throw new ArgumentException("シードレベルは 0 ～ 6 の範囲で指定してください。");
             }
 
             this.Value = value;

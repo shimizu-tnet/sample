@@ -114,29 +114,6 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "players",
-                columns: table => new
-                {
-                    id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    team_id = table.Column<int>(nullable: false),
-                    player_code = table.Column<string>(nullable: true),
-                    player_family_name = table.Column<string>(nullable: true),
-                    player_first_name = table.Column<string>(nullable: true),
-                    player_family_name_kana = table.Column<string>(nullable: true),
-                    player_first_name_kana = table.Column<string>(nullable: true),
-                    player_jpin = table.Column<string>(nullable: true),
-                    category = table.Column<int>(nullable: true),
-                    gender = table.Column<int>(nullable: true),
-                    birth_date = table.Column<DateTime>(nullable: true),
-                    telephone_number = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_players", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "reservation_numbers",
                 columns: table => new
                 {
@@ -188,6 +165,24 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_teams", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tournament_entry",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    reservation_number = table.Column<string>(nullable: true),
+                    reservation_date = table.Column<DateTime>(nullable: true),
+                    entry_fee = table.Column<int>(nullable: true),
+                    receipt_status = table.Column<int>(nullable: true),
+                    received_date = table.Column<DateTime>(nullable: true),
+                    applicant = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tournament_entry", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -331,61 +326,50 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
                     tennis_event_id = table.Column<string>(nullable: true),
                     tournament_format = table.Column<int>(nullable: true),
                     eligible_players_type = table.Column<int>(nullable: true),
-                    MainDrawSettingsId = table.Column<int>(nullable: true),
-                    QualifyingDrawSettingsId = table.Column<int>(nullable: true),
-                    edit_status = table.Column<int>(nullable: true)
+                    edit_status = table.Column<int>(nullable: true),
+                    main_draw_settings_id = table.Column<int>(nullable: false),
+                    qualifying_draw_settings_id = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_draw_tables", x => x.id);
                     table.ForeignKey(
-                        name: "FK_draw_tables_draw_settings_MainDrawSettingsId",
-                        column: x => x.MainDrawSettingsId,
+                        name: "FK_draw_tables_draw_settings_main_draw_settings_id",
+                        column: x => x.main_draw_settings_id,
                         principalTable: "draw_settings",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_draw_tables_draw_settings_QualifyingDrawSettingsId",
-                        column: x => x.QualifyingDrawSettingsId,
+                        name: "FK_draw_tables_draw_settings_qualifying_draw_settings_id",
+                        column: x => x.qualifying_draw_settings_id,
                         principalTable: "draw_settings",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "request_players",
+                name: "players",
                 columns: table => new
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    player_id = table.Column<int>(nullable: false),
                     team_id = table.Column<int>(nullable: false),
-                    season_id = table.Column<int>(nullable: false),
-                    reservation_number = table.Column<string>(nullable: true),
-                    reservation_branch_number = table.Column<int>(nullable: false),
+                    player_code = table.Column<string>(nullable: true),
+                    player_family_name = table.Column<string>(nullable: true),
+                    player_first_name = table.Column<string>(nullable: true),
+                    player_family_name_kana = table.Column<string>(nullable: true),
+                    player_first_name_kana = table.Column<string>(nullable: true),
+                    player_jpin = table.Column<string>(nullable: true),
                     category = table.Column<int>(nullable: true),
-                    approve_state = table.Column<int>(nullable: true),
-                    requested_date_time = table.Column<DateTime>(nullable: false),
-                    player_registration_fee = table.Column<int>(nullable: true),
-                    approve_date_time = table.Column<DateTime>(nullable: true)
+                    gender = table.Column<int>(nullable: true),
+                    birth_date = table.Column<DateTime>(nullable: true),
+                    telephone_number = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_request_players", x => x.id);
+                    table.PrimaryKey("PK_players", x => x.id);
                     table.ForeignKey(
-                        name: "FK_request_players_players_player_id",
-                        column: x => x.player_id,
-                        principalTable: "players",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_request_players_seasons_season_id",
-                        column: x => x.season_id,
-                        principalTable: "seasons",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_request_players_teams_team_id",
+                        name: "FK_players_teams_team_id",
                         column: x => x.team_id,
                         principalTable: "teams",
                         principalColumn: "id",
@@ -502,9 +486,11 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
                     seed_number = table.Column<int>(nullable: true),
                     can_participation_dates = table.Column<string>(nullable: true),
                     receipt_status = table.Column<int>(nullable: true),
+                    usage_features = table.Column<int>(nullable: true),
                     from_qualifying = table.Column<bool>(nullable: false),
                     block_number = table.Column<int>(nullable: true),
-                    draw_table_id = table.Column<int>(nullable: false)
+                    tournament_entry_id = table.Column<int>(nullable: true),
+                    draw_table_id = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -513,6 +499,53 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
                         name: "FK_entry_details_draw_tables_draw_table_id",
                         column: x => x.draw_table_id,
                         principalTable: "draw_tables",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_entry_details_tournament_entry_tournament_entry_id",
+                        column: x => x.tournament_entry_id,
+                        principalTable: "tournament_entry",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "request_players",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    player_id = table.Column<int>(nullable: false),
+                    team_id = table.Column<int>(nullable: false),
+                    season_id = table.Column<int>(nullable: false),
+                    reservation_number = table.Column<string>(nullable: true),
+                    reservation_branch_number = table.Column<int>(nullable: false),
+                    category = table.Column<int>(nullable: true),
+                    request_type = table.Column<int>(nullable: true),
+                    approve_state = table.Column<int>(nullable: true),
+                    requested_date_time = table.Column<DateTime>(nullable: false),
+                    player_registration_fee = table.Column<int>(nullable: true),
+                    approve_date_time = table.Column<DateTime>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_request_players", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_request_players_players_player_id",
+                        column: x => x.player_id,
+                        principalTable: "players",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_request_players_seasons_season_id",
+                        column: x => x.season_id,
+                        principalTable: "seasons",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_request_players_teams_team_id",
+                        column: x => x.team_id,
+                        principalTable: "teams",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -629,6 +662,18 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "417f24ea-9092-41e4-bd9e-2945167af006", "2709c3bf-1f11-41bb-a665-490aa729b1f4", "Administrator", "ADMINISTRATOR" },
+                    { "64813896-1fe3-4c83-9833-9f7ceef245fb", "a8449c40-37fc-4e68-8d67-362c46f20d8d", "TournamentCreator", "TOURNAMENTCREATOR" },
+                    { "c47b40c0-0356-492f-9b36-e7ac7ad8fb38", "e8b7b25e-4205-4b60-a63b-a3f2fc19e6a1", "Recorder", "RECORDER" },
+                    { "6babcfe4-9d72-483d-bd55-41a8d30ec7da", "9f84eff4-8ac1-44a7-973a-d9891b1bf644", "Team", "TEAM" },
+                    { "8afc07f0-0e0f-41b0-93f8-b1328ed7bf5c", "166916d9-7e5b-4e65-b643-91c308fd8ef6", "Developer", "DEVELOPER" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -677,19 +722,25 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
                 column: "draw_table_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_draw_tables_MainDrawSettingsId",
+                name: "IX_draw_tables_main_draw_settings_id",
                 table: "draw_tables",
-                column: "MainDrawSettingsId");
+                column: "main_draw_settings_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_draw_tables_QualifyingDrawSettingsId",
+                name: "IX_draw_tables_qualifying_draw_settings_id",
                 table: "draw_tables",
-                column: "QualifyingDrawSettingsId");
+                column: "qualifying_draw_settings_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_entry_details_draw_table_id",
                 table: "entry_details",
                 column: "draw_table_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_entry_details_tournament_entry_id",
+                table: "entry_details",
+                column: "tournament_entry_id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_entry_players_entry_detail_id",
@@ -716,6 +767,11 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
                 name: "IX_opponents_game_id",
                 table: "opponents",
                 column: "game_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_players_team_id",
+                table: "players",
+                column: "team_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_request_players_player_id",
@@ -812,13 +868,16 @@ namespace JuniorTennis.Infrastructure.DataBase.Migrations
                 name: "seasons");
 
             migrationBuilder.DropTable(
-                name: "teams");
-
-            migrationBuilder.DropTable(
                 name: "tournaments");
 
             migrationBuilder.DropTable(
+                name: "tournament_entry");
+
+            migrationBuilder.DropTable(
                 name: "blocks");
+
+            migrationBuilder.DropTable(
+                name: "teams");
 
             migrationBuilder.DropTable(
                 name: "draw_tables");

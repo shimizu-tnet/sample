@@ -1,4 +1,5 @@
-﻿using JuniorTennis.Domain.Tournaments;
+﻿using JuniorTennis.Domain.Teams;
+using JuniorTennis.Domain.Tournaments;
 using JuniorTennis.SeedWork;
 using System;
 
@@ -13,6 +14,11 @@ namespace JuniorTennis.Domain.Players
         /// 団体idを取得します。
         /// </summary>
         public int TeamId { get; private set; }
+
+        /// <summary>
+        /// 団体を取得します。
+        /// </summary>
+        public Team Team { get; private set; }
 
         /// <summary>
         /// 登録番号を取得します。
@@ -130,31 +136,31 @@ namespace JuniorTennis.Domain.Players
         public void ChangeTelephoneNumber(string telephoneNumber) => this.TelephoneNumber = telephoneNumber;
 
         /// <summary>
-        /// 年度を基準とした選手の年齢を取得します。
+        /// 選手の年齢を取得します。
         /// </summary>
-        public int GetAcademicAge()
+        public int GetSeasonAge()
         {
-            var currentAcademicYear = DateTime.Today.Month < 4 ? DateTime.Today.Year - 1 : DateTime.Today.Year;
-            var birthAcademicYear = this.BirthDate.Value.Month < 4 ? this.BirthDate.Value.Year - 1 : this.BirthDate.Value.Year;
-            var academicAge = currentAcademicYear - birthAcademicYear;
-            return academicAge;
+            var currentYear = DateTime.Today.Year;
+            var birthYear = this.BirthDate.Value.Year;
+            var seasonAge = currentYear - birthYear;
+            return seasonAge;
         }
 
         /// <summary>
-        /// 年齢を基準とした登録可能な最も低いカテゴリーを取得します。
+        /// 年齢に対応するカテゴリーを取得します。
         /// </summary>
-        public Category GetCategoryByAcademicAge()
+        public Category GetCategoryBySeasonAge()
         {
-            int academicAge = GetAcademicAge();
-            if (academicAge <= 12)
+            var seasonAge = GetSeasonAge();
+            if (seasonAge <= 12)
             {
                 return Category.Under11Or12;
             }
-            else if(academicAge <= 14)
+            else if(seasonAge <= 14)
             {
                 return Category.Under13Or14;
             }
-            else if(academicAge <= 16)
+            else if(seasonAge <= 16)
             {
                 return Category.Under15Or16;
             }
@@ -169,9 +175,25 @@ namespace JuniorTennis.Domain.Players
         /// </summary>
         public Category GetAvailableLowestCategory()
         {
-            return this.GetCategoryByAcademicAge().Id > this.Category.Id
+            return this.GetCategoryBySeasonAge().Id > this.Category.Id
                         ? this.Category
-                        : this.GetCategoryByAcademicAge();
+                        : this.GetCategoryBySeasonAge();
+        }
+
+        /// <summary>
+        /// CSV1レコード分の文字列を生成します。
+        /// </summary>
+        public string ToCsv()
+        {
+            return
+            (this.PlayerCode?.Value ?? "") + "," +
+            this.PlayerFamilyName.Value + " " + this.PlayerFirstName.Value + "," +
+            (this.Team.TeamCode?.Value ?? "") + "," +
+            this.Team.TeamName.Value + "," +
+            this.PlayerJpin + "," +
+            this.Category.Name + "," +
+            this.Gender.Name +
+            "\r\n";
         }
     }
 }
