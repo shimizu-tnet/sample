@@ -125,5 +125,8 @@
     </None>
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="IF EXIST &quot;$(ProjectDir)Data&quot; (xcopy /I /Y &quot;$(ProjectDir)Data&quot; &quot;$(TargetDir)Data&quot;)" />
+  </Target>
 
 </Project>
