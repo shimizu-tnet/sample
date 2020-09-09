@@ -4,10 +4,6 @@ phases:
   build:
     commands:
       - dotnet publish
-      - pwd
-      - ls -l
-      - cp appspec.yml ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/
-      - cp before-install.bat ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/
 artifacts:
   files:
     - ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/*
