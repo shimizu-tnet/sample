@@ -9,3 +9,4 @@ artifacts:
     - ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/*
     - ./appspec.yml
     - ./before-install.bat
+    - ./after-install.bat
