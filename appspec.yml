@@ -2,8 +2,11 @@ version: 0.0
 os: windows
 files:
   - source: \
-    destination: c:\inetpub\wwwroot
+    destination: c:\inetpub\deploytmp
 hooks:
   BeforeInstall:
     - location: \before-install.bat
+      timeout: 900
+  AfterInstall:
+    - location: \after-install.bat
       timeout: 900
