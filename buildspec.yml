@@ -5,10 +5,10 @@ phases:
     commands:
       - dotnet restore
       - dotnet publish
-      - ls -l ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/publish
+      - cp appspec.yml ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/publish/
+      - cp before-install.bat ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/publish/
+      - cp after-install.bat ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/publish/
 artifacts:
   files:
     - ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/publish/*
-    - ./appspec.yml
-    - ./before-install.bat
-    - ./after-install.bat
+    
