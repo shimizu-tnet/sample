@@ -7,12 +7,15 @@ phases:
       - cd ./React/public
       - npm install
       - npm run build
-      - ls -l
-      - cd ../build
-      - ls -l
 artifacts:
-  files:
-    - ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/publish/**/*
-    - ./appspec.yml
-    - ./before-install.bat
-    - ./after-install.bat
+  secondary-artifacts:
+    EC2Artifact:
+      files:
+        - ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/publish/**/*
+        - ./appspec.yml
+        - ./before-install.bat
+        - ./after-install.bat
+    S3Artifact:
+      base-directory: ./React/build
+      files:
+        - **/*
