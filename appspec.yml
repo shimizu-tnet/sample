@@ -1,13 +1,13 @@
 version: 0.0
 os: windows
 files:
-  - source: ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/publish/*
+  - source: .\JuniorTennis.Mvc\bin\Debug\netcoreapp3.1\publish\
     destination: c:\inetpub\deploytmp
-  - source: ./appspec.yml
+  - source: .\appspec.yml
     destination: c:\inetpub\deploytmp
-  - source: ./before-install.bat
+  - source: .\before-install.bat
     destination: c:\inetpub\deploytmp
-  - source: ./after-install.bat
+  - source: .\after-install.bat
     destination: c:\inetpub\deploytmp
 hooks:
   BeforeInstall:
