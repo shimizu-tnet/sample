@@ -5,6 +5,7 @@ phases:
     commands:
       - dotnet publish ./JuniorTennis.sln
       - cd ./React/public
+      - npm
       - npm run build
       - ls -l
       - cd build
