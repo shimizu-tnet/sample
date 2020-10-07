@@ -3,7 +3,9 @@ version: 0.2
 phases:
   build:
     commands:
-      - dotnet publish
+      - dotnet publish ./JuniorTennis.sln
+      - node --version
+      - npm -V
 artifacts:
   files:
     - ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/publish/**/*
