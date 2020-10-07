@@ -8,7 +8,7 @@ phases:
       - npm install
       - npm run build
       - ls -l
-      - cd build
+      - cd ../build
       - ls -l
 artifacts:
   files:
