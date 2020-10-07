@@ -1,0 +1,217 @@
+@import "color";
+
+.anken-list {
+  $anken-serach-height: 70px;
+  $anken-title-height: 140px;
+  $anken-paging-height: 57px;
+  $anken-list-width: 800px;
+  box-sizing: border-box;
+  * {
+    box-sizing: border-box;
+  }
+  height: 100vh;
+  display: grid;
+  grid-template-rows: $anken-serach-height $anken-title-height 1fr $anken-paging-height;
+  grid-template-columns: 1fr;
+  justify-content: center;
+  text-align: center;
+  .anken-serach-wrap {
+    padding: 20px;
+    height: $anken-serach-height;
+    text-align: right;
+    background-color: $color-footer;
+    filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.3));
+    $child-height: 30px;
+    label {
+      width: auto;
+      height: $child-height;
+      margin: {
+        right: 10px;
+      }
+      padding: {
+        top: 2px;
+      }
+      vertical-align: text-top;
+    }
+    input {
+      height: $child-height;
+      vertical-align: top;
+    }
+    button {
+      height: $child-height;
+      vertical-align: top;
+    }
+  }
+  .anken-title-wrap {
+    display: grid;
+    grid-template-areas:
+      "title  title"
+      "label1 name1"
+      "label2 name2";
+    grid-template-rows: auto auto auto;
+    grid-template-columns: 70px 300px;
+    grid-gap: 10px;
+    padding: {
+      top: 20px;
+    }
+    justify-content: center;
+    .anken-title {
+      grid-area: title;
+      font-size: xx-large;
+      padding-bottom: 10px;
+    }
+    .anken-label1 {
+      grid-area: label1;
+      text-align: right;
+    }
+    .anken-name1 {
+      grid-area: name1;
+      text-align: left;
+      padding-left: 10px;
+      padding-right: 10px;
+      border-bottom: solid 1px #ddd;
+    }
+    .anken-label2 {
+      grid-area: label2;
+      text-align: right;
+    }
+    .anken-name2 {
+      grid-area: name2;
+      text-align: left;
+      padding-left: 10px;
+      padding-right: 10px;
+      border-bottom: solid 1px #ddd;
+    }
+  }
+  .anken-versions-wrap {
+    height: calc(100vh - #{$anken-serach-height} - #{$anken-title-height} - #{$anken-paging-height});
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr;
+    .header {
+      padding: {
+        top: 40px;
+        bottom: 40px;
+      }
+    }
+    .anken-versions {
+      overflow-y: auto;
+      border-top: solid 1px #ddd;
+      border-bottom: solid 1px #ddd;
+      .anken-versions-inner {
+        width: $anken-list-width;
+        margin: {
+          left: auto;
+          right: auto;
+        }
+        .detail {
+          display: grid;
+          grid-template-rows: auto;
+          grid-template-columns: auto auto;
+          padding: 15px;
+          border: {
+            bottom: 1px solid $light-gray;
+          }
+          .radio {
+            text-align: left;
+          }
+          .updatedAt {
+            text-align: right;
+          }
+        }
+        .detail:hover {
+          background-color: #ffffec;
+        }
+      }
+    }
+    .anken-create-new {
+      border-top: 0;
+      border-bottom: 0;
+    }
+  }
+  .anken-paging-wrap {
+    height: $anken-paging-height;
+    .anken-paging {
+      width: $anken-list-width;
+      padding: {
+        top: 10px;
+        bottom: 10px;
+      }
+      margin: {
+        left: auto;
+        right: auto;
+      }
+      #footer-R {
+        float: left;
+        padding: 8px 15px;
+        &:before {
+          content: "◀";
+          margin-right: 5px;
+        }
+      }
+      #footer-L {
+        float: right;
+        padding: 8px 15px;
+        &:after {
+          content: "▶";
+          margin-left: 5px;
+        }
+      }
+    }
+  }
+}
+
+.confirm-btn {
+  width: 200px;
+  height: 40px;
+  font-size: 20px;
+}
+
+.versions-dialog {
+  border: {
+    radius: 0;
+  }
+  border: solid 0px #999;
+  filter: drop-shadow(0px 3px 3px rgba(41, 41, 41, 0.3));
+  padding: {
+    left: 80px;
+    right: 80px;
+  }
+  top: 100px;
+  h1 {
+    margin : {
+      top: 50px;
+    }
+    font-size: xx-large;
+  }
+  h2 {
+    margin : {
+      top: 30px;
+    }
+    font-size: large;
+  }
+  p {
+    margin : {
+      top: 30px;
+    }
+    padding: {
+      top: 10px;
+      bottom: 10px;
+    }
+    border: {
+      top: 1px solid $light-gray;
+      bottom: 1px solid $light-gray;
+    }
+  }
+  button {
+    margin : {
+      top: 30px;
+      left: 10px;
+      right: 10px;
+      bottom: 50px;
+    }
+    width: 200px;
+    height: 40px;
+    font-size: large;
+  }
+}

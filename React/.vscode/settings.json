@@ -1,0 +1,12 @@
+{
+    "editor.fontFamily": "HackGen, Consolas, 'Courier New', monospace",
+    "editor.formatOnSave": true,
+    "terminal.integrated.shell.windows": "C:\\WINDOWS\\System32\\cmd.exe",
+    "window.zoomLevel": 0,
+    "[plaintext]": {
+      "editor.acceptSuggestionOnEnter": "off"
+    },
+    "editor.tabSize": 2,
+    "git.autofetch": true,
+    "javascript.updateImportsOnFileMove.enabled": "always"
+}

@@ -4,8 +4,8 @@ phases:
   build:
     commands:
       - dotnet publish ./JuniorTennis.sln
-      - node --version
-      - npm -V
+      - cd ./React/public
+      - npm run build
 artifacts:
   files:
     - ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/publish/**/*

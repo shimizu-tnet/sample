@@ -1,0 +1,134 @@
+@import 'color';
+
+main {
+  div {
+    form#property {
+      grid-template-columns: 150px 1fr;
+      .property-table-wrap {
+        grid-column-start: 1;
+        grid-column-end: 3;
+        div {
+          box-sizing: border-box;
+          height: 60px;
+          margin-bottom: 0;
+          input {
+            width: 100%;
+          }
+          p {
+            margin: 0;
+          }
+        }
+
+        .property-table-header {
+          display: grid;
+          grid-template-columns: 10% 22.5% 22.5% 22.5% 22.5%;
+          margin-top: 40px;
+          border: {
+            bottom: 1px solid $light-gray;
+          }
+          div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 0;
+            padding: {
+              top: 5px;
+              bottom: 5px;
+            }
+            line-height: 1.7;
+            p {
+              margin: 0;
+              text-align: center;
+              font-size: 14px;
+              font-weight: 600;
+            }
+          }
+          .property-1 {
+            grid-column-start: 1;
+            grid-column-end: 2;
+          }
+          .property-2 {
+            grid-column-start: 2;
+            grid-column-end: 3;
+          }
+          .property-3 {
+            grid-column-start: 3;
+            grid-column-end: 4;
+          }
+          .property-4 {
+            grid-column-start: 4;
+            grid-column-end: 5;
+          }
+          .property-5 {
+            grid-column-start: 5;
+            grid-column-end: 6;
+          }
+          .property-xx {
+            grid-column-start: 4;
+            grid-column-end: 5;
+          }
+          .reward-2,
+          .reward-4 {
+            text-align: right;
+          }
+          .reward-5 {
+            grid-column-start: 2;
+            grid-column-end: 3;
+            input {
+              width: auto;
+            }
+          }
+        }
+        .property-table-data {
+          display: grid;
+          grid-template-columns: 10% 22.5% 22.5% 22.5% 22.5%;
+          border: {
+            bottom: 1px solid $light-gray;
+          }
+          div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: {
+              left: 5px;
+              right: 5px;
+            }
+          }
+          .property-1 {
+            grid-column-start: 1;
+            grid-column-end: 2;
+            input[type='checkbox'] + label::before {
+              top: -8px;
+            }
+            input[type='checkbox']:checked + label::after {
+              top: -10px;
+            }
+            label{
+                width: auto;
+            }
+          }
+          .property-2 {
+            grid-column-start: 2;
+            grid-column-end: 3;
+          }
+          .property-3 {
+            grid-column-start: 3;
+            grid-column-end: 4;
+          }
+          .property-4 {
+            grid-column-start: 4;
+            grid-column-end: 5;
+          }
+          .property-5 {
+            grid-column-start: 5;
+            grid-column-end: 6;
+            justify-content: flex-end;
+            text-align: right;
+            padding-right: 10px;
+          }
+        }
+      }
+    }
+  }
+}

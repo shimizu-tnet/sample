@@ -1,0 +1,397 @@
+@import "color";
+
+main {
+  div {
+    width: 100%;
+    form#house {
+      width: 100%;
+      grid: initial;
+      grid-column: initial;
+      grid-row: 100px auto 1fr;
+      div {
+        margin-bottom: 0;
+        font-size: 12px;
+      }
+      %line_2_part {
+        grid-row-start: 1;
+        grid-row-end: 3;
+      }
+      %text-right {
+        text-align: right;
+      }
+      %text-center {
+        text-align: center;
+      }
+      %text-left {
+        text-align: left;
+      }
+      %padding-right {
+        padding-right: 8px;
+      }
+      %border-top {
+        border-top: 1px solid $white;
+      }
+      %border-left {
+        border-left: 1px solid $white;
+      }
+      %border-right {
+        border-right: 1px solid $white;
+      }
+      %border-bottom {
+        border-bottom: 1px solid $white;
+      }
+      div.house-table-header {
+        grid-column-start: 1;
+        grid-column-end: 3;
+        width: 100%;
+        border-left: 1px solid $brown;
+        display: grid;
+        grid-template-columns: 8% 25% 10% 20% 10% 11.9% 10% 4.9%;
+        // grid-template-columns: 8% 25% 10% 20% 10% 12% 10% 5%;
+        grid-template-rows: 40px 40px;
+        div {
+          background-color: $brown;
+          border: 1px solid $white;
+          display: inline;
+          p {
+            @extend %text-center;
+            vertical-align: middle;
+            color: $white;
+          }
+        }
+        .house-1 {
+          grid-column-start: 1;
+          grid-column-end: 2;
+          border: {
+            top: 1px solid $brown;
+            left: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+          @extend %line_2_part;
+          @extend %border-right;
+        }
+        .house-2 {
+          grid-column-start: 2;
+          grid-column-end: 3;
+          border: {
+            top: 1px solid $brown;
+            right: 0px;
+          }
+        }
+        .house-3 {
+          grid-column-start: 3;
+          grid-column-end: 4;
+          border: {
+            top: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+          z-index: 10;
+          @extend %line_2_part;
+          p {
+            margin-top: 30px;
+          }
+        }
+        .house-4 {
+          grid-column-start: 4;
+          grid-column-end: 5;
+          border: {
+            top: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+          @extend %line_2_part;
+          p {
+            margin-top: 30px;
+          }
+        }
+        .house-5 {
+          grid-column-start: 5;
+          grid-column-end: 6;
+          border: {
+            top: 1px solid $brown;
+            right: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+          @extend %line_2_part;
+          p {
+            margin-top: 30px;
+          }
+        }
+        .house-6 {
+          grid-column-start: 6;
+          grid-column-end: 7;
+          border: {
+            top: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+          z-index: 10;
+          @extend %line_2_part;
+          p {
+            margin-top: 30px;
+          }
+        }
+        .house-7 {
+          grid-column-start: 7;
+          grid-column-end: 8;
+          border: {
+            top: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+          @extend %line_2_part;
+          p {
+            margin-top: 30px;
+          }
+        }
+        .house-8 {
+          grid-column-start: 8;
+          grid-column-end: 9;
+          border: {
+            top: 1px solid $brown;
+            right: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+          @extend %line_2_part;
+          p {
+            margin-top: 30px;
+          }
+        }
+        .house-9 {
+          grid-column-start: 2;
+          grid-column-end: 3;
+          border: {
+            top: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+        }
+      }
+      div.house-table-wrap {
+        grid-column-start: 1;
+        & :hover {
+          opacity: 0.8;
+        }
+        div {
+          & :hover {
+            opacity: 1;
+          }
+        }
+        .house-table-data {
+          display: grid;
+          grid-template-columns: 8% 25% 10% 20% 10% 12% 10% 5%;
+          grid-template-rows: 74px 40px;
+          .house-data {
+            grid-column-start: 1;
+            grid-column-end: 9;
+            grid-row-start: 1;
+            grid-row-end: 3;
+            display: grid;
+            grid-template-columns: 8% 25% 10% 20% 10% 12% 10% 5%;
+            grid-template-rows: 74px 40px;
+            %line_2_part {
+              grid-row-start: 1;
+              grid-row-end: 3;
+            }
+            div {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              textarea {
+                box-sizing: border-box;
+                resize: none;
+                width: 90%;
+                height: 64px;
+              }
+              input {
+                width: 90%;
+                margin: 0;
+              }
+              label {
+                width: 80px;
+              }
+              p {
+                @extend %text-center;
+              }
+            }
+            .house-10 {
+              grid-column-start: 1;
+              grid-column-end: 2;
+              background-color: $color-pdf;
+              border: {
+                top: 1px solid $white;
+                right: 1px solid $color-pdf;
+              }
+              @extend %line_2_part;
+            }
+            .house-11 {
+              grid-column-start: 2;
+              grid-column-end: 3;
+              border: {
+                right: 1px solid $white;
+                bottom: 1px solid $light-gray;
+              }
+            }
+            .house-12 {
+              grid-column-start: 3;
+              grid-column-end: 4;
+              border: {
+                left: 1px solid $light-gray;
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part;
+              display: inline-block;
+              text-align: center;
+              padding-top: 31px;
+              padding-bottom: 31px;
+              input[type="radio"] + label {
+                padding-left: 0;
+              }
+            }
+            .house-13 {
+              grid-column-start: 4;
+              grid-column-end: 5;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part;
+            }
+            .house-14 {
+              grid-column-start: 5;
+              grid-column-end: 6;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part;
+            }
+            .house-15 {
+              grid-column-start: 6;
+              grid-column-end: 7;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part;
+              input {
+                width: 40px;
+                margin: {
+                  left: 5px;
+                  right: 5px;
+                }
+              }
+            }
+            .house-16 {
+              grid-column-start: 7;
+              grid-column-end: 8;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part;
+            }
+            .house-17 {
+              grid-column-start: 8;
+              grid-column-end: 9;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part;
+              height: auto;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              div {
+                button {
+                  padding: 3px 5px;
+                }
+              }
+            }
+            .house-18 {
+              grid-column-start: 2;
+              grid-column-end: 3;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+            }
+          }
+        }
+      }
+      .row-addition {
+        grid-column-start: 1;
+        grid-column-end: 3;
+        width: 100%;
+        margin-top: 10px;
+        button {
+          width: 100%;
+          height: 30px;
+        }
+      }
+    }
+    .total {
+      grid-column-start: 1;
+      z-index: 3;
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: 84% 16%;
+      .evaluation-amount-sum .deduction-taxation-target {
+        margin: {
+          top: 5px;
+          bottom: 5px;
+        }
+        grid-column-start: 1;
+        display: grid;
+        grid-template-columns: 84% 1fr;
+        .title {
+          grid-column-start: 1;
+          grid-column-end: 2;
+          background-color: $color-pdf;
+          @extend %text-center;
+          p {
+            font-size: 16px;
+            margin: {
+              top: 13px;
+              bottom: 5px;
+            }
+          }
+        }
+        .total-amount {
+          grid-column-start: 2;
+          grid-column-end: 3;
+          border: 2px solid $light-gray;
+          z-index: 5;
+          @extend %text-right;
+          p {
+            font-size: 14px;
+            @extend %padding-right;
+          }
+        }
+      }
+    }
+    .comment-area {
+      grid-column-start: 1;
+      grid-column-end: 3;
+      .title {
+        p {
+          font-size: 16px;
+          font-weight: 600;
+          margin-bottom: 0;
+        }
+      }
+      .comment {
+        margin: 10px 0;
+        input {
+          width: 90%;
+          vertical-align: middle;
+        }
+      }
+      .comment-addition {
+        margin-top: 10px;
+        button {
+          width: 90%;
+          height: 30px;
+        }
+      }
+    }
+  }
+}

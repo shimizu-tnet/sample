@@ -1,0 +1,111 @@
+@import 'color';
+
+div#login {
+  width: 100%;
+  height: 100%;
+  padding-top: 10%;
+  .login-wrapper {
+    background-color: #efefef;
+    background-color: rgba(72, 72, 72, 0.2);
+    padding-left: 35px;
+    padding-right: 35px;
+    padding-top: 35px;
+    padding-bottom: 50px;
+    width: 600px;
+    height: 400px;
+    margin: 0 auto;
+    overflow: hidden;
+
+    &.form-success {
+      .container {
+        h1 {
+          transform: translateY(85px);
+        }
+      }
+    }
+  }
+}
+
+
+.login-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 80px 0;
+  height: 400px;
+  text-align: center;
+
+  h1 {
+    font-size: 40px;
+    transition-duration: 1s;
+    transition-timing-function: ease-in-put;
+    font-weight: 200;
+    color: $color-main;
+  }
+}
+
+.login-form {
+  padding: 20px 0;
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 100px 350px;
+  justify-content: center;
+  vertical-align: middle;
+  
+  label {
+    width: 100%;
+    text-align: right;
+    margin-top: 3px;
+  }
+
+  div {
+    margin: {
+      left: 20px;
+      bottom: 20px;
+    }
+  }
+
+  input {
+    display: block;
+    width: 250px;
+    font-size: 18px;
+    transition-duration: 0.25s;
+    font-weight: 300;
+  }
+
+  .login-btn-wrap {
+    grid-column: 1/3;
+    margin: 0 auto;
+
+    button {
+      margin-top: 20px;
+      width: 250px;
+      height: 40px;
+    }
+  }
+
+  .login-errormessage-wrap {
+    grid-column: 1/3;
+    text-align: left; 
+  }
+}
+
+/* アクセストークンなくなった場合の斡旋画面 */
+.lost-token {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 30vh;
+}
+
+.lost-token-inner {
+  background-color: #efefef;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  div{
+    margin: 10px 0;
+  }
+}

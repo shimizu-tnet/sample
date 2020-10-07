@@ -1,0 +1,662 @@
+@import "color";
+
+main {
+  div {
+    width: 100%;
+    form#land {
+      width: 100%;
+      grid: initial;
+      grid-column: initial;
+      grid-row: 100px auto 1fr;
+      div {
+        margin-bottom: 0;
+        font-size: 12px;
+      }
+      %line_2_part {
+        grid-row-start: 1;
+        grid-row-end: 3;
+      }
+      %text-right {
+        text-align: right;
+      }
+      %text-center {
+        text-align: center;
+      }
+      %text-left {
+        text-align: left;
+      }
+      %padding-right {
+        padding-right: 8px;
+      }
+      %border-top {
+        border-top: 1px solid $white;
+      }
+      %border-left {
+        border-left: 1px solid $white;
+      }
+      %border-right {
+        border-right: 1px solid $white;
+      }
+      %border-bottom {
+        border-bottom: 1px solid $white;
+      }
+      div.land-table-header {
+        grid-column-start: 1;
+        grid-column-end: 3;
+        width: 100%;
+        border-left: 1px solid $brown;
+        display: grid;
+        grid-template-columns: 6.6% 7.5% 7.5% 7.5% 7.5% 7.5% 7.5% 7.5% 7.5% 7.5% 9.9% 9.9% 6%;
+        grid-template-rows: 40px 40px;
+        div {
+          background-color: $brown;
+          border: 1px solid $white;
+          display: inline;
+          p {
+            @extend %text-center;
+            vertical-align: middle;
+            color: $white;
+          }
+        }
+        .land-1 {
+          grid-column-start: 1;
+          grid-column-end: 2;
+          border: {
+            top: 1px solid $brown;
+            left: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+          @extend %line_2_part;
+          @extend %border-right;
+        }
+        .land-2 {
+          grid-column-start: 2;
+          grid-column-end: 5;
+          border: {
+            top: 1px solid $brown;
+            right: 0px;
+          }
+        }
+        .land-3 {
+          grid-column-start: 5;
+          grid-column-end: 6;
+          border: {
+            top: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+          z-index: 10;
+          @extend %line_2_part;
+          p {
+            margin-top: 30px;
+          }
+        }
+        .land-4 {
+          grid-column-start: 6;
+          grid-column-end: 7;
+          border: {
+            top: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+        }
+        .land-5 {
+          grid-column-start: 7;
+          grid-column-end: 11;
+          border: {
+            top: 1px solid $brown;
+            right: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+        }
+        .land-6 {
+          grid-column-start: 11;
+          grid-column-end: 12;
+          border: {
+            top: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+          z-index: 10;
+          @extend %line_2_part;
+        }
+        .land-7 {
+          grid-column-start: 12;
+          grid-column-end: 13;
+          border: {
+            top: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+          @extend %line_2_part;
+        }
+        .land-8 {
+          grid-column-start: 13;
+          grid-column-end: 14;
+          border: {
+            top: 1px solid $brown;
+            right: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+          @extend %line_2_part;
+          p {
+            margin-top: 30px;
+          }
+        }
+        .land-9 {
+          grid-column-start: 2;
+          grid-column-end: 3;
+          border: {
+            top: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+        }
+        .land-10 {
+          grid-column-start: 3;
+          grid-column-end: 4;
+          border: {
+            top: 1px solid $brown;
+            // right: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+        }
+        .land-11 {
+          grid-column-start: 4;
+          grid-column-end: 5;
+          border: {
+            top: 1px solid $brown;
+            right: 0px;
+            bottom: 1px solid $brown;
+          }
+        }
+        .land-12 {
+          grid-column-start: 6;
+          grid-column-end: 7;
+          border: {
+            // top: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+        }
+        .land-13 {
+          grid-column-start: 7;
+          grid-column-end: 8;
+          border: {
+            // top: 1px solid $brown;
+            bottom: 1px solid $brown;
+          }
+        }
+        .land-14 {
+          grid-column-start: 8;
+          grid-column-end: 9;
+          border: {
+            bottom: 1px solid $brown;
+          }
+        }
+        .land-15 {
+          grid-column-start: 9;
+          grid-column-end: 10;
+          border: {
+            bottom: 1px solid $brown;
+          }
+        }
+        .land-16 {
+          grid-column-start: 10;
+          grid-column-end: 11;
+          border: {
+            bottom: 1px solid $brown;
+          }
+        }
+      }
+      div.land-table-wrap {
+        grid-column-start: 1;
+        & :hover {
+          opacity: 0.8;
+        }
+        div {
+          & :hover {
+            opacity: 1;
+          }
+        }
+        .land-table-data {
+          display: grid;
+          grid-template-columns: 6.5% 7.5% 7.5% 7.5% 7.5% 7.5% 7.5% 7.5% 7.5% 7.5% 10% 10% 6%;
+          .land-data {
+            grid-column-start: 1;
+            grid-column-end: 13;
+            grid-row-start: 1;
+            grid-row-end: 2;
+          }
+          .land-reduction-data {
+            grid-column-start: 1;
+            grid-column-end: 13;
+            grid-row-start: 2;
+            grid-row-end: 3;
+          }
+          .land-data,
+          .land-reduction-data {
+            display: grid;
+            grid-template-columns: 7% 8% 8% 8% 8% 8% 8% 8% 8% 8% 10.5% 10.5%;
+            grid-template-rows: 20px 20px 20px 20px 20px 20px;
+            %line_2_part-2 {
+              grid-row-start: 3;
+              grid-row-end: 5;
+            }
+            %line_2_part-3 {
+              grid-row-start: 5;
+              grid-row-end: 7;
+            }
+            %line_3_part {
+              grid-row-start: 1;
+              grid-row-end: 4;
+            }
+            %line_3_part-2 {
+              grid-row-start: 4;
+              grid-row-end: 7;
+            }
+            %line_6_part {
+              grid-row-start: 1;
+              grid-row-end: 7;
+            }
+            div {
+              p {
+                @extend %text-center;
+              }
+            }
+            .land-17 {
+              grid-column-start: 1;
+              grid-column-end: 2;
+              background-color: $color-pdf;
+              border: {
+                top: 1px solid $white;
+                right: 1px solid $color-pdf;
+              }
+              @extend %line_6_part;
+            }
+            .land-18 {
+              grid-column-start: 2;
+              grid-column-end: 5;
+              border: {
+                right: 1px solid $white;
+                bottom: 1px solid $light-gray;
+              }
+              pre {
+                text-align: left;
+                margin-left: 12px;
+              }
+              @extend %line_3_part;
+            }
+            .land-19 {
+              grid-column-start: 5;
+              grid-column-end: 6;
+              border: {
+                left: 1px solid $light-gray;
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_6_part;
+            }
+            .land-20 {
+              grid-column-start: 6;
+              grid-column-end: 7;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_3_part;
+            }
+            .land-21 {
+              grid-column-start: 7;
+              grid-column-end: 8;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part;
+            }
+            .land-22 {
+              grid-column-start: 8;
+              grid-column-end: 9;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part;
+            }
+            .land-23 {
+              grid-column-start: 9;
+              grid-column-end: 10;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part;
+            }
+            .land-24 {
+              grid-column-start: 10;
+              grid-column-end: 11;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part;
+            }
+            .land-25 {
+              grid-column-start: 11;
+              grid-column-end: 12;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part;
+              @extend %text-right;
+              p {
+                @extend %padding-right;
+                @extend %text-right;
+              }
+            }
+            .land-26 {
+              grid-column-start: 12;
+              grid-column-end: 13;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part;
+              @extend %text-right;
+              p {
+                @extend %padding-right;
+                @extend %text-right;
+              }
+            }
+            .land-27 {
+              grid-column-start: 7;
+              grid-column-end: 8;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part-2;
+            }
+            .land-28 {
+              grid-column-start: 8;
+              grid-column-end: 9;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part-2;
+            }
+            .land-29 {
+              grid-column-start: 9;
+              grid-column-end: 10;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part-2;
+            }
+            .land-30 {
+              grid-column-start: 10;
+              grid-column-end: 11;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part-2;
+            }
+            .land-31 {
+              grid-column-start: 11;
+              grid-column-end: 12;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part-2;
+              @extend %text-right;
+              p {
+                @extend %padding-right;
+                @extend %text-right;
+              }
+            }
+            .land-32 {
+              grid-column-start: 12;
+              grid-column-end: 13;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part-2;
+              @extend %text-right;
+              p {
+                @extend %padding-right;
+                @extend %text-right;
+              }
+            }
+            .land-33 {
+              grid-column-start: 2;
+              grid-column-end: 3;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_3_part-2;
+            }
+            .land-34 {
+              grid-column-start: 3;
+              grid-column-end: 4;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_3_part-2;
+            }
+            .land-35 {
+              grid-column-start: 4;
+              grid-column-end: 5;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_3_part-2;
+            }
+            .land-36 {
+              grid-column-start: 6;
+              grid-column-end: 7;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_3_part-2;
+            }
+            .land-37 {
+              grid-column-start: 7;
+              grid-column-end: 8;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part-3;
+            }
+            .land-38 {
+              grid-column-start: 8;
+              grid-column-end: 9;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part-3;
+            }
+            .land-39 {
+              grid-column-start: 9;
+              grid-column-end: 10;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part-3;
+            }
+            .land-40 {
+              grid-column-start: 10;
+              grid-column-end: 11;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part-3;
+            }
+            .land-41 {
+              grid-column-start: 11;
+              grid-column-end: 12;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part-3;
+              p {
+                @extend %padding-right;
+                @extend %text-right;
+              }
+            }
+            .land-42 {
+              grid-column-start: 12;
+              grid-column-end: 13;
+              border: {
+                right: 1px solid $light-gray;
+                bottom: 1px solid $light-gray;
+              }
+              @extend %line_2_part-3;
+              p {
+                @extend %padding-right;
+                @extend %text-right;
+              }
+            }
+          }
+          .land-reduction-data {
+            .land-26,
+            .land-42 {
+              p {
+                color: $red;
+              }
+            }
+          }
+          .land-data-edit-area {
+            grid-column-start: 13;
+            grid-column-end: 14;
+            border: {
+              top: 0px solid $light-gray;
+              left: 1px solid $light-gray;
+              right: 1px solid $light-gray;
+              bottom: 1px solid $light-gray;
+            }
+            min-height: 60px;
+            height: auto;
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            justify-content: center;
+            @extend %line_2_part;
+            div {
+              text-align: center;
+              button {
+                padding: 3px 8px;
+                margin: {
+                  top: 5px;
+                  left: 2px;
+                  right: 2px;
+                  bottom: 10px;
+                }
+              }
+            }
+          }
+        }
+      }
+      .row-addition {
+        grid-column-start: 1;
+        grid-column-end: 3;
+        width: 100%;
+        margin-top: 10px;
+        button {
+          width: 100%;
+          height: 30px;
+        }
+      }
+    }
+    .total {
+      grid-column-start: 1;
+      z-index: 3;
+      margin-top: 20px;
+      display: grid;
+      // grid-template-columns: 84% 9.8% 6%;
+      grid-template-columns: 84% 16%;
+      .evaluation-amount-sum,
+      .evaluation-decrease-sum,
+      .deduction-taxation-target {
+        margin: {
+          top: 5px;
+          bottom: 5px;
+        }
+        grid-column-start: 1;
+        grid-column-end: 3;
+        display: grid;
+        // grid-template-columns: 89.45% 10.55%;
+        // grid-template-columns: 88.9% 1fr;
+        grid-template-columns: 84% 1fr;
+        .title {
+          grid-column-start: 1;
+          grid-column-end: 2;
+          background-color: $color-pdf;
+          @extend %text-center;
+          p {
+            font-size: 16px;
+            margin: {
+              top: 13px;
+              bottom: 5px;
+            }
+          }
+        }
+        .total-amount {
+          grid-column-start: 2;
+          grid-column-end: 3;
+          border: 2px solid $light-gray;
+          z-index: 5;
+          @extend %text-right;
+          p {
+            font-size: 14px;
+            @extend %padding-right;
+          }
+        }
+      }
+      .evaluation-amount-sum {
+        border: 0px;
+      }
+      .evaluation-decrease-sum {
+        .total-amount {
+          p {
+            color: $red;
+          }
+        }
+      }
+    }
+    .comment-area {
+      grid-column-start: 1;
+      grid-column-end: 3;
+      .title {
+        p {
+          font-size: 16px;
+          font-weight: 600;
+          margin-bottom: 0;
+        }
+      }
+      .comment {
+        margin: 10px 0;
+        input {
+          width: 90%;
+          vertical-align: middle;
+        }
+      }
+      .comment-addition {
+        margin-top: 10px;
+        button {
+          width: 90%;
+          height: 30px;
+        }
+      }
+    }
+  }
+}

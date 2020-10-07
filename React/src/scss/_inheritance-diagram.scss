@@ -1,0 +1,43 @@
+@import 'color';
+
+main {
+  div {
+    form#inheritance {
+      width: 100%;
+      .inheritance-pattern {
+        grid-column-start: 1;
+        display: grid;
+        grid-template-columns: 180px 1fr 142px;
+        .inheritance-pattern-title {
+          grid-column-start: 1;
+          grid-column-end: 2;
+        }
+        .inheritance-pattern-select {
+          grid-column-start: 2;
+          grid-column-end: 3;
+        }
+        .inheritance-help {
+          grid-column-start: 3;
+          grid-column-end: 4;
+          .btn {
+            height: 32px;
+          }
+        }
+      }
+    }
+    .inheritance-row {
+      grid-template-columns: 6fr 5fr 5fr 53px minmax(50px, 1fr) minmax(40px, 1fr) 6fr 2fr;
+      .input-table-cell {
+        span {
+          padding: 3px;
+          display: inline-block;
+        }
+      }
+      
+    }
+    .row-addition {
+      width: 100%;
+      margin-top: 20px;
+    }
+  }
+}

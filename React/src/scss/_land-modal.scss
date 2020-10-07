@@ -1,0 +1,262 @@
+@import "color";
+body {
+  overflow: hidden;
+}
+
+main {
+  div {
+    width: 100%;
+    form#land {
+      width: 100%;
+      grid: initial;
+      grid-column: initial;
+      grid-row: 100px auto 1fr;
+      div {
+        margin-bottom: 0;
+        font-size: 12px;
+      }
+      .modal-area {
+        // display: none;//モーダル表示
+        display: block;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        opacity: 1; //モーダル表示
+        background-color: rgba(30, 30, 30, 0.9);
+        overflow-y: auto;
+        // visibility: hidden;
+        transition: 0.6s;
+        .modal-wrapper {
+          position: absolute;
+          // top: 50%;
+          top: 28rem;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 100%;
+          max-width: 600px;
+          height: auto;
+          margin-top: 20%;
+          margin-bottom: 10%;
+          padding: 50px 80px;
+          background-color: #fff;
+          .modal-contents {
+            display: grid;
+            .modal-land-table {
+              grid-column-start: 1;
+              display: grid;
+              grid-template-columns: 20% 20% 20% 20% 20%;
+              // grid-template-rows: 40px;
+              div {
+                box-sizing: border-box;
+                padding: 2px;
+                p {
+                  font-size: 14px;
+                  margin: 0;
+                }
+                input {
+                  width: 100%;
+                  vertical-align: middle;
+                }
+                input[type="checkbox"] + label {
+                  cursor: default;
+                }
+                input[type="checkbox"] + label::before {
+                  background-color: white;
+                }
+              }
+              .modal-land-data,
+              .modal-land-reduction-data {
+                grid-column-start: 1;
+                grid-column-end: 6;
+                display: grid;
+                grid-template-columns: 20% 20% 20% 20% 20%;
+                margin-bottom: 40px;
+                .modal-land-table-header {
+                  grid-column-start: 1;
+                  grid-column-end: 6;
+                  margin-bottom: 10px;
+                  label {
+                    font-size: 20px;
+                    line-height: 1.1;
+                  }
+                }
+                .modal-land-table-data {
+                  grid-column-start: 1;
+                  grid-column-end: 6;
+                  display: grid;
+                  grid-template-columns: 20% 20% 20% 20% 20%;
+                  // grid-template-rows: 40px;
+                  div {
+                    display: inline-block;
+                    padding: {
+                      top: 5px;
+                      bottom: 5px;
+                    }
+                    p {
+                      // margin: 0;
+                      vertical-align: middle;
+                      line-height: 2;
+                    }
+                  }
+                  // margin-bottom: 10px;
+                  .modal-land-1,
+                  .modal-land-3,
+                  .modal-land-5,
+                  .modal-land-7,
+                  .modal-land-9,
+                  .modal-land-11,
+                  .modal-land-13,
+                  .modal-land-15,
+                  .modal-land-22,
+                  .modal-land-27,
+                  .modal-land-32,
+                  .modal-land-37,
+                  .modal-land-39,
+                  .modal-land-41 {
+                    grid-column-start: 1;
+                    grid-column-end: 2;
+                  }
+                  .modal-land-2,
+                  .modal-land-4,
+                  .modal-land-6,
+                  .modal-land-8,
+                  .modal-land-10,
+                  .modal-land-12,
+                  .modal-land-14,
+                  .modal-land-16,
+                  .modal-land-38,
+                  .modal-land-40,
+                  .modal-land-42 {
+                    grid-column-start: 2;
+                    grid-column-end: 6;
+                  }
+                  .modal-land-4 {
+                    textarea {
+                      box-sizing: border-box;
+                      resize: none;
+                      width: 100%;
+                      height: 65px;
+                    }
+                  }
+                  .modal-land-18,
+                  .modal-land-23,
+                  .modal-land-28,
+                  .modal-land-33 {
+                    grid-column-start: 2;
+                    grid-column-end: 3;
+                  }
+                  .modal-land-19,
+                  .modal-land-24,
+                  .modal-land-29,
+                  .modal-land-34 {
+                    grid-column-start: 3;
+                    grid-column-end: 4;
+                  }
+                  .modal-land-20,
+                  .modal-land-25,
+                  .modal-land-30,
+                  .modal-land-35 {
+                    grid-column-start: 4;
+                    grid-column-end: 5;
+                  }
+                  .modal-land-21,
+                  .modal-land-26,
+                  .modal-land-31,
+                  .modal-land-36 {
+                    grid-column-start: 5;
+                    grid-column-end: 6;
+                  }
+                  .modal-land-43 {
+                    grid-column-start: 2;
+                    grid-column-end: 6;
+                    input {
+                      width: 100px;
+                    }
+                    span {
+                      margin: 0 5px;
+                    }
+                  }
+                }
+                .modal-total {
+                  grid-column-start: 1;
+                  grid-column-end: 6;
+                  display: grid;
+                  grid-template-columns: 20% 20% 20% 20% 20%;
+                  font-weight: 600;
+                  .modal-total-title {
+                    grid-column-start: 1;
+                    grid-column-end: 2;
+                    p {
+                      font-size: 18px;
+                    }
+                  }
+                  .modal-total-amount {
+                    grid-column-start: 2;
+                    grid-column-end: 6;
+                    p {
+                      font-size: 18px;
+                    }
+                  }
+                }
+                .modal-land-other {
+                  grid-column-start: 1;
+                  grid-column-end: 6;
+                  display: grid;
+                  grid-template-columns: 20% 20% 20% 20% 20%;
+                  margin-top: 30px;
+                  font-weight: 500;
+                  .modal-land-other-title {
+                    grid-column-start: 1;
+                    grid-column-end: 2;
+                    height: 30px;
+                  }
+                  .modal-land-other-amount {
+                    grid-column-start: 2;
+                    grid-column-end: 6;
+                  }
+                }
+              }
+              .modal-land-reduction-data {
+                margin-bottom: 0;
+                .modal-total {
+                  .modal-total-amount {
+                    p {
+                      color: $red;
+                    }
+                  }
+                }
+              }
+              .addition {
+                grid-column-start: 1;
+                grid-column-end: 6;
+                margin-top: 50px;
+                display: flex;
+                justify-content: space-between;
+                button {
+                  width: 100%;
+                  margin: 0 20px;
+                  padding: {
+                    top: 5px;
+                    bottom: 5px;
+                  }
+                }
+                // .cancel {
+                //   background-color: $white;
+                //   color: #333;
+                //   border: 1px solid #333;
+                //   &:hover {
+                //     background-color: #666;
+                //     color: $white;
+                //   }
+                // }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

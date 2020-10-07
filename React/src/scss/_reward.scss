@@ -1,0 +1,53 @@
+@import 'color';
+
+main {
+  div {
+    form#reward {
+      grid-template-columns: 180px 1fr 1fr 15px;
+      .reward-data {
+        grid-column-start: 1;
+        grid-column-end: 5;
+        display: grid;
+        grid-template-columns: 180px 30% 20% 50px;
+        div {
+          box-sizing: border-box;
+          padding: 5px;
+          input {
+            width: 100%;
+          }
+        }
+        .reward-1 {
+          grid-column-start: 1;
+          grid-column-end: 2;
+        }
+        .reward-2 {
+          grid-column-start: 2;
+          grid-column-end: 4;
+        }
+        .reward-3 {
+          grid-column-start: 2;
+          grid-column-end: 3;
+        }
+        .reward-4 {
+          grid-column-start: 3;
+          grid-column-end: 4;
+        }
+        .reward-xx {
+          grid-column-start: 4;
+          grid-column-end: 5;
+        }
+        .reward-2,
+        .reward-4 {
+          text-align: right;
+        }
+        .reward-5 {
+          grid-column-start: 2;
+          grid-column-end: 3;
+          input {
+            width: auto;
+          }
+        }
+      }
+    }
+  }
+}
