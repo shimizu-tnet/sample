@@ -15,7 +15,9 @@ artifacts:
         - ./appspec.yml
         - ./before-install.bat
         - ./after-install.bat
+      name: EC2Artifact
     S3Artifact:
       base-directory: ./React/build
       files:
-        - **/*
+        - '**/*'
+      name: S3Artifact
