@@ -18,4 +18,4 @@ artifacts:
     S3Artifact:
       base-directory: ./React/build
       files:
-        - '**/*'
+        - ./**/*
