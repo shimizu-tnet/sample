@@ -3,7 +3,7 @@ version: 0.2
 phases:
   build:
     commands:
-      - dotnet publish ./JuniorTennis.sln
+      - dotnet publish -c Release ./JuniorTennis.sln
       - cd JuniorTennis.Mvc/bin
       - ls -l
 artifacts:
