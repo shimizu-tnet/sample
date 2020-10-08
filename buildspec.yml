@@ -4,18 +4,11 @@ phases:
   build:
     commands:
       - dotnet publish ./JuniorTennis.sln
-      - cd ./React/public
-      - npm install
-      - npm run build
+      - cd JuniorTennis.Mvc
+      - ls -l
 artifacts:
-  secondary-artifacts:
-    EC2Artifact:
-      files:
-        - ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/publish/**/*
-        - ./appspec.yml
-        - ./before-install.bat
-        - ./after-install.bat
-    S3Artifact:
-      base-directory: ./React/build
-      files:
-        - ./**/*
+  files:
+    - ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/publish/**/*
+    - ./appspec.yml
+    - ./before-install.bat
+    - ./after-install.bat
