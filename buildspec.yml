@@ -8,7 +8,7 @@ phases:
       - ls -l
 artifacts:
   files:
-    - ./JuniorTennis.Mvc/bin/Debug/netcoreapp3.1/publish/**/*
+    - ./JuniorTennis.Mvc/bin/Release/netcoreapp3.1/publish/**/*
     - ./appspec.yml
     - ./before-install.bat
     - ./after-install.bat
